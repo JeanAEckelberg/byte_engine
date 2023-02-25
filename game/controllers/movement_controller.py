@@ -6,41 +6,30 @@ class MovementController(Controller):
 
     def __init__(self):
         super().__init__()
-       
+
     def handle_actions(self, world, client):
-        new_position = None
-        avatar_x = client.cook.position[1]
-        avatar_y = client.cook.position[0]
+        avatar_x = client.avatar.position[1]
+        avatar_y = client.avatar.position[0]
+        pos_mod = None
         match client.action.chosen_action:
             case ActionType.MOVE_UP:
-                if not world.game_map[avatar_y - 1][avatar_x].occupied_by:
-                    new_position = (avatar_y - 1, avatar_x)
+                pos_mod = (0, -1)
             case ActionType.MOVE_DOWN:
-                if not world.game_map[avatar_y + 1][avatar_x].occupied_by:
-                    new_position = (avatar_y + 1, avatar_x)
+                pos_mod = (0, 1)
             case ActionType.MOVE_LEFT:
-                if not world.game_map[avatar_y][avatar_x - 1].occupied_by:
-                    new_position = (avatar_y, avatar_x - 1)
+                pos_mod = (-1, 0)
             case ActionType.MOVE_RIGHT:
-                if not world.game_map[avatar_y][avatar_x + 1].occupied_by:
-                    new_position = (avatar_y, avatar_x + 1)
-        # if client.action.chosen_action == ActionType.Move.up:
-        #    if not world.game_map[avatar_y - 1][avatar_x].occupied_by:
-        #       new_position = (avatar_y-1, avatar_x)
-        # if client.action.chosen_action == ActionType.Move.down:
-        #    if not world.game_map[avatar_y+1][avatar_x].occupied_by:
-        #       new_position = (avatar_y+1, avatar_x)
-        # if client.action.chosen_action == ActionType.Move.left:
-        #    if not world.game_map[avatar_y][avatar_x-1].occupied_by:
-        #       new_position = (avatar_y, avatar_x-1)
-        # if client.action.chosen_action == ActionType.Move.right:
-        #    if not world.game_map[avatar_y][avatar_x+1].occupied_by:
-        #       new_position = (avatar_y, avatar_x+1)
-        if new_position:
-            world.game_map[avatar_y][avatar_x].occupied_by = None
-            client.cook.position = new_position
-            world.game_map[new_position[0]][new_position[1]].occupied_by = client.cook
+                pos_mod = (1, 0)
 
+        temp = world.game_map[avatar_y + pos_mod[1]][avatar_x + pos_mod[0]]
+        while temp.occupied_by:
+            # if it's not none, and it doesn't have an occupied by attribute then its blocked
+            if temp.occupied_by and not hasattr(temp.occupied_by, 'occupied_by'):
+                return
+            if not temp.occupied_by:
+                break
+            temp = temp.occupied_by
 
-        
-                         
+        temp.occupied_by = client.avatar
+        world.game_map[avatar_y][avatar_x].occupied_by = None
+        client.avatar.position = (avatar_x + pos_mod[0], avatar_y + pos_mod[1])
