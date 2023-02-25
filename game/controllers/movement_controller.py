@@ -23,8 +23,6 @@ class MovementController(Controller):
 
         temp = world.game_map[avatar_y + pos_mod[1]][avatar_x + pos_mod[0]]
         while temp.occupied_by:
-            if not temp.occupied_by:
-                break
             # if it's not none, and it doesn't have an occupied by attribute then its blocked and movement fails
             if not hasattr(temp.occupied_by, 'occupied_by'):
                 return
