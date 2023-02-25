@@ -21,6 +21,7 @@ class MovementController(Controller):
             case ActionType.MOVE_RIGHT:
                 pos_mod = (1, 0)
 
+        # if tile is occupied return
         temp = world.game_map[avatar_y + pos_mod[1]][avatar_x + pos_mod[0]]
         while temp.occupied_by:
             # if it's not none, and it doesn't have an occupied by attribute then its blocked and movement fails
@@ -30,5 +31,10 @@ class MovementController(Controller):
             temp = temp.occupied_by
 
         temp.occupied_by = client.avatar
-        world.game_map[avatar_y][avatar_x].occupied_by = None
+        # while the object that occupies tile has the occupied by attribute, escalate check for avatar
+        temp = world.game_map[avatar_y][avatar_x]
+        while hasattr(temp.occupied_by, 'occupied_by'):
+            temp = temp.occupied_by
+
+        temp.occupied_by = None
         client.avatar.position = (avatar_x + pos_mod[0], avatar_y + pos_mod[1])
