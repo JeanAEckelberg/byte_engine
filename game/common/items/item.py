@@ -4,15 +4,14 @@ from typing import Self
 
 
 class Item(GameObject):
-    def __init__(self, value: int, durability: float = 1):
+    def __init__(self, value: int, durability: int = 100):
         super().__init__()
         self.object_type = ObjectType.ITEM
         self.value = value
-        # durability starts as 1; treated as percent where 1 = 100%
         self.durability = durability
         
     @property
-    def durability(self) -> float:
+    def durability(self) -> int:
         return self.__durability
 
     @property
@@ -20,10 +19,10 @@ class Item(GameObject):
         return self.__value
 
     @durability.setter
-    def durability(self, durability: float):
-        if not isinstance(durability, float):
-            raise ValueError(f'Durability for {self.object_type.name} must be a float type.')
-        self.__durability = min(max(durability, 0), 1)
+    def durability(self, durability: int):
+        if not isinstance(durability, int):
+            raise ValueError(f'Durability for {self.object_type.name} must be an int.')
+        self.__durability = durability
 
     @value.setter
     def value(self, value: int):
