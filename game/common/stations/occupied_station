@@ -1,5 +1,4 @@
-from game.common.avatar import avatar
-from game.common.game_object import GameObject
+from game.common.avatar import Avatar
 from game.common.enums import ObjectType
 from game.common.items.item import Item
 from game.common.stations.station import Station
@@ -21,7 +20,7 @@ class Occupied_Station(Station):
         self.occupied_by = occupied_by
 
     # take action method
-    def take_action(self, avatar: avatar = None):
+    def take_action(self, avatar: Avatar = None):
         return
     
     # json methods

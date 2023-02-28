@@ -1,4 +1,4 @@
-from game.common.avatar import avatar
+from game.common.avatar import Avatar
 from game.common.game_object import GameObject
 from game.common.enums import ObjectType
 from game.common.items.item import Item
@@ -20,7 +20,7 @@ class Station(GameObject):
         self.__item = item if isinstance(item, Item) else None
 
     # take action method
-    def take_action(self, avatar: avatar = None):
+    def take_action(self, avatar: Avatar = None):
         return
 
     # json methods
