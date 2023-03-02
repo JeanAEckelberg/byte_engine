@@ -2,23 +2,26 @@ from game.common.avatar import Avatar
 from game.common.enums import ObjectType
 from game.common.items.item import Item
 from game.common.stations.station import Station
+from game.common.game_object import GameObject
 from typing import Self
 
 # create station object that contains occupied_by
 class Occupiable_Station(Station):
-    def __init__(self, item: Item = None, occupied_by: bool = False):
+    def __init__(self, item: Item = None, occupied_by: GameObject = None):
         super().__init__(self, item)
         self.object_type = ObjectType.OCCUPIABLE_STATION
         self.occupied_by = occupied_by
 
     # occupied_by getter and setter methods
     @property
-    def occupied_by(self) -> bool:
-        return self.occupied_by
+    def occupied_by(self) -> GameObject:
+        return self.__occupied_by
     
     @occupied_by.setter
-    def occupied_by(self, occupied_by: bool):
-        self.occupied_by = occupied_by
+    def occupied_by(self, occupied_by: GameObject):
+        if occupied_by and not isinstance(occupied_by, GameObject):
+            raise ValueError(f"{self.__class__.__name__}.occupied_by must be a GameObject.")
+        self.__occupied_by = occupied_by
 
     # take action method
     def take_action(self, avatar: Avatar = None):

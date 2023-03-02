@@ -18,7 +18,9 @@ class Station(GameObject):
 
     @item.setter
     def item(self, item: Item):
-        self.__item = item if isinstance(item, Item) else None
+        if item and not isinstance(item, Item):
+            raise ValueError(f"{self.__class__.__name__}.item must be an Item.")
+        self.__item = item
 
     # take action method
     def take_action(self, avatar: Avatar = None):
