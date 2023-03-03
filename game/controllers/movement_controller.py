@@ -8,8 +8,8 @@ class MovementController(Controller):
         super().__init__()
 
     def handle_actions(self, world, client):
-        avatar_x = client.avatar.position[1]
-        avatar_y = client.avatar.position[0]
+        avatar_x = client.avatar.position[0]
+        avatar_y = client.avatar.position[1]
         pos_mod = None
         match client.action.chosen_action:
             case ActionType.MOVE_UP:
