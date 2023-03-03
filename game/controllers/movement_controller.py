@@ -20,10 +20,12 @@ class MovementController(Controller):
                 pos_mod = (-1, 0)
             case ActionType.MOVE_RIGHT:
                 pos_mod = (1, 0)
+            case _:  # default case
+                return
 
         # if tile is occupied return
         temp = world.game_map[avatar_y + pos_mod[1]][avatar_x + pos_mod[0]]
-        while temp.occupied_by:
+        while temp.occupied_by is not None:
             # if it's not none, and it doesn't have an occupied by attribute then its blocked and movement fails
             if not hasattr(temp.occupied_by, 'occupied_by'):
                 return
