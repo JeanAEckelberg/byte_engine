@@ -13,7 +13,7 @@ class Occupiable_Station(Tile, Station):
         self.object_type: ObjectType = ObjectType.OCCUPIABLE_STATION
 
     # take action method
-    def take_action(self, avatar: Avatar) -> Item:
+    def take_action(self, avatar: Avatar) -> Item|None:
         return
     
     # json methods

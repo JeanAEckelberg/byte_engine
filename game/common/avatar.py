@@ -8,12 +8,12 @@ class Avatar(GameObject):
     def __init__(self, item: Item = None, position: tuple[int,int]=None):
         super().__init__()
         self.object_type: ObjectType = ObjectType.AVATAR
-        self.held_item: Item = item
+        self.held_item: Item|None = item
         self.score: int = 0
-        self.position: tuple[int,int] = position
+        self.position: tuple[int,int]|None = position
 
     @property
-    def held_item(self) -> Item:
+    def held_item(self) -> Item|None:
         return self.__held_item
 
     @property
@@ -21,27 +21,27 @@ class Avatar(GameObject):
         return self.__score
 
     @property
-    # return format for tuple (x-position, y-position), assumes (0,0) is top left of the game board
-    def position(self) -> tuple[int, int]:
+    # return format for tuple (x-position, y-position), assumes (0,0) is top left of the game board, or None
+    def position(self) -> tuple[int, int]|None:
         return self.__position
 
     @held_item.setter
-    def held_item(self, item: Item):
+    def held_item(self, item: Item) -> None:
         # If it's not an item, and it's not None, raise the error
         if item is not None and not isinstance(item, Item):
             raise ValueError(f"{self.__class__.__name__}.held_item must be an Item or None.")
         self.__held_item = item
 
     @score.setter
-    def score(self, score: int):
-        if score is not None and not isinstance(score, int):
+    def score(self, score: int) -> None:
+        if score is None and not isinstance(score, int):
             raise ValueError(f"{self.__class__.__name__}.score must be an int.")
         self.__score = score
 
     @position.setter
-    def position(self, position: tuple[int, int]):
+    def position(self, position: tuple[int, int]) -> None:
         if position is not None and not(isinstance(position, tuple) and list(map(type, position)) == [int, int]):
-            raise ValueError(f"{self.__class__.__name__}.position must be a tuple of two ints.")
+            raise ValueError(f"{self.__class__.__name__}.position must be a tuple of two ints or None.")
         self.__position = position
 
     def to_json(self) -> dict:

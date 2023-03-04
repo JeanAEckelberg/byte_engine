@@ -10,11 +10,11 @@ class Tile(GameObject):
     def __init__(self, occupied_by: GameObject = None, **kwargs):
         super().__init__()
         self.object_type: ObjectType = ObjectType.TILE
-        self.occupied_by: GameObject = occupied_by
+        self.occupied_by: GameObject|None = occupied_by
 
 
     @property
-    def occupied_by(self) -> GameObject:
+    def occupied_by(self) -> GameObject|None:
         return self.__occupied_by
 
     @occupied_by.setter

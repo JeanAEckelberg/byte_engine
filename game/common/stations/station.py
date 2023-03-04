@@ -9,21 +9,21 @@ class Station(GameObject):
     def __init__(self, item: Item = None, **kwargs):
         super().__init__()
         self.object_type: ObjectType = ObjectType.STATION
-        self.item: Item = item
+        self.item: Item|None = item
 
     # item getter and setter methods
     @property
-    def item(self) -> Item:
+    def item(self) -> Item|None:
         return self.__item
 
     @item.setter
     def item(self, item: Item) -> None:
         if item is not None and not isinstance(item, Item):
-            raise ValueError(f"{self.__class__.__name__}.item must be an Item not {item}.")
+            raise ValueError(f"{self.__class__.__name__}.item must be an Item or None, not {item}.")
         self.__item = item
 
     # take action method
-    def take_action(self, avatar: Avatar) -> Item:
+    def take_action(self, avatar: Avatar) -> Item|None:
         return
 
     # json methods
