@@ -8,7 +8,7 @@ from game.common.enums import *
 
 
 class GameBoard(GameObject):
-    def __init__(self, seed: int = None, map_size: (int, int) = tuple,
+    def __init__(self, seed: int = None, map_size: {chr: int} = {'y': 0, 'x': 0},
                  locations: dict = dict, walled: bool = False):
 
         random.seed(seed)
@@ -47,8 +47,8 @@ class GameBoard(GameObject):
         $  For the double for loop, check to make sure the key-value pairs have the same length, else 
             throw an error
             
-        $  Check for Avatar in the value list of GameObjects to add the coordinates to the Avatar. This will be 
-            its own unique check in the loops
+        $  Check for Avatar in the value list of GameObjects to add the coordinates to the Avatar. This will 
+           be its own unique check in the loops
             
         $  For the second for loop in the method, make a helper method that is used to avoid multiple 
             indents
@@ -56,7 +56,8 @@ class GameBoard(GameObject):
 
         # generate map
         # max_size(1) for x, and max_size(0)
-        self.game_map = [[Tile() for x in range(self.map_size(1))] for y in range(self.map_size(0))]
+        self.game_map = [[Tile() for x in range(self.map_size['y'])] for y in range(self.map_size['x'])]
+
         ####################
         ### If walled is true, make wall here
         ####################
@@ -67,16 +68,26 @@ class GameBoard(GameObject):
                 raise ValueError("A key-value pair from game_board.locations has mismatching lengths. "
                                  "They must be the same length, regardless of size.")
             j = random.choices(k, k=len(k))
-            self.__help(j, v)
+            self.__help_populate(j, v)
 
-    def __help(self, j: (int, int), v: list[GameObject]):
+    def __help_populate(self, j: (int, int), v: list[GameObject]):
         for i in v:
-            (y, x) = j.pop()
+            y, x = j
 
             if isinstance(i, Avatar):  # If the GameObject is an Avatar, assign it the coordinate position
                 i.position = j[::-1]
 
-            self.game_map[y][x].occupied_by = i
+            temp = self.game_map[y][x]
+
+            while temp.occupied_by is not None:
+                # if it's not none, and it doesn't have an occupied by attribute then its blocked and
+                # movement fails
+                if not hasattr(temp.occupied_by, 'occupied_by'):
+                    raise Exception("The GameObject does not have an 'occupied_by' attribute.")
+
+                temp = temp.occupied_by
+
+            temp.occupied_by = i
 
     def stations(self) -> list:
         to_return = list()
