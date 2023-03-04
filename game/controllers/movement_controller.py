@@ -1,6 +1,7 @@
 from game.controllers.controller import Controller
 from game.common.player import Player
 from game.common.map.game_board import GameBoard
+from game.common.map.tile import Tile
 from game.common.enums import *
 
 
@@ -26,19 +27,19 @@ class MovementController(Controller):
                 return
 
         # if tile is occupied return
-        temp = world.game_map[avatar_y + pos_mod[1]][avatar_x + pos_mod[0]]
-        while temp.occupied_by is not None:
-            # if it's not none, and it doesn't have an occupied by attribute then its blocked and movement fails
-            if not hasattr(temp.occupied_by, 'occupied_by'):
-                return
-
-            temp = temp.occupied_by
-
-        temp.occupied_by = client.avatar
-        # while the object that occupies tile has the occupied by attribute, escalate check for avatar
-        temp = world.game_map[avatar_y][avatar_x]
+        temp: Tile = world.game_map[avatar_y + pos_mod[1]][avatar_x + pos_mod[0]]
         while hasattr(temp.occupied_by, 'occupied_by'):
-            temp = temp.occupied_by
+            temp: Tile = temp.occupied_by
+            
+        if temp.occupied_by is not None:
+            return 
+        
+        temp.occupied_by = client.avatar
+        
+        # while the object that occupies tile has the occupied by attribute, escalate check for avatar
+        temp: Tile = world.game_map[avatar_y][avatar_x]
+        while hasattr(temp.occupied_by, 'occupied_by'):
+            temp: Tile = temp.occupied_by
 
         temp.occupied_by = None
         client.avatar.position = (avatar_x + pos_mod[0], avatar_y + pos_mod[1])
