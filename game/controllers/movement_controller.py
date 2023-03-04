@@ -1,4 +1,6 @@
 from game.controllers.controller import Controller
+from game.common.player import Player
+from game.common.map.game_board import GameBoard
 from game.common.enums import *
 
 
@@ -7,10 +9,10 @@ class MovementController(Controller):
     def __init__(self):
         super().__init__()
 
-    def handle_actions(self, world, client):
-        avatar_x = client.avatar.position[0]
-        avatar_y = client.avatar.position[1]
-        pos_mod = None
+    def handle_actions(self, client: Player, world: GameBoard):
+        avatar_x: int = client.avatar.position[0]
+        avatar_y: int = client.avatar.position[1]
+        pos_mod: tuple[int,int] = (0,0)
         match client.action.chosen_action:
             case ActionType.MOVE_UP:
                 pos_mod = (0, -1)
