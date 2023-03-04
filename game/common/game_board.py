@@ -1,21 +1,24 @@
 import random
+from typing import Self
+from game.utils.vector import Vector
 from game.common.avatar import Avatar
 from game.common.game_object import GameObject
 from game.common.stations.station import Station
 from game.common.stations.occupiable_station import Occupiable_Station
 from game.common.map.tile import Tile
+from game.common.map.wall import Wall
 from game.common.enums import *
 
 
 class GameBoard(GameObject):
-    def __init__(self, seed: int = None, map_size: {chr: int} = {'y': 0, 'x': 0},
-                 locations: dict = dict, walled: bool = False):
+    def __init__(self, seed: int = None, map_size: Vector = Vector(),
+                 locations: dict[[Vector]:[GameObject]] = None, walled: bool = False):
 
         random.seed(seed)
         super().__init__()
         self.object_type: ObjectType = ObjectType.GAMEBOARD
         self.event_active = None
-        self.map_size: (int, int) = map_size
+        self.map_size: Vector = map_size
         self.locations: dict = locations
         self.walled: bool = walled
 
@@ -34,11 +37,11 @@ class GameBoard(GameObject):
         
         $  Account for avatar being passed in the locations
         
-        Account for stations with occupied_by as an attribute
+        $  Account for stations with occupied_by as an attribute
         
         Needs extensive documentation on how the locations dict work
         
-        Look at movement controller for how to get to top-most occupiable level
+        $  Look at movement controller for how to get to top-most occupiable level
         
         $  Will have to modify cooks and ovens methods to be related to avatar and stations respectively 
         
@@ -56,11 +59,15 @@ class GameBoard(GameObject):
 
         # generate map
         # max_size(1) for x, and max_size(0)
-        self.game_map = [[Tile() for x in range(self.map_size['y'])] for y in range(self.map_size['x'])]
+        self.game_map = [[Tile() for x in range(self.map_size.y)] for y in range(self.map_size.x)]
 
-        ####################
-        ### If walled is true, make wall here
-        ####################
+        if walled:
+            for x in range(self.map_size.x):
+                if x == 0 or x == self.map_size.x-1:
+                    for y in range(self.map_size.y):
+                        self.game_map[y][x].occupied_by = Wall()
+                self.game_map[0][x].occupied_by = Wall()
+                self.game_map[self.map_size.y - 1][x].occupied_by = Wall()
 
     def populate_map(self):
         for k, v in self.locations.items():
@@ -70,14 +77,13 @@ class GameBoard(GameObject):
             j = random.choices(k, k=len(k))
             self.__help_populate(j, v)
 
-    def __help_populate(self, j: (int, int), v: list[GameObject]):
+    def __help_populate(self, j: Vector, v: list[GameObject]):
         for i in v:
-            y, x = j
 
             if isinstance(i, Avatar):  # If the GameObject is an Avatar, assign it the coordinate position
-                i.position = j[::-1]
+                i.position = j
 
-            temp = self.game_map[y][x]
+            temp = self.game_map[j.y][j.x]
 
             while temp.occupied_by is not None:
                 # if it's not none, and it doesn't have an occupied by attribute then its blocked and
@@ -89,6 +95,7 @@ class GameBoard(GameObject):
 
             temp.occupied_by = i
 
+    # Needs fixing with loop to get up the occupied_by chain
     def stations(self) -> list:
         to_return = list()
         for row in self.game_map:
@@ -97,6 +104,7 @@ class GameBoard(GameObject):
                     to_return.append(col.occupied_by)
         return to_return
 
+    # Needs fixing with loop to get up the occupied_by chain
     def avatars(self) -> list:
         to_return = list()
         for row in self.game_map:
@@ -105,7 +113,7 @@ class GameBoard(GameObject):
                     to_return.append(col.occupied_by)
         return to_return
 
-    def to_json(self):
+    def to_json(self) -> dict:
         data = super().to_json()
         temp = list([list(map(lambda tile: tile.to_json(), y)) for y in self.game_map])
         data["game_map"] = temp
@@ -115,7 +123,7 @@ class GameBoard(GameObject):
     def generate_event(self, start, end):
         self.event_active = random.randint(start, end)
 
-    def from_json(self, data):
+    def from_json(self, data) -> Self:
         super().from_json(data)
         temp = data["game_map"]
         self.game_map = list([list(map(lambda tile: Tile().from_json(tile), y)) for y in temp])
