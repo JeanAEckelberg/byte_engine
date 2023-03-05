@@ -14,7 +14,7 @@ class MovementController(Controller):
         avatar_x: int = client.avatar.position[0]
         avatar_y: int = client.avatar.position[1]
         pos_mod: tuple[int,int] = (0,0)
-        match client.action.chosen_action:
+        match client.action:
             case ActionType.MOVE_UP:
                 pos_mod = (0, -1)
             case ActionType.MOVE_DOWN:
@@ -39,7 +39,7 @@ class MovementController(Controller):
         # while the object that occupies tile has the occupied by attribute, escalate check for avatar
         temp: Tile = world.game_map[avatar_y][avatar_x]
         while hasattr(temp.occupied_by, 'occupied_by'):
-            temp: Tile = temp.occupied_by
+            temp = temp.occupied_by
 
         temp.occupied_by = None
         client.avatar.position = (avatar_x + pos_mod[0], avatar_y + pos_mod[1])

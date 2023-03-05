@@ -12,10 +12,6 @@ class Occupiable_Station(Tile, Station):
         super().__init__(occupied_by=occupied_by, item=item)
         self.object_type: ObjectType = ObjectType.OCCUPIABLE_STATION
 
-    # take action method
-    def take_action(self, avatar: Avatar) -> Item|None:
-        return
-    
     # json methods
     def to_json(self) -> dict:
         data: dict = super().to_json()

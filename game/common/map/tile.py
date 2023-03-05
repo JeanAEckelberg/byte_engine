@@ -18,7 +18,7 @@ class Tile(GameObject):
         return self.__occupied_by
 
     @occupied_by.setter
-    def occupied_by(self, occupied_by: GameObject) -> None:
+    def occupied_by(self, occupied_by: GameObject|None) -> None:
         if occupied_by is not None and not isinstance(occupied_by, GameObject):
             raise ValueError(f'{self.__class__.__name__}.occupied_by must be None or an instance of GameObject.')
         self.__occupied_by = occupied_by  
@@ -30,7 +30,7 @@ class Tile(GameObject):
 
     def from_json(self, data: dict) -> Self:
         super().from_json(data)
-        occupied_by: GameObject = data['occupied_by']
+        occupied_by: GameObject|None = data['occupied_by']
         if occupied_by is None:
             self.occupied_by = None
             return self

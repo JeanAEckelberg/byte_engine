@@ -6,7 +6,7 @@ from typing import Self
 
 # create Station object from GameObject that allows item to be contained in it
 class Station(GameObject):
-    def __init__(self, item: Item = None, **kwargs):
+    def __init__(self, item: Item|None = None, **kwargs):
         super().__init__()
         self.object_type: ObjectType = ObjectType.STATION
         self.item: Item|None = item

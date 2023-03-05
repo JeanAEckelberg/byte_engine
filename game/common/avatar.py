@@ -5,7 +5,7 @@ from typing import Self
 
 
 class Avatar(GameObject):
-    def __init__(self, item: Item = None, position: tuple[int,int]=None):
+    def __init__(self, item: Item|None = None, position: tuple[int,int]|None = None):
         super().__init__()
         self.object_type: ObjectType = ObjectType.AVATAR
         self.held_item: Item|None = item
@@ -26,7 +26,7 @@ class Avatar(GameObject):
         return self.__position
 
     @held_item.setter
-    def held_item(self, item: Item) -> None:
+    def held_item(self, item: Item|None) -> None:
         # If it's not an item, and it's not None, raise the error
         if item is not None and not isinstance(item, Item):
             raise ValueError(f"{self.__class__.__name__}.held_item must be an Item or None.")
@@ -39,7 +39,7 @@ class Avatar(GameObject):
         self.__score = score
 
     @position.setter
-    def position(self, position: tuple[int, int]) -> None:
+    def position(self, position: tuple[int, int]|None) -> None:
         if position is not None and not(isinstance(position, tuple) and list(map(type, position)) == [int, int]):
             raise ValueError(f"{self.__class__.__name__}.position must be a tuple of two ints or None.")
         self.__position = position
@@ -54,8 +54,8 @@ class Avatar(GameObject):
     def from_json(self, data: dict) -> Self:
         super().from_json(data)
         self.score: int = data['score']
-        self.position: tuple[int,int] = data['position']
-        held_item: Item = data['held_item']
+        self.position: tuple[int,int]|None = data['position']
+        held_item: Item|None = data['held_item']
         if held_item is None:
             self.held_item = None
             return self
