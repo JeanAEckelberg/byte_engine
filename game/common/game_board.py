@@ -98,7 +98,6 @@ class GameBoard(GameObject):
         self.walled: bool = walled
 
         # generate map
-        # max_size(1) for x, and max_size(0)
         self.game_map = [[Tile() for x in range(self.map_size.y)] for y in range(self.map_size.x)]
 
         if walled:
@@ -108,6 +107,49 @@ class GameBoard(GameObject):
                         self.game_map[y][x].occupied_by = Wall()
                 self.game_map[0][x].occupied_by = Wall()
                 self.game_map[self.map_size.y - 1][x].occupied_by = Wall()
+
+    @property
+    def seed(self) -> int:
+        return self.__seed
+
+    @seed.setter
+    def seed(self, seed: int):
+        if seed is None or isinstance(seed, int):
+            self.__seed = seed
+
+        raise ValueError("Seed must be an integer.")
+
+    @property
+    def map_size(self) -> Vector:
+        return self.__map_size
+
+    @map_size.setter
+    def map_size(self, map_size: Vector):
+        if map_size is None or isinstance(map_size, Vector):
+            self.__map_size = map_size
+        raise ValueError("Map_size must be a Vector.")
+
+    @property
+    def locations(self) -> dict:
+        return self.__locations
+
+    @locations.setter
+    def locations(self, locations: dict[[Vector]:[GameObject]]):
+        if locations is None or isinstance(locations, dict):
+            self.__locations = locations
+        raise ValueError("Locations must be a dict. The key must be a list of Vector Objects, and the "
+                         "value a list of GameObject.")
+
+    @property
+    def walled(self) -> bool:
+        return self.__walled
+
+    @walled.setter
+    def walled(self, walled: bool):
+        if walled is None or isinstance(walled, bool):
+            self.__walled = walled
+        raise ValueError("Walled must be a bool.")
+
 
     def populate_map(self):
         for k, v in self.locations.items():
