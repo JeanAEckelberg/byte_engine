@@ -11,6 +11,81 @@ from game.common.enums import *
 
 
 class GameBoard(GameObject):
+    """
+    Notes for creating the GameBoard:
+
+    map_size:
+        map_size is a Vector object, allowing you to specify the size of the x, y plane of the game board.
+        For example, a Vector object with an 'x' of 5 and a 'y' of 7 will create a board 5 tiles wide and
+        7 tiles long
+
+    -----------------------------------------------------------------------------------------------------------
+
+    locations:
+        This is the bulkiest part of the generation. The locations field is a dictionary with a key
+        being a list of Vectors, and the value being a list of GameObjects. This is used to assign the
+        given GameObjects the given coordinates via the Vectors. This is done in two ways:
+
+            Statically:
+                If you want a GameObject to be at a specific coordinate, ensure that the key-value pair is
+                ONE Vector and ONE GameObject.
+                An example of this would be the following:
+                    locations = {[vector_2_4] : [station_0]}
+
+                In this example, vector_2_4 contains the coordinates (2, 4). (Note that this naming convention
+                isn't necessary, but was used to help with the concept). Furthermore, station_0 is the
+                GameObject that will be at coordinates (2, 4).
+
+            Dynamically:
+                If you want to assign multiple GameObjects to different coordinates, use a key-value
+                pair of any length. However, the assignments will be random.
+                An example of this would be the following:
+                    locations =
+                        {
+                            [vector_0_0, vector_1_1, vector_2_2] : [station_0, station_1, station_2]
+                        }
+
+                When this is passed in, the three different vectors containing coordinates (0, 0), (1, 1), or
+                (2, 2) will be randomly assigned station_0, station_1, or station_2.
+
+                Therefore:
+                If station_0 is at (1, 1),
+                station_1 could be at (2, 2),
+                then station_2 will be at (0, 0).
+
+        Lastly, another example will be shown to explain that you can combine both static and
+        dynamic assignments in the same dictionary:
+
+            locations =
+                {
+                    [vector_0_0] : [station_0],
+                    [vector_0_1] : [station_1],
+                    [vector_1_1, vector_1_2, vector_1_3] : [station_2, station_3, station_4]
+                }
+
+        In this example, station_0 will be at vector_0_0 without interference. The same applies to
+        station_1 and vector_0_1. However, for vector_1_1, vector_1_2, and vector_1_3, they will randomly
+        be assigned station_2, station_3, and station_4.
+
+    -----------------------------------------------------------------------------------------------------------
+
+    walled:
+        This is simply a bool value that will create a wall barrier on the boundary of the game_board. If
+        walled is True, the wall will be created for you.
+
+        For example, let the dimensions of the map be (5, 7). There will be wall Objects horizontally across
+        x = 0 and x = 4. There will also be wall Objects vertically at y = 0 and y = 6.
+
+        Below is a visual example of this, with 'x' being where the wall Objects are.
+
+        x x x x x   y = 0
+        x       x
+        x       x
+        x       x
+        x       x
+        x       x
+        x x x x x   y = 6
+    """
     def __init__(self, seed: int = None, map_size: Vector = Vector(),
                  locations: dict[[Vector]:[GameObject]] = None, walled: bool = False):
 
@@ -21,41 +96,6 @@ class GameBoard(GameObject):
         self.map_size: Vector = map_size
         self.locations: dict = locations
         self.walled: bool = walled
-
-        """
-        TODO: $  Type hint for constructor
-        
-        $  Get rid of station_hold and temp_pop_data
-        $  Also get rid of the zipper for them
-        $  Get rid of temp_hold
-        
-        $  Make sure that on line 39, where it says 13 and 7, that those are integers that can be passed in 
-            to specify the size of the map
-            
-        $  Include in the constructor: Seed, a tuple of (y, x) to represent the map size, 
-            dict of locations, and walled boolean
-        
-        $  Account for avatar being passed in the locations
-        
-        $  Account for stations with occupied_by as an attribute
-        
-        Needs extensive documentation on how the locations dict work
-        
-        $  Look at movement controller for how to get to top-most occupiable level
-        
-        $  Will have to modify cooks and ovens methods to be related to avatar and stations respectively 
-        
-        
-        
-        $  For the double for loop, check to make sure the key-value pairs have the same length, else 
-            throw an error
-            
-        $  Check for Avatar in the value list of GameObjects to add the coordinates to the Avatar. This will 
-           be its own unique check in the loops
-            
-        $  For the second for loop in the method, make a helper method that is used to avoid multiple 
-            indents
-        """
 
         # generate map
         # max_size(1) for x, and max_size(0)
@@ -95,23 +135,31 @@ class GameBoard(GameObject):
 
             temp.occupied_by = i
 
-    # Needs fixing with loop to get up the occupied_by chain
     def stations(self) -> list:
         to_return = list()
         for row in self.game_map:
             for col in row:
                 if isinstance(col.occupied_by, Station):
                     to_return.append(col.occupied_by)
+                    self.__loop_occupied_by(col, to_return)
         return to_return
 
-    # Needs fixing with loop to get up the occupied_by chain
     def avatars(self) -> list:
         to_return = list()
         for row in self.game_map:
             for col in row:
                 if isinstance(col.occupied_by, Avatar):
                     to_return.append(col.occupied_by)
+                    self.__loop_occupied_by(col, to_return)
         return to_return
+
+    def __loop_occupied_by(self, col: GameObject, to_return: list[GameObject]) -> None:
+        # A helper method to be used in the stations and avatars methods.
+        # Loops through the occupied_by chain and appends those Objects to the given list.
+        while col.occupied_by:
+            if hasattr(col.occupied_by, 'occupied_by'):
+                to_return.append(col.occupied_by)
+
 
     def to_json(self) -> dict:
         data = super().to_json()
