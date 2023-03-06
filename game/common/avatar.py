@@ -34,7 +34,7 @@ class Avatar(GameObject):
 
     @score.setter
     def score(self, score: int) -> None:
-        if score is None and not isinstance(score, int):
+        if score is None or not isinstance(score, int):
             raise ValueError(f"{self.__class__.__name__}.score must be an int.")
         self.__score = score
 
