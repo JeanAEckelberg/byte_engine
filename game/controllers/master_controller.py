@@ -5,7 +5,8 @@ from game.common.action import Action
 from game.common.avatar import Avatar
 from game.common.enums import *
 from game.common.player import Player
-from game.common.stats import GameStats
+# from game.common.stats import GameStats  - don't need it because it is specifically for 1.7
+# but keeping it for now in case it breaks something
 import game.config as config
 from game.utils.thread import CommunicationThread
 from game.controllers.movement_controller import MovementController
@@ -16,19 +17,19 @@ from game.controllers.interact_controller import InteractController
 class MasterController(Controller):
     def __init__(self):
         super().__init__()
-        self.game_over = False
-        self.event_timer = GameStats.event_timer
-        self.event_times = (0, 0)
-        self.turn = None
-        self.current_world_data = None
-        self.movement_controller = MovementController()
-        self.interact_controller = InteractController()
+        self.game_over: bool = False
+        # self.event_timer = GameStats.event_timer
+        self.event_times: tuple[int, int] | None = None
+        self.turn: int = 1
+        self.current_world_data: GameBoard | None = None
+        self.movement_controller: MovementController = MovementController()
+        self.interact_controller: InteractController = InteractController()
 
     # Receives all clients for the purpose of giving them the objects they will control
-    def give_clients_objects(self, clients):
-        starting_positions = [[3, 3], [3, 9]]
+    def give_clients_objects(self, clients: list(Player), world: GameBoard):
+        # starting_positions = [[3, 3], [3, 9]]
         for index, client in enumerate(clients):
-            client.avatar = Avatar(position=starting_positions[index])
+            client.avatar = Avatar(position=game_board[index])
 
     # Generator function. Given a key:value pair where the key is the identifier for the current world and the value is
     # the state of the world, returns the key that will give the appropriate world information
@@ -73,7 +74,8 @@ class MasterController(Controller):
     def handle_events(self, clients):
         # If it is time to run an event, master controller picks an event to run
         if self.turn == self.event_times[0] or self.turn == self.event_times[1]:
-            self.current_world_data["game_map"].generate_event(EventType.example, EventType.example) #eventtype.example is just a placeholder for now
+            self.current_world_data["game_map"].generate_event(EventType.example, EventType.example)
+            # event type.example is just a placeholder for now
 
     # Return serialized version of game
     def create_turn_log(self, clients, turn):

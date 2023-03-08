@@ -36,8 +36,8 @@ class Engine:
             if self.quiet_mode:
                 f = open(os.devnull, 'w')
                 sys.stdout = f
-            self.boot()
             self.load()
+            self.boot()
             for self.current_world_key in tqdm(
                     self.master_controller.game_loop_logic(),
                     bar_format=TQDM_BAR_FORMAT,
@@ -146,9 +146,9 @@ class Engine:
             self.clients.sort(key=lambda clnt: clnt.team_name, reverse=True)
             # Finally, request master controller to establish clients with basic objects
             if SET_NUMBER_OF_CLIENTS_START == 1:
-                self.master_controller.give_clients_objects(self.clients[0])
+                self.master_controller.give_clients_objects(self.clients[0], self.world)
             else:
-                self.master_controller.give_clients_objects(self.clients)
+                self.master_controller.give_clients_objects(self.clients, self.world)
 
     # Loads in the world
     def load(self):
