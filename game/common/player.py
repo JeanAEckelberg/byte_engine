@@ -10,7 +10,7 @@ class Player(GameObject):
         super().__init__()
         self.object_type = ObjectType.player
         
-        self.functional = True
+        self.functional: bool = True
         self.error = None
         self.team_name = team_name
         self.code = code
