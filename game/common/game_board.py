@@ -3,8 +3,6 @@ from typing import Self
 from game.utils.vector import Vector
 from game.common.avatar import Avatar
 from game.common.game_object import GameObject
-from game.common.stations.station import Station
-from game.common.stations.occupiable_station import Occupiable_Station
 from game.common.map.tile import Tile
 from game.common.map.wall import Wall
 from game.common.enums import *
@@ -86,38 +84,31 @@ class GameBoard(GameObject):
         x       x
         x x x x x   y = 6
     """
-    def __init__(self, seed: int = None, map_size: Vector = Vector(),
-                 locations: dict[[Vector]:[GameObject]] = None, walled: bool = False):
 
-        random.seed(seed)
+    def __init__(self, seed: int | None = None, map_size: Vector = Vector(),
+                 locations: dict[[Vector]:[GameObject]] | None = None, walled: bool = False):
+
         super().__init__()
+        self.seed = seed
+        random.seed(seed)
         self.object_type: ObjectType = ObjectType.GAMEBOARD
         self.event_active = None
         self.map_size: Vector = map_size
         self.locations: dict = locations
         self.walled: bool = walled
 
-        # generate map
-        self.game_map = [[Tile() for x in range(self.map_size.y)] for y in range(self.map_size.x)]
-
-        if walled:
-            for x in range(self.map_size.x):
-                if x == 0 or x == self.map_size.x-1:
-                    for y in range(self.map_size.y):
-                        self.game_map[y][x].occupied_by = Wall()
-                self.game_map[0][x].occupied_by = Wall()
-                self.game_map[self.map_size.y - 1][x].occupied_by = Wall()
+        # game_map is initially going to be None. Since generation is slow, call generate_map() as needed
+        self.game_map: list[list[GameObject]] | None = None
 
     @property
     def seed(self) -> int:
         return self.__seed
 
     @seed.setter
-    def seed(self, seed: int):
-        if seed is None or isinstance(seed, int):
-            self.__seed = seed
-
-        raise ValueError("Seed must be an integer.")
+    def seed(self, seed: int | None):
+        if seed is not None and not isinstance(seed, int):
+            raise ValueError("Seed must be an integer.")
+        self.__seed = seed
 
     @property
     def map_size(self) -> Vector:
@@ -150,8 +141,21 @@ class GameBoard(GameObject):
             self.__walled = walled
         raise ValueError("Walled must be a bool.")
 
+    def generate_map(self):
+        # generate map
+        self.game_map = [[Tile() for _ in range(self.map_size.x)] for _ in range(self.map_size.y)]
 
-    def populate_map(self):
+        if self.walled:
+            for x in range(self.map_size.x):
+                if x == 0 or x == self.map_size.x - 1:
+                    for y in range(self.map_size.y):
+                        self.game_map[y][x].occupied_by = Wall()
+                self.game_map[0][x].occupied_by = Wall()
+                self.game_map[self.map_size.y - 1][x].occupied_by = Wall()
+
+        self.__populate_map()
+
+    def __populate_map(self):
         for k, v in self.locations.items():
             if len(k) != len(v) or (len(k) == 0 or len(v) == 0):  # Key-Value lengths must be > 0 and equal
                 raise ValueError("A key-value pair from game_board.locations has mismatching lengths. "
@@ -159,54 +163,53 @@ class GameBoard(GameObject):
             j = random.choices(k, k=len(k))
             self.__help_populate(j, v)
 
-    def __help_populate(self, j: Vector, v: list[GameObject]):
+    def __help_populate(self, vector_list: list[Vector], v: list[GameObject]):
         for i in v:
+            temp_vector: Vector = vector_list.pop()
 
             if isinstance(i, Avatar):  # If the GameObject is an Avatar, assign it the coordinate position
-                i.position = j
+                i.position = temp_vector
 
-            temp = self.game_map[j.y][j.x]
+            temp_tile: GameObject = self.game_map[temp_vector.y][temp_vector.x]
 
-            while temp.occupied_by is not None:
-                # if it's not none, and it doesn't have an occupied by attribute then its blocked and
-                # movement fails
-                if not hasattr(temp.occupied_by, 'occupied_by'):
-                    raise Exception("The GameObject does not have an 'occupied_by' attribute.")
+            while hasattr(temp_tile.occupied_by, 'occupied_by'):
+                temp_tile = temp_tile.occupied_by
 
-                temp = temp.occupied_by
+            if temp_tile is not None:
+                raise ValueError("Last item on the given tile doesn't have the 'occupied_by' attribute.")
 
-            temp.occupied_by = i
+            temp_tile.occupied_by = i
 
-    def stations(self) -> list:
+    def get_objects(self, look_for: ObjectType) -> list[GameObject]:
         to_return = list()
+
         for row in self.game_map:
-            for col in row:
-                if isinstance(col.occupied_by, Station):
-                    to_return.append(col.occupied_by)
-                    self.__loop_occupied_by(col, to_return)
+            for object_in_row in row:
+                temp: GameObject | Tile = object_in_row
+                self.__get_objects_help(look_for, temp, to_return)
+
         return to_return
 
-    def avatars(self) -> list:
-        to_return = list()
-        for row in self.game_map:
-            for col in row:
-                if isinstance(col.occupied_by, Avatar):
-                    to_return.append(col.occupied_by)
-                    self.__loop_occupied_by(col, to_return)
-        return to_return
+    @staticmethod
+    def __get_objects_help(look_for: ObjectType, temp: GameObject | Tile, to_return: list[GameObject]):
+        while hasattr(temp, 'occupied_by'):
+            if temp.object_type is look_for:
+                to_return.append(temp)
 
-    def __loop_occupied_by(self, col: GameObject, to_return: list[GameObject]) -> None:
-        # A helper method to be used in the stations and avatars methods.
-        # Loops through the occupied_by chain and appends those Objects to the given list.
-        while col.occupied_by:
-            if hasattr(col.occupied_by, 'occupied_by'):
-                to_return.append(col.occupied_by)
+            # The final temp is the last occupied by option which is either an Avatar, Station, or None
+            temp = temp.occupied_by
 
+        if temp is not None and temp.object_type is look_for:
+            to_return.append(temp)
 
     def to_json(self) -> dict:
         data = super().to_json()
         temp = list([list(map(lambda tile: tile.to_json(), y)) for y in self.game_map])
         data["game_map"] = temp
+        data["seed"] = self.seed
+        data["map_size"] = self.map_size
+        data["locations"] = self.locations
+        data["walled"] = self.walled
         data['event_active'] = self.event_active
         return data
 
@@ -217,5 +220,9 @@ class GameBoard(GameObject):
         super().from_json(data)
         temp = data["game_map"]
         self.game_map = list([list(map(lambda tile: Tile().from_json(tile), y)) for y in temp])
+        self.seed = data["seed"]
+        self.map_size = data["map_size"]
+        self.locations = data["locations"]
+        self.walled = data["walled"]
         self.event_active = data['event_active']
         return self
