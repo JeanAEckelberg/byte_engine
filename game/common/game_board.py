@@ -116,9 +116,9 @@ class GameBoard(GameObject):
 
     @map_size.setter
     def map_size(self, map_size: Vector):
-        if map_size is None or isinstance(map_size, Vector):
-            self.__map_size = map_size
-        raise ValueError("Map_size must be a Vector.")
+        if map_size is None or not isinstance(map_size, Vector):
+            raise ValueError("Map_size must be a Vector.")
+        self.__map_size = map_size
 
     @property
     def locations(self) -> dict:
@@ -126,7 +126,7 @@ class GameBoard(GameObject):
 
     @locations.setter
     def locations(self, locations: dict[[Vector]:[GameObject]]):
-        if locations is None or isinstance(locations, dict):
+        if locations is not None or not isinstance(locations, dict):
             self.__locations = locations
         raise ValueError("Locations must be a dict. The key must be a list of Vector Objects, and the "
                          "value a list of GameObject.")
@@ -203,8 +203,8 @@ class GameBoard(GameObject):
             to_return.append(temp)
 
     def to_json(self) -> dict:
-        data = super().to_json()
-        temp = list([list(map(lambda tile: tile.to_json(), y)) for y in self.game_map])
+        data: dict[str, str] = super().to_json()
+        temp = list((map(lambda tile: tile.to_json(), y)) for y in self.game_map)
         data["game_map"] = temp
         data["seed"] = self.seed
         data["map_size"] = self.map_size
@@ -219,7 +219,7 @@ class GameBoard(GameObject):
     def from_json(self, data) -> Self:
         super().from_json(data)
         temp = data["game_map"]
-        self.game_map = list([list(map(lambda tile: Tile().from_json(tile), y)) for y in temp])
+        self.game_map = list((map(lambda tile: Tile().from_json(tile), y)) for y in temp)
         self.seed = data["seed"]
         self.map_size = data["map_size"]
         self.locations = data["locations"]
