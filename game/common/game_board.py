@@ -106,7 +106,7 @@ class GameBoard(GameObject):
 
     @seed.setter
     def seed(self, seed: int | None):
-        if seed is not None and not isinstance(seed, int):
+        if seed is not None or not isinstance(seed, int):
             raise ValueError("Seed must be an integer.")
         self.__seed = seed
 
@@ -125,11 +125,12 @@ class GameBoard(GameObject):
         return self.__locations
 
     @locations.setter
-    def locations(self, locations: dict[[Vector]:[GameObject]]):
+    def locations(self, locations: dict[[Vector]:[GameObject]] | None):
         if locations is not None or not isinstance(locations, dict):
-            self.__locations = locations
-        raise ValueError("Locations must be a dict. The key must be a list of Vector Objects, and the "
-                         "value a list of GameObject.")
+            raise ValueError("Locations must be a dict. The key must be a list of Vector Objects, and the "
+                             "value a list of GameObject.")
+
+        self.__locations = locations
 
     @property
     def walled(self) -> bool:
@@ -137,9 +138,10 @@ class GameBoard(GameObject):
 
     @walled.setter
     def walled(self, walled: bool):
-        if walled is None or isinstance(walled, bool):
-            self.__walled = walled
-        raise ValueError("Walled must be a bool.")
+        if walled is None or not isinstance(walled, bool):
+            raise ValueError("Walled must be a bool.")
+
+        self.__walled = walled
 
     def generate_map(self):
         # generate map
@@ -185,7 +187,7 @@ class GameBoard(GameObject):
 
         for row in self.game_map:
             for object_in_row in row:
-                temp: GameObject | Tile = object_in_row
+                temp: GameObject = object_in_row
                 self.__get_objects_help(look_for, temp, to_return)
 
         return to_return
@@ -204,7 +206,7 @@ class GameBoard(GameObject):
 
     def to_json(self) -> dict:
         data: dict[str, str] = super().to_json()
-        temp = list((map(lambda tile: tile.to_json(), y)) for y in self.game_map)
+        temp: list[list[GameObject]] = list((map(lambda tile: tile.to_json(), y)) for y in self.game_map)
         data["game_map"] = temp
         data["seed"] = self.seed
         data["map_size"] = self.map_size
@@ -219,10 +221,10 @@ class GameBoard(GameObject):
     def from_json(self, data) -> Self:
         super().from_json(data)
         temp = data["game_map"]
-        self.game_map = list((map(lambda tile: Tile().from_json(tile), y)) for y in temp)
-        self.seed = data["seed"]
-        self.map_size = data["map_size"]
-        self.locations = data["locations"]
-        self.walled = data["walled"]
+        self.game_map: list[list[GameObject]] = list((map(lambda tile: Tile().from_json(tile), y)) for y in temp)
+        self.seed: int | None = data["seed"]
+        self.map_size: Vector = data["map_size"]
+        self.locations: dict[[Vector]:[GameObject]] = data["locations"]
+        self.walled: bool = data["walled"]
         self.event_active = data['event_active']
         return self
