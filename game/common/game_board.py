@@ -211,7 +211,6 @@ class GameBoard(GameObject):
 
         return to_return
 
-    @staticmethod
     def __get_objects_help(look_for: ObjectType, temp: GameObject | Tile, to_return: list[GameObject]):
         while hasattr(temp, 'occupied_by'):
             if temp.object_type is look_for:
