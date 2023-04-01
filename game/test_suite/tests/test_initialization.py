@@ -18,6 +18,7 @@ class TestInitialization(unittest.TestCase):
         self.occupiable_station: Occupiable_Station = Occupiable_Station(None, None)
         self.tile: Tile = Tile(None)
         self.wall: Wall = Wall()
+        self.vector: Vector = Vector()
     
     # tests that all objects have the correct ObjectType
     def testObjectInit(self):
@@ -27,4 +28,5 @@ class TestInitialization(unittest.TestCase):
         self.assertEqual(self.occupiable_station.object_type, ObjectType.OCCUPIABLE_STATION)
         self.assertEqual(self.tile.object_type, ObjectType.TILE)
         self.assertEqual(self.wall.object_type, ObjectType.WALL)
+        self.assertEqual(self.vector.object_type, ObjectType.VECTOR)
 
