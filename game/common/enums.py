@@ -18,6 +18,7 @@ class ObjectType(Enum):
     TILE = auto()
     WALL = auto()
     ITEM = auto()
+    ITERACTABLE = auto()
     STATION = auto()
     OCCUPIABLE_STATION = auto()
 
