@@ -76,7 +76,7 @@ class Player(GameObject):
         data['functional'] = self.functional
         # data['error'] = self.error  # .to_json() if self.error is not None else None
         data['team_name'] = self.team_name
-        data['action'] = self.action.to_json() if self.action is not None else None
+        data['action'] = self.actiontype.to_json() if self.actiontype is not None else None
         data['avatar'] = self.avatar.to_json() if self.avatar is not None else None
 
         return data
@@ -96,7 +96,7 @@ class Player(GameObject):
             return self
         # match case for action
         match action['object_type']:
-            case ObjectType.ACTION:
+            case ActionType.ACTION:
                 self.action = Action().from_json(data['action'])
             case None:
                 self.action = None
