@@ -5,6 +5,7 @@ import os
 import sys
 import traceback
 
+from game.common.map.game_board import GameBoard
 from game.common.player import Player
 from game.config import *
 from game.controllers.master_controller import MasterController
@@ -167,7 +168,9 @@ class Engine:
         world = None
         with open(GAME_MAP_FILE) as json_file:
             world = json.load(json_file)
+            world['game_board'] = GameBoard().from_json(world['game_board'])
         self.world = world
+
 
     # Sits on top of all actions that need to happen before the player takes their turn
     def pre_tick(self):
@@ -260,7 +263,8 @@ class Engine:
         else:
             data = self.master_controller.create_turn_log(self.clients, self.tick_number)
 
-        self.game_logs[self.tick_number] = data
+        with open(os.path.join(LOGS_DIR, f"turn_{self.tick_number:04d}.json"), 'w+') as f:
+            json.dump(data, f)
 
         # Perform a game over check
         if self.master_controller.game_over:
