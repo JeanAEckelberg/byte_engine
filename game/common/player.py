@@ -88,7 +88,7 @@ class Player(GameObject):
         # self.error = data['error']  # .from_json(data['action']) if data['action'] is not None else None
         self.team_name = data['team_name']
 
-        action: ObjectType.action | None = data['action']
+        action: ActionType | None = data['action']
         avatar: Avatar | None = data['avatar']
         if action is None and avatar is None:
             self.action = None
@@ -96,7 +96,7 @@ class Player(GameObject):
             return self
         # match case for action
         # match action['object_type']:
-        #     case ActionType.ACTION:
+        #     case ObjectType.ACTION:
         #         self.action = Action().from_json(data['action'])
         #     case None:
         #         self.action = None
