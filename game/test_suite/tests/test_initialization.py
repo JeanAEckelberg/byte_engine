@@ -4,8 +4,7 @@ from game.common.enums import ObjectType
 from game.common.avatar import Avatar
 from game.common.items.item import Item
 from game.common.stations.station import Station
-from game.common.stations.occupiable_station import Occupiable_Station
-from game.common.map.tile import Tile
+from game.common.map.tile import Tile, Occupiable_Station
 from game.common.map.wall import Wall
 
 class TestInitialization(unittest.TestCase):
@@ -19,12 +18,12 @@ class TestInitialization(unittest.TestCase):
     
 
     def testObjectInit(self):
-        self.assertEqual(self.item, ObjectType.ITEM)
-        self.assertEqual(self.avatar, ObjectType.AVATAR)
-        self.assertEqual(self.station, ObjectType.STATION)
-        self.assertEqual(self.occupiable_station, ObjectType.OCCUPIABLE_STATION)
-        self.assertEqual(self.tile, ObjectType.TILE)
-        self.assertEqual(self.wall, ObjectType.WALL)
+        self.assertEqual(self.item.object_type, ObjectType.ITEM)
+        self.assertEqual(self.avatar.object_type, ObjectType.AVATAR)
+        self.assertEqual(self.station.object_type, ObjectType.STATION)
+        self.assertEqual(self.occupiable_station.object_type, ObjectType.OCCUPIABLE_STATION)
+        self.assertEqual(self.tile.object_type, ObjectType.TILE)
+        self.assertEqual(self.wall.object_type, ObjectType.WALL)
 
     def testAvatarSetItem(self):
         self.avatar.held_item = self.item
@@ -46,11 +45,13 @@ class TestInitialization(unittest.TestCase):
 
 
     def testAvatarSetPosition(self):
-        self.avatar.position = tuple(10, 10)
-        self.assertEqual(self.avatar.position, tuple(10, 10))
+        self.avatar.position = (10, 10)
+        self.assertEqual(self.avatar.position, (10, 10))
 
     def testAvatarSetPositionFail(self):
         with self.assertRaises(ValueError) as e:
             self.avatar.position = 10
         self.assertEqual(str(e.exception), 'Avatar.position must be a tuple of two ints or None.')
 
+if __name__ == '__main__':
+    unittest.main()
