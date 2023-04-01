@@ -11,6 +11,7 @@ from game.controllers.movement_controller import MovementController
 from game.controllers.controller import Controller
 from game.controllers.interact_controller import InteractController
 from game.common.map.game_board import GameBoard
+from game.config import MAX_NUMBER_OF_ACTIONS_PER_TURN
 
 
 class MasterController(Controller):
@@ -69,9 +70,9 @@ class MasterController(Controller):
     # Perform the main logic that happens per turn
     def turn_logic(self, clients: list[Player], turn):
         for client in clients:
-            for action in client.actions:
-                self.movement_controller.handle_actions(action, client, self.current_world_data["game_board"])
-                self.interact_controller.handle_actions(action, client, self.current_world_data["game_board"])
+            for i in range(MAX_NUMBER_OF_ACTIONS_PER_TURN):
+                self.movement_controller.handle_actions(client.actions[i], client, self.current_world_data["game_board"])
+                self.interact_controller.handle_actions(client.actions[i], client, self.current_world_data["game_board"])
         # checks event logic at the end of round
         # self.handle_events(clients)
 
