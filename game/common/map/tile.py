@@ -1,8 +1,8 @@
 from game.common.enums import ObjectType
 from game.common.game_object import GameObject
 from game.common.avatar import Avatar
+from game.common.stations.occupiable_station import Occupiable_Station
 from game.common.stations.station import Station
-from game.common.items.item import Item
 from typing import Self
 
 """This object exists to encapsulate all objects that could be placed on the gameboard"""
@@ -45,19 +45,4 @@ class Tile(GameObject):
                 self.occupied_by = Station().from_json(data['occupied_by'])
             case _:
                 raise Exception(f'Could not parse occupied_by: {self.occupied_by}')                  
-        return self
-    
-# create station object that contains occupied_by
-class Occupiable_Station(Tile, Station):
-    def __init__(self, item: Item = None, occupied_by: GameObject = None):
-        super().__init__(occupied_by=occupied_by, item=item)
-        self.object_type: ObjectType = ObjectType.OCCUPIABLE_STATION
-
-    # json methods
-    def to_json(self) -> dict:
-        data: dict = super().to_json()
-        return data
-    
-    def from_json(self, data: dict) -> Self:
-        super().from_json(data)
         return self

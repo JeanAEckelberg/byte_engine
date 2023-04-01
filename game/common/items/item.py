@@ -4,14 +4,14 @@ from typing import Self
 
 
 class Item(GameObject):
-    def __init__(self, value: int = 1, durability: int = 100 | None):
+    def __init__(self, value: int = 1, durability: int = 100):
         super().__init__()
         self.object_type: ObjectType = ObjectType.ITEM
         self.value: int = value
-        self.durability: int | None = durability # durability can be set to none if infinite durability
+        self.durability: int = durability
         
     @property
-    def durability(self) -> int | None:
+    def durability(self) -> int:
         return self.__durability
 
     @property
@@ -19,9 +19,9 @@ class Item(GameObject):
         return self.__value
 
     @durability.setter
-    def durability(self, durability: int | None) -> None:
-        if durability is not None and not isinstance(durability, int):
-            raise ValueError(f'{self.__class__.__name__}.durability must be an int or None.')
+    def durability(self, durability: int) -> None:
+        if durability is None or not isinstance(durability, int):
+            raise ValueError(f'{self.__class__.__name__}.durability must be an int.')
         self.__durability = durability
 
     @value.setter
@@ -38,6 +38,6 @@ class Item(GameObject):
 
     def from_json(self, data: dict) -> Self:
         super().from_json(data)
-        self.durability: int | None = data['durability']
+        self.durability: int = data['durability']
         self.value: int = data['value']
         return self

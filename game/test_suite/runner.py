@@ -1,5 +1,4 @@
 import unittest
-import game.test_suite.tests
     
 if __name__ == "__main__":
     loader = unittest.TestLoader()
