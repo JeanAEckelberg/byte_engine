@@ -16,20 +16,20 @@ class Tile(Occupiable):
 
     def from_json(self, data: dict) -> Self:
         super().from_json(data)
-        occupied_by = data['occupied_by']
+        occupied_by: dict = data['occupied_by']
         if occupied_by is None:
             self.occupied_by = None
             return self
         # Add all possible game objects that can occupy a tile here (requires python 3.10) 
         match occupied_by['object_type']:
             case ObjectType.AVATAR:
-                self.occupied_by = Avatar().from_json(data['occupied_by'])
+                self.occupied_by: Avatar = Avatar().from_json(data['occupied_by'])
             case ObjectType.OCCUPIABLE_STATION:
-                self.occupied_by = Occupiable_Station().from_json(data['occupied_by'])
+                self.occupied_by: Occupiable_Station = Occupiable_Station().from_json(data['occupied_by'])
             case ObjectType.STATION:
-                self.occupied_by = Station().from_json(data['occupied_by'])
+                self.occupied_by: Station = Station().from_json(data['occupied_by'])
             case ObjectType.WALL:
-                self.occupied_by = Wall().from_json(data['occupied_by'])
+                self.occupied_by: Wall = Wall().from_json(data['occupied_by'])
             case _:
                 raise Exception(f'Could not parse occupied_by: {self.occupied_by}')                  
         return self
