@@ -89,32 +89,6 @@ class Avatar(GameObject):
             picked_up_item is left where it was first found.
         Inventory after:
         [inventory_item (5/5), inventory_item (5/5) inventory_item (5/5) inventory_item (5/5), inventory_item (5/5)]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    Dispenser Station:
-        In this example, there will be a Station called a Dispenser Station. This Station will have a single Item
-        that it gives the Avatar whenever it is interacted with. For example, let's say this Dispenser Station
-        gives an item called 'gold' when interacted with.
-
-
-        Inventory is not full; stack is not full:
-            When the player interacts with the dispenser, gold will be added to their inventory without any issues.
-        Inventory is almost full:
-
     """
 
     def __init__(self, item: Item | None = None, position: Vector | None = None, inventory: list[Item] = [],
@@ -190,8 +164,6 @@ class Avatar(GameObject):
             return None
 
         return t
-
-
 
     def to_json(self) -> dict:
         data: dict = super().to_json()
