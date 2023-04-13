@@ -41,7 +41,7 @@ class Item(GameObject):
         self.__value: int = value
 
     @quantity.setter
-    def quantity(self, quantity: int):
+    def quantity(self, quantity: int) -> None:
         if quantity is None or not isinstance(quantity, int):
             raise ValueError(f'{self.__class__.__name__}.quantity must be an int.')
         if quantity < 0:
