@@ -98,7 +98,7 @@ class Avatar(GameObject):
         self.held_item: Item | None = item
         self.score: int = 0
         self.position: Vector | None = position
-        self.max_inventory_size = max_inventory_size
+        self.max_inventory_size: int = max_inventory_size
         self.inventory: list[Item] = inventory
 
     @property
@@ -126,19 +126,19 @@ class Avatar(GameObject):
         # If it's not an item, and it's not None, raise the error
         if item is not None and not isinstance(item, Item):
             raise ValueError(f"{self.__class__.__name__}.held_item must be an Item or None.")
-        self.__held_item = item
+        self.__held_item: Item = item
 
     @score.setter
     def score(self, score: int) -> None:
         if score is None or not isinstance(score, int):
             raise ValueError(f"{self.__class__.__name__}.score must be an int.")
-        self.__score = score
+        self.__score: int = score
 
     @position.setter
     def position(self, position: Vector | None) -> None:
         if position is not None and not isinstance(position, Vector):
             raise ValueError(f"{self.__class__.__name__}.position must be a Vector or None.")
-        self.__position = position
+        self.__position: Vector | None = position
 
     @inventory.setter
     def inventory(self, inventory: list[Item]) -> None:
@@ -147,13 +147,13 @@ class Avatar(GameObject):
             raise ValueError(f"{self.__class__.__name__}.inventory must be a list of Items.")
         if len(inventory) > self.max_inventory_size:
             raise ValueError(f"{self.__class__.__name__}.inventory size must be less than max_inventory_size")
-        self.__inventory = inventory
+        self.__inventory: list[Item] = inventory
 
     @max_inventory_size.setter
     def max_inventory_size(self, size: int) -> None:
         if size is None or not isinstance(size, int):
             raise ValueError(f"{self.__class__.__name__}.max_inventory_size must be an int.")
-        self.__max_inventory_size = size
+        self.__max_inventory_size: int = size
 
     def pick_up(self, item: Item) -> Item | None:
         t = item

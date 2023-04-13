@@ -10,7 +10,7 @@ class Item(GameObject):
         self.value: int = value  # Value can more specified based on purpose (e.g., the sell price)
         self.durability: int | None = durability  # durability can be None if infinite durability
         self.quantity: int = quantity  # the current amount of this item
-        self.stack_size = stack_size  # the max quantity this item can contain
+        self.stack_size: int = stack_size  # the max quantity this item can contain
 
     @property
     def durability(self) -> int | None:
@@ -29,7 +29,7 @@ class Item(GameObject):
         return self.__stack_size
 
     @durability.setter
-    def durability(self, durability: int | None) -> int | None:
+    def durability(self, durability: int | None):
         if durability is not None and not isinstance(durability, int):
             raise ValueError(f'{self.__class__.__name__}.durability must be an int or None.')
         self.__durability = durability
@@ -38,22 +38,24 @@ class Item(GameObject):
     def value(self, value: int) -> None:
         if value is None or not isinstance(value, int):
             raise ValueError(f'{self.__class__.__name__}.value must be an int.')
-        self.__value = value
+        self.__value: int = value
 
     @quantity.setter
-    def quantity(self, quantity: int) -> int:
-
+    def quantity(self, quantity: int):
         if quantity is None or not isinstance(quantity, int):
             raise ValueError(f'{self.__class__.__name__}.quantity must be an int.')
         if quantity < 0:
             raise ValueError(f'{self.__class__.__name__}.quantity must be greater than 0.')
-        self.__quantity = quantity
+
+        # The self.quantity is set to the lower value between stack_size and the given quantity
+        # The remaining given quantity is returned if it's larger than self.quantity
+        self.__quantity: int = min(self.stack_size, quantity)
 
     @stack_size.setter
-    def stack_size(self, stack_size: int) -> int:
+    def stack_size(self, stack_size: int) -> None:
         if stack_size is not isinstance(stack_size, int) or stack_size < self.quantity:
             raise ValueError(f'{self.__class__.__name__}.stack_size must be an int and greater than the quantity.')
-        self.__stack_size = stack_size
+        self.__stack_size: int = stack_size
 
     def pick_up(self, item: Self) -> Self | None:
         # If the items don't match, return the given item without modifications
@@ -63,7 +65,7 @@ class Item(GameObject):
         # If the picked up quantity goes over the stack_size, add to make the quantity equal the stack_size
         if self.quantity + item.quantity > self.stack_size:
             item.quantity -= self.stack_size - self.quantity
-            self.quantity = self.stack_size
+            self.quantity: int = self.stack_size
             return item
 
         # Add the given item's quantity to the self item
