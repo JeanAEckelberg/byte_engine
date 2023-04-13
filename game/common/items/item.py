@@ -6,6 +6,7 @@ from typing import Self
 class Item(GameObject):
     def __init__(self, value: int = 1, durability: int | None = 100, quantity: int = 1, stack_size: int = 1):
         super().__init__()
+        self.__quantity = None  # This is here to prevent an error
         self.object_type: ObjectType = ObjectType.ITEM
         self.value: int = value  # Value can more specified based on purpose (e.g., the sell price)
         self.stack_size: int = stack_size  # the max quantity this item can contain
@@ -54,8 +55,9 @@ class Item(GameObject):
     @stack_size.setter
     def stack_size(self, stack_size: int) -> None:
         if stack_size is None or stack_size is not isinstance(stack_size, int) or \
-                (self.quantity is not None and stack_size < self.quantity):
-            raise ValueError(f'{self.__class__.__name__}.stack_size must be an int and greater than the quantity.')
+                (self.__quantity is not None and stack_size < self.__quantity):
+            raise ValueError(f'{self.__class__.__name__}.stack_size must be an int and greater than or equal '
+                             f'to the quantity.')
         self.__stack_size: int = stack_size
 
     def pick_up(self, item: Self) -> Self | None:
