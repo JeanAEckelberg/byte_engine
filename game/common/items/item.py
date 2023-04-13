@@ -4,12 +4,12 @@ from typing import Self
 
 
 class Item(GameObject):
-    def __init__(self, value: int = 1, durability: int | None = 100, quantity: int = 1, stack_size: int = 0):
+    def __init__(self, value: int = 1, durability: int | None = 100, quantity: int = 1, stack_size: int = 1):
         super().__init__()
         self.object_type: ObjectType = ObjectType.ITEM
         self.value: int = value  # Value can more specified based on purpose (e.g., the sell price)
-        self.durability: int | None = durability  # durability can be None if infinite durability
         self.stack_size: int = stack_size  # the max quantity this item can contain
+        self.durability: int | None = durability  # durability can be None if infinite durability
         self.quantity: int = quantity  # the current amount of this item
 
     @property
@@ -30,8 +30,8 @@ class Item(GameObject):
 
     @durability.setter
     def durability(self, durability: int | None):
-        if durability is not None and not isinstance(durability, int):
-            raise ValueError(f'{self.__class__.__name__}.durability must be an int or None.')
+        if durability is not None and not isinstance(durability, int) or self.stack_size > 1:
+            raise ValueError(f'{self.__class__.__name__}.durability must be an int or None, and stack_size must be 1.')
         self.__durability = durability
 
     @value.setter
