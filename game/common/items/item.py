@@ -50,14 +50,14 @@ class Item(GameObject):
 
         # The self.quantity is set to the lower value between stack_size and the given quantity
         # The remaining given quantity is returned if it's larger than self.quantity
-        if(quantity > self.stack_size):
+        if quantity > self.stack_size:
             raise ValueError(f'{self.__class__.__name__}.quantity cannot be greater than '
                              f'{self.__class__.__name__}.stack_size')
         self.__quantity: int = min(self.stack_size, quantity)
 
     @stack_size.setter
     def stack_size(self, stack_size: int) -> None:
-        if stack_size is None or stack_size is not isinstance(stack_size, int):
+        if stack_size is None or not isinstance(stack_size, int):
             raise ValueError(f'{self.__class__.__name__}.stack_size must be an int.')
         if self.__quantity is not None and stack_size < self.__quantity:
             raise ValueError(f'{self.__class__.__name__}.stack_size must be greater than or equal to the quantity.')
