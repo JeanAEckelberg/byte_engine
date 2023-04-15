@@ -5,7 +5,7 @@ from game.common.enums import *
 
 
 class Player(GameObject):
-    def __init__(self, code: object | None = None, team_name: str | None = None, actions: list[ActionType] | list = [],
+    def __init__(self, code: object | None = None, team_name: str | None = None, actions: list[ActionType] = [],
                  avatar: Avatar | None = None):
         super().__init__()
         self.object_type: ObjectType = ObjectType.PLAYER
