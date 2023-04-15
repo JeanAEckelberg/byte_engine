@@ -177,9 +177,7 @@ class Avatar(GameObject):
     def from_json(self, data: dict) -> Self:
         super().from_json(data)
         self.score: int = data['score']
-        position: Vector | None = data['position']
-        self.position: Vector | None = None if position is None else Vector().from_json(data['position'])
-        self.position
+        self.position: Vector | None = None if data['position'] is None else Vector().from_json(data['position'])
         self.inventory: list[Item] = data['inventory']
         self.max_inventory_size: int = data['max_inventory_size']
         held_item: Item | None = data['held_item']
