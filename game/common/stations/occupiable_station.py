@@ -6,8 +6,14 @@ from game.common.stations.station import Station
 from game.common.game_object import GameObject
 from typing import Self
 
+
 # create station object that contains occupied_by
-class Occupiable_Station(Occupiable, Station):
+class OccupiableStation(Occupiable, Station):
+    """
+    An occupiable station inherits from both Occupiable and Station, allowing it to be occupied by GameObjects and
+    have its own held items that players can interact with and collect.
+    """
+
     def __init__(self, item: Item = None, occupied_by: GameObject = None):
         super().__init__(occupied_by=occupied_by, item=item)
         self.object_type: ObjectType = ObjectType.OCCUPIABLE_STATION
@@ -23,11 +29,9 @@ class Occupiable_Station(Occupiable, Station):
             case ObjectType.AVATAR:
                 self.occupied_by: Avatar = Avatar().from_json(data['occupied_by'])
             case ObjectType.OCCUPIABLE_STATION:
-                self.occupied_by: Occupiable_Station = Occupiable_Station().from_json(data['occupied_by'])
+                self.occupied_by: OccupiableStation = OccupiableStation().from_json(data['occupied_by'])
             case ObjectType.STATION:
                 self.occupied_by: Station = Station().from_json(data['occupied_by'])
             case _:
-                raise Exception(f'Could not parse occupied_by: {self.occupied_by}')                  
+                raise Exception(f'Could not parse occupied_by: {self.occupied_by}')
         return self
-
-        
