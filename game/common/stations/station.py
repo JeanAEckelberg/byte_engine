@@ -11,6 +11,7 @@ class Station(GameObject):
     A Station is an Object that inherits from GameObject. Stations are able to contain Items in them. Players can
     interact with Stations to receive the items. (Refer to avatar.py and item.py to see how this works).
     """
+
     def __init__(self, held_item: Item | None = None, **kwargs):
         super().__init__()
         self.object_type: ObjectType = ObjectType.STATION
@@ -29,7 +30,7 @@ class Station(GameObject):
 
     # take action method
     def take_action(self, avatar: Avatar) -> Item | None:
-        return
+        return self.held_item
 
     # json methods
     def to_json(self) -> dict:
@@ -40,16 +41,14 @@ class Station(GameObject):
 
     def from_json(self, data: dict) -> Self:
         super().from_json(data)
-        item: dict = data['held_item']
-        if item is None:
+        held_item: dict = data['held_item']
+        if held_item is None:
             self.held_item = None
-            return self
 
         # framework match case for from json, can add more object types that can be item
-        match item['object_type']:
+        match held_item['object_type']:
             case ObjectType.ITEM:
                 self.held_item = Item().from_json(data['held_item'])
             case _:
-                raise Exception(f'Could not parse item: {self.held_item}')
-
+                raise Exception(f'Could not parse held_item: {self.held_item}')
         return self
