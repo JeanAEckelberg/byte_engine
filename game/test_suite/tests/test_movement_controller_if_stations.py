@@ -9,23 +9,26 @@ from game.utils.vector import Vector
 from game.common.player import Player
 from game.common.avatar import Avatar
 from game.common.action import ActionType
+from game.common.game_object import GameObject
 
 
 class TestMovementControllerIfStations(unittest.TestCase):
     def setUp(self) -> None:
         self.movement_controller = MovementController()
-        self.game_board = GameBoard(0, Vector(4, 4), None, True)
         # (1, 0), (2, 0), (0, 1), (0, 2), (1, 3), (2, 3), (3, 1), (3, 2)
         self.locations: dict = {(Vector(1, 0), Vector(2, 0), Vector(0, 1), Vector(0, 2), Vector(1, 3), Vector(2, 3),
                                  Vector(3, 1), Vector(3, 2)): [Station(None), Station(None), Station(None),
                                                                Station(None), Station(None), Station(None),
                                                                Station(None), Station(None)]}
+
         self.occ_station = Occupiable_Station()
+        self.game_board = GameBoard(0, Vector(4, 4), self.locations, True)
         self.wall = Wall()
         # test movements up, down, left and right by starting with default 3,3 then know if it changes from there \/
         self.avatar = Avatar(None, Vector(2, 2), [], 1)
         self.client = Player(None, None, [], self.avatar)
         self.game_board.generate_map()
+
 
     # if there is a station
     def test_move_up(self):

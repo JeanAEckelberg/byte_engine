@@ -44,4 +44,4 @@ class MovementController(Controller):
             temp = temp.occupied_by
 
         temp.occupied_by = None
-        client.avatar.position = (temp_vec.x, temp_vec.y)
+        client.avatar.position = Vector(temp_vec.x, temp_vec.y)

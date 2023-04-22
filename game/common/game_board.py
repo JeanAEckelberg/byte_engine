@@ -124,7 +124,7 @@ class GameBoard(GameObject):
         if self.game_map is not None:
             raise RuntimeError(f'{self.__class__.__name__} variables cannot be changed once generate_map is run.')
         if seed is not None and not isinstance(seed, int):
-            raise ValueError(f'{self.__class__.__name__}.seed must be an integer.')
+            raise ValueError(f'{self.__class__.__name__}.seed must be an integer or None.')
         self.__seed = seed
 
     @property

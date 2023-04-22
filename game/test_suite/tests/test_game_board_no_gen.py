@@ -33,7 +33,7 @@ class TestGameBoard(unittest.TestCase):
     def testSeedFail(self):
         with self.assertRaises(ValueError) as e:
             self.game_board.seed = "False"
-        self.assertEqual(str(e.exception), 'GameBoard.seed must be an integer.')
+        self.assertEqual(str(e.exception), 'GameBoard.seed must be an integer or None.')
 
     # test map_size
     def testMap_size(self):

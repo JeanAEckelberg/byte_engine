@@ -9,18 +9,23 @@ from game.utils.vector import Vector
 from game.common.player import Player
 from game.common.action import ActionType
 from game.common.avatar import Avatar
+from game.common.game_object import GameObject
 
 
 class TestMovementControllerIfWall(unittest.TestCase):
     def setUp(self) -> None:
-        self.movement_controller = MovementController
-        self.game_board = GameBoard(self, 0, Vector(4, 4), None, True)
+        self.movement_controller = MovementController()
+        self.avatar = Avatar(None, Vector(2, 2), [], 1)
+        self.locations: dict[tuple[Vector]: list[GameObject]] = {
+            (Vector(2, 2),):[self.avatar]
+        }
+        self.game_board = GameBoard(0, Vector(4, 4), self.locations, True)
         self.station = Station()
         self.occupiable_station = Occupiable_Station()
         self.wall = Wall()
         # test movements up, down, left and right by starting with default 3,3 then know if it changes from there \/
-        self.avatar = Avatar(None, Vector(2, 2),  [], 1)
         self.client = Player(None, None, [], self.avatar)
+        self.game_board.generate_map()
 
     # if there is a wall
     def test_move_up(self):
