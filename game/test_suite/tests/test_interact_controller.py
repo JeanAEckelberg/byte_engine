@@ -3,7 +3,7 @@ import unittest
 from game.common.avatar import Avatar
 from game.common.items.item import Item
 from game.controllers.interact_controller import InteractController
-from game.common.game_board import GameBoard
+from game.common.map.game_board import GameBoard
 from game.utils.vector import Vector
 from game.common.map.wall import Wall
 from game.common.stations.station import Station
