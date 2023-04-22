@@ -17,11 +17,12 @@ class Item(GameObject):
     Durability:
         The value of an item's durability can be either None or an integer.
 
-        If durability is an integer, it allows for flexibility with the item. For example, if the durability is
-        0, the item could disappear, "break," etc.
+        If durability is an integer, the stack size *must* be 1. Think of Minecraft and the mechanics of tools. You
+        can only have one sword with a durability (they don't stack).
 
-        If the durability is equal to None, it represents the item having infinite durability. In the case
-        the game being created needs items without durability, set this attribute to None to prevent any difficulties.
+        If the durability is equal to None, it represents the item having infinite durability. The item can now be
+        stacked with others of the same type. In the case the game being created needs items without durability,
+        set this attribute to None to prevent any difficulties.
 
     ----------------------------------------------------------------------------------------------------------------
 
@@ -45,8 +46,18 @@ class Item(GameObject):
     ----------------------------------------------------------------------------------------------------------------
 
     pick_up Method:
+        When picking up an item, it will first check the item's ObjectType. If the Object interacted with is not of
+        the ObjectType ITEM enum, an error will be thrown.
 
-    
+        Otherwise, the method will check if the picked up item will be able to fit in the inventory. If some of the
+        item's quantity can be picked up and a surplus will be left over, the player will be pick up what they can.
+        Then, the same item they picked up will have its quantity modified to be what is left over. That surplus of
+        the item is then returned to allow for it to be placed back where it was found on the map.
+
+        If the player can pick up an item without any inventory issues, the entire item and its quantity will be
+        added.
+
+        *** Refer to avatar.py for a more in-depth explanation of how picking up items work with examples. ***
     """
 
     def __init__(self, value: int = 1, durability: int | None = 100, quantity: int = 1, stack_size: int = 1):
