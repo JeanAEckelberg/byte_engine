@@ -44,6 +44,7 @@ class Station(GameObject):
         held_item: dict = data['held_item']
         if held_item is None:
             self.held_item = None
+            return self
 
         # framework match case for from json, can add more object types that can be item
         match held_item['object_type']:
