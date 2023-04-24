@@ -3,7 +3,7 @@ import unittest
 from game.common.map.game_board import GameBoard
 from game.controllers.movement_controller import MovementController
 from game.common.stations.station import Station
-from game.common.stations.occupiable_station import Occupiable_Station
+from game.common.stations.occupiable_station import OccupiableStation
 from game.common.map.wall import Wall
 from game.utils.vector import Vector
 from game.common.player import Player
@@ -21,7 +21,8 @@ class TestMovementControllerIfWall(unittest.TestCase):
         }
         self.game_board = GameBoard(0, Vector(4, 4), self.locations, True)
         self.station = Station()
-        self.occupiable_station = Occupiable_Station()
+        self.occupiable_station = OccupiableStation()
+        self.occupiable_station = OccupiableStation()
         self.wall = Wall()
         # test movements up, down, left and right by starting with default 3,3 then know if it changes from there \/
         self.client = Player(None, None, [], self.avatar)
