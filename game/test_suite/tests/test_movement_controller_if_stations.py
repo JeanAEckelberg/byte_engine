@@ -1,7 +1,7 @@
 import unittest
 
 from game.controllers.movement_controller import MovementController
-from game.common.game_board import GameBoard
+from game.common.map.game_board import GameBoard
 from game.common.stations.station import Station
 from game.common.stations.occupiable_station import Occupiable_Station
 from game.common.map.wall import Wall

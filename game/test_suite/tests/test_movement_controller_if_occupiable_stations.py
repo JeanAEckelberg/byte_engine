@@ -2,7 +2,7 @@ import unittest
 
 from game.common.action import ActionType
 from game.common.avatar import Avatar
-from game.common.game_board import GameBoard
+from game.common.map.game_board import GameBoard
 from game.common.map.wall import Wall
 from game.common.player import Player
 from game.common.stations.occupiable_station import Occupiable_Station
