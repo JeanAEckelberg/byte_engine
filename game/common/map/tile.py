@@ -2,14 +2,19 @@ from game.common.map.occupiable import Occupiable
 from game.common.enums import ObjectType
 from game.common.game_object import GameObject
 from game.common.avatar import Avatar
-from game.common.stations.occupiable_station import Occupiable_Station
+from game.common.stations.occupiable_station import OccupiableStation
 from game.common.stations.station import Station
 from game.common.map.wall import Wall
 from typing import Self
 
 
-"""This object exists to encapsulate all objects that could be placed on the gameboard"""
 class Tile(Occupiable):
+    """
+    This object exists to encapsulate all objects that could be placed on the gameboard.
+
+    Tiles will represent things like the floor in the game. They inherit from Occupiable, which allows for tiles to
+    have certain GameObjects and the avatar in it.
+    """
     def __init__(self, occupied_by: GameObject = None):
         super().__init__()
         self.object_type: ObjectType = ObjectType.TILE
@@ -25,7 +30,7 @@ class Tile(Occupiable):
             case ObjectType.AVATAR:
                 self.occupied_by: Avatar = Avatar().from_json(data['occupied_by'])
             case ObjectType.OCCUPIABLE_STATION:
-                self.occupied_by: Occupiable_Station = Occupiable_Station().from_json(data['occupied_by'])
+                self.occupied_by: OccupiableStation = OccupiableStation().from_json(data['occupied_by'])
             case ObjectType.STATION:
                 self.occupied_by: Station = Station().from_json(data['occupied_by'])
             case ObjectType.WALL:
