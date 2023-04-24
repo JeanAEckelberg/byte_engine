@@ -29,7 +29,6 @@ class TestMovementControllerIfStations(unittest.TestCase):
         self.client = Player(None, None, [], self.avatar)
         self.game_board.generate_map()
 
-
     # if there is a station
     def test_move_up(self):
         self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)

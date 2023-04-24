@@ -17,7 +17,7 @@ class TestMovementControllerIfWall(unittest.TestCase):
         self.movement_controller = MovementController()
         self.avatar = Avatar(None, Vector(2, 2), [], 1)
         self.locations: dict[tuple[Vector]: list[GameObject]] = {
-            (Vector(2, 2),):[self.avatar]
+            (Vector(2, 2),): [self.avatar]
         }
         self.game_board = GameBoard(0, Vector(4, 4), self.locations, True)
         self.station = Station()
