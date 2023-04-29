@@ -6,7 +6,8 @@ from typing import Self
 
 class GameObject:
     """
-    Everything inherits from GameObject to be used in the game and have access to the to_ and from_json methods.
+    This class is widely used throughout the project to represent different types of Objects that are interacted
+    with in the game.
     """
     def __init__(self, **kwargs):
         self.id = str(uuid.uuid4())
