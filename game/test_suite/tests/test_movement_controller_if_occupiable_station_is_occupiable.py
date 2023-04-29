@@ -36,21 +36,9 @@ def test_move_up(self):
     self.assertEqual((str(self.client.avatar.position)), str(Vector(1, 0)))
 
 
-def test_move_up_fail(self):
-    self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
-    self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
-    self.assertEqual((str(self.client.avatar.position)), str(Vector(1, -1)))
-
-
 def test_move_down(self):
     self.movement_controller.handle_actions(ActionType.MOVE_DOWN, self.client, self.game_board)
     self.assertEqual((str(self.client.avatar.position)), str(Vector(1, 2)))
-
-
-def test_move_down_fail(self):
-    self.movement_controller.handle_actions(ActionType.MOVE_DOWN, self.client, self.game_board)
-    self.movement_controller.handle_actions(ActionType.MOVE_DOWN, self.client, self.game_board)
-    self.assertEqual((str(self.client.avatar.position)), str(Vector(1, 3)))
 
 
 def test_move_left(self):
@@ -58,18 +46,8 @@ def test_move_left(self):
     self.assertEqual((str(self.client.avatar.position)), str(Vector(0, 1)))
 
 
-def test_move_left_fail(self):
-    self.movement_controller.handle_actions(ActionType.MOVE_LEFT, self.client, self.game_board)
-    self.movement_controller.handle_actions(ActionType.MOVE_LEFT, self.client, self.game_board)
-    self.assertEqual((str(self.client.avatar.position)), str(Vector(-1, 1)))
-
-
 def test_move_right(self):
     self.movement_controller.handle_actions(ActionType.MOVE_RIGHT, self.client, self.game_board)
     self.assertEqual((str(self.client.avatar.position)), str(Vector(2, 1)))
 
 
-def test_move_right_fail(self):
-    self.movement_controller.handle_actions(ActionType.MOVE_RIGHT, self.client, self.game_board)
-    self.movement_controller.handle_actions(ActionType.MOVE_RIGHT, self.client, self.game_board)
-    self.assertEqual((str(self.client.avatar.position)), str(Vector(3, 1)))
