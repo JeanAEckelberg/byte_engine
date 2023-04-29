@@ -2,6 +2,11 @@ from game.common.enums import *
 
 
 class Action:
+    """
+    NOTE: This is not currently implemented in this version of the engine. If you want more complex actions, you can
+    use this class for Objects instead of the enums.
+    """
+
     def __init__(self):
         self.object_type = ObjectType.action
         self._example_action = None

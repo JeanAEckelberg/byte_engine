@@ -5,6 +5,11 @@ from game.common.enums import *
 
 
 class Player(GameObject):
+    """
+    The Player class encapsulates the client and avatar together. The player will have the team name to represent
+    the team, a list of actions for them to do, and their avatar.
+    """
+
     def __init__(self, code: object | None = None, team_name: str | None = None, actions: list[ActionType] = [],
                  avatar: Avatar | None = None):
         super().__init__()
@@ -119,6 +124,7 @@ class Player(GameObject):
     def __str__(self):
         p = f"""ID: {self.id}
             Team name: {self.team_name}
-            Action: {self.action}
+            Actions: 
             """
+        [p:= p + action for action in self.actions]
         return p
