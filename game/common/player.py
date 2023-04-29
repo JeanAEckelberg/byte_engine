@@ -126,5 +126,6 @@ class Player(GameObject):
             Team name: {self.team_name}
             Actions: 
             """
+        # This concatenates every action from the list of actions to the string 
         [p:= p + action for action in self.actions]
         return p
