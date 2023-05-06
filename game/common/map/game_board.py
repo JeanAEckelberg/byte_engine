@@ -267,7 +267,7 @@ class GameBoard(GameObject):
         match temp:
             case ObjectType.WALL:
                 return Wall().from_json(data)
-            case ObjectType.OCCUPIABLE_STATION.value:
+            case ObjectType.OCCUPIABLE_STATION:
                 return OccupiableStation().from_json(data)
             case ObjectType.STATION:
                 return Station().from_json(data)
@@ -276,7 +276,7 @@ class GameBoard(GameObject):
             # If adding more ObjectTypes that can be placed on the game_board, specify here
             case _:
                 raise ValueError(f'The location (dict) must have a valid key (tuple of vectors) and a valid value ('
-                                 f'list of GameObjects).{data["object_type"]} Object: {data}')
+                                 f'list of GameObjects).')
 
     def from_json(self, data: dict) -> Self:
         super().from_json(data)

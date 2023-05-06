@@ -47,9 +47,9 @@ class Station(GameObject):
             return self
 
         # framework match case for from json, can add more object types that can be item
-        match held_item['object_type']:
+        match ObjectType(held_item['object_type']):
             case ObjectType.ITEM:
-                self.held_item = Item().from_json(data['held_item'])
+                self.held_item = Item().from_json(held_item)
             case _:
-                raise Exception(f'Could not parse held_item: {self.held_item}')
+                raise Exception(f'Could not parse held_item: {held_item}')
         return self

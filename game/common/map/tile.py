@@ -28,13 +28,13 @@ class Tile(Occupiable):
         # Add all possible game objects that can occupy a tile here (requires python 3.10) 
         match ObjectType(occupied_by['object_type']):
             case ObjectType.AVATAR:
-                self.occupied_by: Avatar = Avatar().from_json(data['occupied_by'])
+                self.occupied_by: Avatar = Avatar().from_json(occupied_by)
             case ObjectType.OCCUPIABLE_STATION:
-                self.occupied_by: OccupiableStation = OccupiableStation().from_json(data['occupied_by'])
+                self.occupied_by: OccupiableStation = OccupiableStation().from_json(occupied_by)
             case ObjectType.STATION:
-                self.occupied_by: Station = Station().from_json(data['occupied_by'])
+                self.occupied_by: Station = Station().from_json(occupied_by)
             case ObjectType.WALL:
-                self.occupied_by: Wall = Wall().from_json(data['occupied_by'])
+                self.occupied_by: Wall = Wall().from_json(occupied_by)
             case _:
-                raise Exception(f'Could not parse occupied_by: {self.occupied_by}')                  
+                raise Exception(f'Could not parse occupied_by: {occupied_by}')                  
         return self
