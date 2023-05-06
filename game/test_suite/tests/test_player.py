@@ -55,7 +55,6 @@ class TestPlayer(unittest.TestCase):
     def test_functional_fail_int(self):
         with self.assertRaises(ValueError) as e:
             self.player.functional = "Strig"
-            print(self.player.functional)
         self.assertEqual(str(e.exception), 'Player.functional must be a boolean')
 
     # team name
