@@ -69,7 +69,7 @@ class Player(GameObject):
 
     @property
     def object_type(self) -> ObjectType:
-        return self.object_type
+        return self.__object_type
 
     @object_type.setter
     def object_type(self, object_type: ObjectType) -> None:
@@ -110,7 +110,7 @@ class Player(GameObject):
         #         raise Exception(f'Could not parse action: {self.action}')
 
         # match case for avatar
-        match avatar['object_type']:
+        match ObjectType(avatar['object_type']):
             case ObjectType.AVATAR:
                 self.avatar = Avatar().from_json(data['avatar'])
             case None:
