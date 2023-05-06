@@ -11,4 +11,5 @@ class StationReceiverExample(Station):
     
     def take_action(self, avatar: Avatar) -> None:
         self.held_item = avatar.held_item
+        # assuming held_item is stored at index 0 in inventory
         avatar.inventory.pop(0)
