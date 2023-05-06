@@ -1,13 +1,14 @@
 import random
-from typing import Self, List, Tuple
-from game.utils.vector import Vector
-from game.common.stations.occupiable_station import OccupiableStation
-from game.common.stations.station import Station
+from typing import Self
+
 from game.common.avatar import Avatar
+from game.common.enums import *
 from game.common.game_object import GameObject
 from game.common.map.tile import Tile
 from game.common.map.wall import Wall
-from game.common.enums import *
+from game.common.stations.occupiable_station import OccupiableStation
+from game.common.stations.station import Station
+from game.utils.vector import Vector
 
 
 class GameBoard(GameObject):
@@ -228,8 +229,8 @@ class GameBoard(GameObject):
 
         for y, row in enumerate(self.game_map):
             for x, object_in_row in enumerate(row):
-                go_list = []
-                temp = object_in_row
+                go_list: list[GameObject] = []
+                temp: GameObject = object_in_row
                 self.__get_objects_help(look_for, temp, go_list)
                 if len(go_list) > 0:
                     to_return.append((Vector(x=x, y=y), [*go_list, ]))
@@ -266,7 +267,7 @@ class GameBoard(GameObject):
         self.event_active = random.randint(start, end)
 
     def __from_json_helper(self, data: dict) -> GameObject:
-        temp:ObjectType = ObjectType(data['object_type'])
+        temp: ObjectType = ObjectType(data['object_type'])
         match temp:
             case ObjectType.WALL:
                 return Wall().from_json(data)
