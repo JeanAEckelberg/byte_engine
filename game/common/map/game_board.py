@@ -1,5 +1,5 @@
 import random
-from typing import Self
+from typing import Self, List, Tuple
 from game.utils.vector import Vector
 from game.common.stations.occupiable_station import OccupiableStation
 from game.common.stations.station import Station
@@ -223,13 +223,16 @@ class GameBoard(GameObject):
 
             temp_tile.occupied_by = i
 
-    def get_objects(self, look_for: ObjectType) -> list[GameObject]:
-        to_return: list[GameObject] = list()
+    def get_objects(self, look_for: ObjectType) -> list[tuple[Vector, list[GameObject]]]:
+        to_return: list[tuple[Vector, list[GameObject]]] = list()
 
-        for row in self.game_map:
-            for object_in_row in row:
-                temp: GameObject = object_in_row
-                self.__get_objects_help(look_for, temp, to_return)
+        for y, row in enumerate(self.game_map):
+            for x, object_in_row in enumerate(row):
+                go_list = []
+                temp = object_in_row
+                self.__get_objects_help(look_for, temp, go_list)
+                if len(go_list) > 0:
+                    to_return.append((Vector(x=x, y=y), [*go_list, ]))
 
         return to_return
 
