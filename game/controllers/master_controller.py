@@ -70,7 +70,7 @@ class MasterController(Controller):
         avatars: list[tuple[Vector, list[Avatar]]]= gb.get_objects(ObjectType.AVATAR)
         for avatar, client in zip(avatars,clients):
             avatar[1][0].position = avatar[0]
-            client.avatar = avatar
+            client.avatar = avatar[1][0]
             
 
     # Generator function. Given a key:value pair where the key is the identifier for the current world and the value is
