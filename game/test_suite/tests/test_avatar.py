@@ -11,7 +11,7 @@ class TestAvatar(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        self.avatar: Avatar = Avatar(None, None, [], 1)
+        self.avatar: Avatar = Avatar(None, None, 1)
         self.item: Item = Item(10, 100, 1, 1)
 
     # test set item
@@ -38,6 +38,10 @@ class TestAvatar(unittest.TestCase):
     def test_avatar_set_position(self):
         self.avatar.position = Vector(10, 10)
         self.assertEqual(str(self.avatar.position), str(Vector(10, 10)))
+
+    def test_avatar_set_position_None(self):
+        self.avatar.position = None
+        self.assertEqual(self.avatar.position, None)
 
     def test_avatar_set_position_fail(self):
         with self.assertRaises(ValueError) as e:
@@ -70,8 +74,7 @@ class TestAvatar(unittest.TestCase):
             self.avatar.max_inventory_size = 'Fail'
         self.assertEqual(str(e.exception), 'Avatar.max_inventory_size must be an int.')
 
-        # test json method
-
+    # test json method
     def test_avatar_json(self):
         self.avatar.held_item = self.item
         self.avatar.position = Vector(10, 10)

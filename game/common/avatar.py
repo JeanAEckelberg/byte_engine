@@ -91,15 +91,14 @@ class Avatar(GameObject):
         [inventory_item (5/5), inventory_item (5/5) inventory_item (5/5) inventory_item (5/5), inventory_item (5/5)]
     """
 
-    def __init__(self, item: Item | None = None, position: Vector | None = None, inventory: list[Item] = [],
-                 max_inventory_size: int = 10):
+    def __init__(self, item: Item | None = None, position: Vector | None = None, max_inventory_size: int = 10):
         super().__init__()
         self.object_type: ObjectType = ObjectType.AVATAR
-        self.held_item: Item | None = item
         self.score: int = 0
         self.position: Vector | None = position
         self.max_inventory_size: int = max_inventory_size
-        self.inventory: list[Item] = inventory
+        self.inventory: list[Item | None] = [None] * max_inventory_size
+        self.held_item: Item | None = self.inventory[0]
 
     @property
     def held_item(self) -> Item | None:
@@ -141,9 +140,11 @@ class Avatar(GameObject):
         self.__position: Vector | None = position
 
     @inventory.setter
-    def inventory(self, inventory: list[Item]) -> None:
+    def inventory(self, inventory: list[Item | None]) -> None:
+        # If every item in the inventory is not of type None or Item, throw an error
         if inventory is None or not isinstance(inventory, list) \
-                or (len(inventory) > 0 and any(map(lambda item: not isinstance(item, Item), inventory))):
+                or (len(inventory) > 0 and any(map(lambda item: item is not None and not
+                    isinstance(item, Item), inventory))):
             raise ValueError(f'{self.__class__.__name__}.inventory must be a list of Items.')
         if len(inventory) > self.max_inventory_size:
             raise ValueError(f'{self.__class__.__name__}.inventory size must be less than max_inventory_size')
