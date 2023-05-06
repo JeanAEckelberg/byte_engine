@@ -16,7 +16,7 @@ class TestInventoryController(unittest.TestCase):
     def setUp(self) -> None:
         self.inventory_controller: InventoryController = InventoryController()
         self.item: Item = Item()
-        self.avatar: Avatar = Avatar()
+        self.avatar: Avatar = Avatar(max_inventory_size=10)
 
         self.inventory: [Item] = [Item(1), Item(2), Item(3), Item(4), Item(5), Item(6), Item(7), Item(8),
                                   Item(9), Item(10)]
@@ -80,6 +80,17 @@ class TestInventoryController(unittest.TestCase):
         self.inventory_controller.handle_actions(ActionType.MOVE_LEFT, self.player, self.game_board)
         self.assertEqual(self.avatar.held_item, None)
         self.check_inventory_item()
+
+    def test_with_out_of_bounds(self):
+        with self.assertRaises(IndexError) as e:
+            self.inventory: [Item] = [Item(1), Item(2), Item(3), Item(4), Item(5)]
+            self.avatar.max_inventory_size = 5
+            self.avatar.inventory = self.inventory
+            self.player: Player = Player(avatar=self.avatar)
+            self.inventory_controller.handle_actions(ActionType.SELECT_SLOT_9, self.player, self.game_board)
+        self.assertEqual(str(e.exception), 'The given action type, SELECT_SLOT_9, is not within bounds of the given '
+                                           'inventory of size 5. Select an ActionType enum '
+                                           'that will be within the inventory\'s bounds.')
 
     def check_inventory_item(self):
         # Test to make sure that the inventory hasn't shift items
