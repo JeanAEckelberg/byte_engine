@@ -99,10 +99,11 @@ class Avatar(GameObject):
         self.max_inventory_size: int = max_inventory_size
         self.inventory: list[Item | None] = [None] * max_inventory_size
         self.held_item: Item | None = self.inventory[0]
+        self.__held_index: int = 0
 
     @property
     def held_item(self) -> Item | None:
-        return self.__held_item
+        return self.inventory[self.__held_index]
 
     @property
     def score(self) -> int:
@@ -125,7 +126,14 @@ class Avatar(GameObject):
         # If it's not an item, and it's not None, raise the error
         if item is not None and not isinstance(item, Item):
             raise ValueError(f'{self.__class__.__name__}.held_item must be an Item or None.')
-        self.__held_item: Item = item
+
+        # If the item is not contained in the inventory, the error will be raised.
+        if not self.inventory.__contains__(item):
+            raise ValueError(f'{self.__class__.__name__}.held_item must be set to an item that already exists'
+                             f' in the inventory.')
+
+        # If the item is contained in the inventory, set the held_index to that item's index
+        self.__held_index = self.inventory.index(item)
 
     @score.setter
     def score(self, score: int) -> None:
@@ -158,7 +166,7 @@ class Avatar(GameObject):
 
     def pick_up(self, item: Item) -> Item | None:
         t = item
-        [t := i.pick_up(t) for i in self.inventory]
+        [t := i.pick_up(t) if i is not None else None for i in self.inventory]
 
         if t is not None and len(self.inventory) < self.max_inventory_size:
             self.inventory.append(t)

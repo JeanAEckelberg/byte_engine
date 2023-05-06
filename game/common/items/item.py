@@ -127,8 +127,12 @@ class Item(GameObject):
         self.__stack_size: int = stack_size
 
     def pick_up(self, item: Self) -> Self | None:
-        if item is None or not isinstance(item, Item):
+        if item is not None and not isinstance(item, Item):
             raise ValueError(f'{item.__class__.__name__} is not of type Item.')
+
+        # If the item is None, just return None
+        if item is None:
+            return None
 
         # If the items don't match, return the given item without modifications
         if self.object_type != item.object_type:
