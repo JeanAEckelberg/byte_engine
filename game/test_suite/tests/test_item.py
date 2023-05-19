@@ -11,7 +11,7 @@ class TestItem(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        self.avatar: Avatar = Avatar(None, None, 1)
+        self.avatar: Avatar = Avatar(None, 1)
         self.item: Item = Item()
 
     # test set durability

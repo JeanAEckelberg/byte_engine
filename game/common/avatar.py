@@ -91,7 +91,7 @@ class Avatar(GameObject):
         [inventory_item (5/5), inventory_item (5/5) inventory_item (5/5) inventory_item (5/5), inventory_item (5/5)]
     """
 
-    def __init__(self, item: Item | None = None, position: Vector | None = None, max_inventory_size: int = 10):
+    def __init__(self, position: Vector | None = None, max_inventory_size: int = 10):
         super().__init__()
         self.object_type: ObjectType = ObjectType.AVATAR
         self.score: int = 0
@@ -155,7 +155,8 @@ class Avatar(GameObject):
                     isinstance(item, Item), inventory))):
             raise ValueError(f'{self.__class__.__name__}.inventory must be a list of Items.')
         if len(inventory) > self.max_inventory_size:
-            raise ValueError(f'{self.__class__.__name__}.inventory size must be less than max_inventory_size')
+            raise ValueError(f'{self.__class__.__name__}.inventory size must be less than or equal to '
+                             f'max_inventory_size')
         self.__inventory: list[Item] = inventory
 
     @max_inventory_size.setter

@@ -29,7 +29,7 @@ class TestInteractController(unittest.TestCase):
         self.occupiable_station: OccupiableStation = OccupiableStation(self.item)
         self.station_example: StationExample = StationExample(self.item)
         self.occupiable_station_example = OccupiableStationExample(self.item)
-        self.avatar: Avatar = Avatar(None, Vector(5, 5))
+        self.avatar: Avatar = Avatar(Vector(5, 5))
         self.locations: dict[tuple[Vector]:list[GameObject]] = {
             (Vector(1, 1),): [Station(None)],
             (Vector(5, 4),): [self.occupiable_station_example],
@@ -48,7 +48,7 @@ class TestInteractController(unittest.TestCase):
         self.assertEqual(self.avatar.held_item, None)
 
     # interact and pick up from an occupiable_station 
-    def test_interact_item_occupible_station(self):
+    def test_interact_item_occupiable_station(self):
         self.interact_controller.handle_actions(ActionType.INTERACT_UP, self.player, self.game_board)
         self.assertEqual(self.avatar.inventory[0].object_type, ObjectType.ITEM)
 
@@ -59,6 +59,7 @@ class TestInteractController(unittest.TestCase):
 
     # interact and get item then dump item
     def test_interact_dump_item(self):
+        self.avatar.inventory = [Item(1, 1)]
         self.interact_controller.handle_actions(ActionType.INTERACT_RIGHT, self.player, self.game_board)
         self.avatar.held_item = self.avatar.inventory[0]
         self.interact_controller.handle_actions(ActionType.INTERACT_LEFT, self.player, self.game_board)
