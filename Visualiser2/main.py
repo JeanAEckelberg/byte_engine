@@ -22,9 +22,10 @@ class ByteVisualiser:
         self.tick: int = 0
 
     def load(self):
-        self.screen.fill(self.config.BACKGROUND_COLOR)
+        pass
 
     def prerender(self):
+        self.screen.fill(self.config.BACKGROUND_COLOR)
         if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
             # NEXT TURN
             pass
