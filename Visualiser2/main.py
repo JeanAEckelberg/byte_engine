@@ -1,6 +1,10 @@
+import json
+
 import pygame, sys
 from Visualiser2.config import Config
 from game.utils.vector import Vector
+import game.config as gc
+from pathlib import Path
 
 
 class ByteVisualiser:
@@ -8,7 +12,7 @@ class ByteVisualiser:
     def __init__(self):
         pygame.init()
         self.config = Config()
-        self.turn_logs: list[dict]
+        self.turn_logs: list[dict] = []
         self.size: Vector = self.config.SCREEN_SIZE
         # size = width, height = 1366, 768
         self.tile_size: int = self.config.TILE_SIZE
@@ -21,7 +25,9 @@ class ByteVisualiser:
         self.tick: int = 0
 
     def load(self):
-        pass
+        for file in Path(gc.LOGS_DIR).glob('*.json'):
+            with open(file, 'r') as f:
+                self.turn_logs.append(json.load(f))
 
     def prerender(self):
         self.screen.fill(self.config.BACKGROUND_COLOR)
