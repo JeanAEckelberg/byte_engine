@@ -125,6 +125,7 @@ class Avatar(GameObject):
     @held_item.setter
     def held_item(self, item: Item | None) -> None:
         self.__clean_inventory()
+
         # If it's not an item, and it's not None, raise the error
         if item is not None and not isinstance(item, Item):
             raise ValueError(f'{self.__class__.__name__}.held_item must be an Item or None.')
@@ -133,8 +134,6 @@ class Avatar(GameObject):
         if not self.inventory.__contains__(item):
             raise ValueError(f'{self.__class__.__name__}.held_item must be set to an item that already exists'
                              f' in the inventory.')
-
-        # Make private function here
 
         # If the item is contained in the inventory, set the held_index to that item's index
         self.__held_index = self.inventory.index(item)
