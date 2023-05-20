@@ -59,8 +59,7 @@ class TestInteractController(unittest.TestCase):
 
     # interact and get item then dump item
     def test_interact_dump_item(self):
-        self.avatar.inventory = [Item(1, 1)]
         self.interact_controller.handle_actions(ActionType.INTERACT_RIGHT, self.player, self.game_board)
-        self.avatar.held_item = self.avatar.inventory[0]
+        self.assertEqual(self.avatar.held_item, self.item)
         self.interact_controller.handle_actions(ActionType.INTERACT_LEFT, self.player, self.game_board)
-        self.assertEqual(len(self.avatar.inventory), 0)
+        self.assertTrue(all(map(lambda x: x is None, self.avatar.inventory)))

@@ -57,8 +57,8 @@ class TestItem(unittest.TestCase):
 
     def test_set_quantity_fail_greater_than_0(self):
         with self.assertRaises(ValueError) as e:
-            self.item.quantity = 0
-        self.assertEqual(str(e.exception), 'Item.quantity must be greater than 0.')
+            self.item.quantity = -1
+        self.assertEqual(str(e.exception), 'Item.quantity must be greater than or equal to 0.')
 
     def test_set_quantity_fail_stack_size(self):
         with self.assertRaises(ValueError) as e:
