@@ -7,6 +7,7 @@ class Config:
     __SCALE: int = 2
     __SCREEN_SIZE: Vector = Vector(x=1366, y=768)  # width, height
     __FRAME_RATE: int = 4
+    __BACKGROUND_COLOR: (int, int, int) = 0, 0, 0
 
     @property
     def NUMBER_OF_FRAMES_PER_TURN(self) -> int:
@@ -28,5 +29,6 @@ class Config:
     def FRAME_RATE(self) -> int:
         return self.__FRAME_RATE
 
+    @property
     def BACKGROUND_COLOR(self) -> (int, int, int):
         return self.__BACKGROUND_COLOR
