@@ -42,6 +42,7 @@ class ByteVisualiser:
     def loop(self):
         self.load()
         while True:
+            # pygame events used to exit the loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
 
