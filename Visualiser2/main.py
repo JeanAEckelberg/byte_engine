@@ -12,7 +12,7 @@ class ByteVisualiser:
         self.size: Vector = self.config.SCREEN_SIZE
         # size = width, height = 1366, 768
         self.tile_size: int = self.config.TILE_SIZE
-        self.black = 0, 0, 0
+        self.background_color = 0, 0, 0
 
         self.screen = pygame.display.set_mode((self.size.x, self.size.y))
 
