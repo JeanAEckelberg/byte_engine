@@ -27,3 +27,6 @@ class Config:
     @property
     def FRAME_RATE(self) -> int:
         return self.__FRAME_RATE
+
+    def BACKGROUND_COLOR(self) -> (int, int, int):
+        return self.__BACKGROUND_COLOR
