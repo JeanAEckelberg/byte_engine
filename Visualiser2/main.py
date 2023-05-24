@@ -1,7 +1,7 @@
 import json
-
 import pygame, sys
 from Visualiser2.config import Config
+from Visualiser2.bytesprite import ByteSprite
 from game.utils.vector import Vector
 import game.config as gc
 from pathlib import Path
@@ -32,6 +32,7 @@ class ByteVisualiser:
     def prerender(self):
         self.screen.fill(self.config.BACKGROUND_COLOR)
         if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
+            # TODO: Make Connections to Adapter class to Trigger Methods to Populate Frame lists
             # NEXT TURN
             pass
         else:
