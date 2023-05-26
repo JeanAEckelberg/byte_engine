@@ -72,26 +72,28 @@ class TestAvatarInventory(unittest.TestCase):
 
     # Tests when an item is being taken away
     def test_take(self):
+        """
+        When this test is performed, it works properly, but because the Item class is used and is very generic, it
+        may not seem to be the case. However, it does work in the end. The first item in the inventory has its
+        quantity decrease to 2 after the take method is executed. Then, the helper method, clean_inventory,
+        consolidates all similar Items with each other. This means that inventory[1] will add its quantity to
+        inventory[0], making it have a quantity of 5; inventory[1] now has a quantity of 4 instead of 7. Then,
+        inventory[2] will add its quantity to inventory[1], making it have a quantity of 7; inventory[2] now has a
+        quantity of 7.
+
+        TL;DR
+        When the take method is used, it will work properly with more specific Item classes being created to
+        consolidate the same Item object types together
+
+        When more subclasses of Item are created, more specific tests can be created if needed.
+        """
+
         self.avatar: Avatar = Avatar(None, 3)
         self.avatar.inventory = [Item(quantity=5, stack_size=5), Item(quantity=7, stack_size=7),
                                  Item(quantity=10, stack_size=10)]
         taken = self.avatar.take(Item(quantity=3, stack_size=3))
 
         self.assertEqual(taken, None)
-
-        """
-        When this test is performed, it works properly, but because the Item class is used and is very generic, it 
-        may not seem to be the case. However, it does work in the end. The first item in the inventory has its 
-        quantity decrease to 2 after the take method is executed. Then, the helper method, clean_inventory, 
-        consolidates all similar Items with each other. This means that inventory[1] will add its quantity to 
-        inventory[0], making it have a quantity of 5; inventory[1] now has a quantity of 4 instead of 7. Then, 
-        inventory[3] will add its quantity to inventory[1], making it have a quantity of 7; inventory[3] now has a 
-        quantity of 7 too. 
-
-        TL;DR
-        When the take method is used, it will work properly with more specific Item classes being created to 
-        consolidate the same Item object types together
-        """
         self.assertEqual(self.avatar.inventory[2].quantity, 7)
 
     # Tests when the None value is being taken away
