@@ -3,7 +3,7 @@ import pygame, sys
 from Visualiser2.config import Config
 from Visualiser2.bytesprite import ByteSprite
 from game.utils.vector import Vector
-import game.config as gc
+from Visualiser2.utils.log_reader import logs_to_dict
 from pathlib import Path
 
 
@@ -12,7 +12,7 @@ class ByteVisualiser:
     def __init__(self):
         pygame.init()
         self.config = Config()
-        self.turn_logs: list[dict] = []
+        self.turn_logs: dict[str:dict] = {}
         self.size: Vector = self.config.SCREEN_SIZE
         # size = width, height = 1366, 768
         self.tile_size: int = self.config.TILE_SIZE
@@ -25,9 +25,7 @@ class ByteVisualiser:
         self.tick: int = 0
 
     def load(self):
-        for file in Path(gc.LOGS_DIR).glob('*.json'):
-            with open(file, 'r') as f:
-                self.turn_logs.append(json.load(f))
+        self.turn_logs = logs_to_dict()
 
     def prerender(self):
         self.screen.fill(self.config.BACKGROUND_COLOR)
@@ -55,6 +53,7 @@ class ByteVisualiser:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE: sys.exit()
+                # TODO: Add event method to adapter
 
             self.prerender()
             self.render()
