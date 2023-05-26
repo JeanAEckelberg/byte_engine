@@ -1,8 +1,9 @@
+from typing import Self
+
 from game.common.enums import ObjectType
 from game.common.game_object import GameObject
 from game.common.items.item import Item
 from game.utils.vector import Vector
-from typing import Self
 
 
 class Avatar(GameObject):
@@ -16,7 +17,7 @@ class Avatar(GameObject):
     be mentioned is completely optional to implement if you desire. The Dispensing Station is used to help with the
     explanation.
 
-    ----------------------------------------------------------------------------------------------------------------
+    ----
 
     Items:
         Every Item has a quantity and a stack_size. The quantity is how much of the Item the player *currently* has.
@@ -39,7 +40,7 @@ class Avatar(GameObject):
                 2 + 1 < 10 --> True
             Inventory_item quantity after picking up: 3/10
 
-    ----------------------------------------------------------------------------------------------------------------
+    ----
 
     Example 2:
         For the next two examples, the total inventory size will be considered.
@@ -71,7 +72,7 @@ class Avatar(GameObject):
             The result is:
             [inventory_item (5/5), inventory_item (2/5), None, None, None]
 
-    ----------------------------------------------------------------------------------------------------------------
+    ----
     Example 3:
 
         For this last example, assume your inventory looks like this:
@@ -155,7 +156,7 @@ class Avatar(GameObject):
         # If every item in the inventory is not of type None or Item, throw an error
         if inventory is None or not isinstance(inventory, list) \
                 or (len(inventory) > 0 and any(map(lambda item: item is not None and not
-                    isinstance(item, Item), inventory))):
+        isinstance(item, Item), inventory))):
             raise ValueError(f'{self.__class__.__name__}.inventory must be a list of Items.')
         if len(inventory) > self.max_inventory_size:
             raise ValueError(f'{self.__class__.__name__}.inventory size must be less than or equal to '
@@ -172,13 +173,13 @@ class Avatar(GameObject):
     def __clean_inventory(self) -> None:
         """
         This method is used to manage the inventory. Whenever an item has a quantity of 0, it will set that item object
-        to None since it doesn't exist in the inventory anymore. Otherwise, if there are multiple instances of an
-        item in the inventory and they can be consolidated, this method does that.
+            to None since it doesn't exist in the inventory anymore. Otherwise, if there are multiple instances of an
+            item in the inventory, and they can be consolidated, this method does that.
 
-        * Example: In inventory[0], there is a stack of gold with a quantity and stack_size of 5. In inventory[1], there
-        is another stack of gold with quantity of 3, stack size of 5. If you want to take away 4 gold, inventory[0] will
-        have quantity 1, and inventory[1] will have quantity 3. Then, when clean_inventory is called, it will
-        consolidate the two. This mean that inventory[0] will have quantity 4 and inventory[1] will be set to None.
+        Example: In inventory[0], there is a stack of gold with a quantity and stack_size of 5. In inventory[1], there
+            is another stack of gold with quantity of 3, stack size of 5. If you want to take away 4 gold, inventory[0]
+            will have quantity 1, and inventory[1] will have quantity 3. Then, when clean_inventory is called, it will
+            consolidate the two. This mean that inventory[0] will have quantity 4 and inventory[1] will be set to None.
         :return: None
         """
 
@@ -193,14 +194,20 @@ class Avatar(GameObject):
 
     def drop_held_item(self) -> Item | None:
         """
-        Call this method when a station is taking the held item from the avatar
+        Call this method when a station is taking the held item from the avatar.
+
+        ----
 
         This method can be modified more for different scenarios where the held item would be dropped
-            (e.g., you make a game where being attacked forces you to drop your held item)
+            (e.g., you make a game where being attacked forces you to drop your held item).
+
+        ----
 
         If you want the held item to go somewhere specifically and not become None, that can be changed too.
 
-        Make sure to keep clean inventory in this method
+        ----
+
+        Make sure to keep clean inventory in this method.
         """
         # The held item will be taken from the avatar will be replaced with None in the inventory
         held_item = self.held_item
@@ -212,15 +219,22 @@ class Avatar(GameObject):
 
     def take(self, item: Item | None) -> Item | None:
         """
-        * To use this method, pass in an item object. Whatever this item's quantity is will be the amount subtracted
-        from the avatar's inventory. For example, if the item in the inventory is has a quantity of 5 and this method is
-        called with the parameter having a quantity of 2, the item in the inventory will have a quantity of 3.
+        To use this method, pass in an item object. Whatever this item's quantity is will be the amount subtracted from
+            the avatar's inventory. For example, if the item in the inventory is has a quantity of 5 and this method is
+            called with the parameter having a quantity of 2, the item in the inventory will have a quantity of 3.
 
-        * Furthermore, when this method is called and the potential item is taken away, the clean_inventory method is
-        called. It will consolidate all similar items together to ensure that the inventory is clean.
+        ----
 
-        * Reference test_avatar_inventory.py and the clea_inventory method for further documentation on this method
-        and how the inventory is managed.
+        Furthermore, when this method is called and the potential item is taken away, the clean_inventory method is
+            called. It will consolidate all similar items together to ensure that the inventory is clean.
+
+        ----
+
+        Reference test_avatar_inventory.py and the clean_inventory method for further documentation on this method and
+            how the inventory is managed.
+
+        ----
+
         :param item:
         :return: Item or None
         """
@@ -251,7 +265,7 @@ class Avatar(GameObject):
         data: dict = super().to_json()
         data['held_index'] = self.__held_index
         data['score'] = self.score
-        data['position'] = self.position.to_json() if self.position is not None else None 
+        data['position'] = self.position.to_json() if self.position is not None else None
         data['inventory'] = self.inventory
         data['max_inventory_size'] = self.max_inventory_size
         return data
