@@ -1,7 +1,14 @@
 import pygame
 from game.utils.vector import Vector
 
-# class that creates text to be displayed in the visualizer within a rectangle
+"""
+class that creates text to be displayed in the visualizer within a rectangle
+
+defaults used unless otherwise stated:
+font: Bauhaus93
+color: #daa520          (yellowish)
+position: Vector(0, 0)  (representing pixels on screen, top left pixel)
+"""
 
 class Text:
     def __init__(self, screen: pygame.Surface, text: str, font_size: int, font: str = 'bauhaus93', color: pygame.Color = pygame.Color('#daa520'), position: Vector = Vector(0, 0)):
