@@ -5,6 +5,7 @@ from Visualiser2.bytesprite import ByteSprite
 from game.utils.vector import Vector
 from Visualiser2.utils.log_reader import logs_to_dict
 from pathlib import Path
+from Visualiser2.adapter import Adapter
 
 
 class ByteVisualiser:
@@ -18,11 +19,13 @@ class ByteVisualiser:
         self.tile_size: int = self.config.TILE_SIZE
 
         self.screen = pygame.display.set_mode((self.size.x, self.size.y))
+        self.adapter = Adapter()
 
         self.clock = pygame.time.Clock()
         self.simple_font = pygame.font.Font(None, 50)
 
         self.tick: int = 0
+
 
     def load(self):
         self.turn_logs = logs_to_dict()
@@ -31,6 +34,8 @@ class ByteVisualiser:
         self.screen.fill(self.config.BACKGROUND_COLOR)
         if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
             # TODO: Make Connections to Adapter class to Trigger Methods to Populate Frame lists
+            self.adapter.continue_animation() # did we want these to be right next to eachother like this?
+            self.adapter.recalc_animation()
             # NEXT TURN
             pass
         else:
@@ -53,7 +58,8 @@ class ByteVisualiser:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE: sys.exit()
-                # TODO: Add event method to adapter
+
+                self.adapter.on_event(event)
 
             self.prerender()
             self.render()
