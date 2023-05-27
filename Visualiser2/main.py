@@ -19,34 +19,33 @@ class ByteVisualiser:
         self.tile_size: int = self.config.TILE_SIZE
 
         self.screen = pygame.display.set_mode((self.size.x, self.size.y))
-        self.adapter = Adapter()
+        self.adapter = Adapter(self.screen)
 
         self.clock = pygame.time.Clock()
         self.simple_font = pygame.font.Font(None, 50)
 
         self.tick: int = 0
 
-
     def load(self):
         self.turn_logs = logs_to_dict()
+        self.adapter.populate_bytesprites()
 
     def prerender(self):
         self.screen.fill(self.config.BACKGROUND_COLOR)
         if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
-            # TODO: Make Connections to Adapter class to Trigger Methods to Populate Frame lists
-            self.adapter.continue_animation() # did we want these to be right next to eachother like this?
-            self.adapter.recalc_animation()
             # NEXT TURN
-            pass
+            self.adapter.continue_animation()
         else:
             # NEXT ANIMATION FRAME
-            pass
+            self.adapter.recalc_animation(self.turn_logs[f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN+1:04d}'])
         self.tick += 1
 
     def render(self):
+        self.adapter.render()
         pygame.display.flip()
 
     def postrender(self):
+        self.adapter.clean_up()
         self.clock.tick(self.config.FRAME_RATE)
 
     def loop(self):
