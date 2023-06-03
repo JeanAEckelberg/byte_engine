@@ -41,3 +41,11 @@ class Config:
     @property
     def BACKGROUND_COLOR(self) -> (int, int, int):
         return self.__BACKGROUND_COLOR
+
+    @property
+    def GAME_BOARD_MARGIN_LEFT(self) -> int:
+        return self.__GAME_BOARD_MARGIN_LEFT
+
+    @property
+    def GAME_BOARD_MARGIN_TOP(self) -> int:
+        return self.__GAME_BOARD_MARGIN_TOP
