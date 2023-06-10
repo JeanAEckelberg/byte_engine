@@ -16,7 +16,7 @@ class Text:
     def __init__(self, screen: pygame.Surface, text: str, font_size: int, font_name: str = 'bauhaus93', color: str | int | tuple[int, int, int, Optional[int]] | list[int, int, int, Optional[int]] | pygame.Color = pygame.Color('#daa520'), position: Vector = Vector(0, 0)):
         self.screen: pygame.Surface = screen  # assign screen used
         self.text: str = text  # assign text used
-        self.font_size = font_size  # assign font size used
+        self.font_size: int = font_size  # assign font size used
         self.font_name: str = font_name  # name of font used
         self.color: str | int | tuple[int, int, int, Optional[int]] | list[int, int, int, Optional[int]] | pygame.Color = color  # assign color used
         self.position: Vector = position  # assign position used
