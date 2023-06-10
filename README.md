@@ -1,5 +1,24 @@
-# byte_le_engine
-Base game engine for use in NDACM Byte-le Royale games.
+# byte_engine
+Revamped base game engine for use in NDACM Byte-le Royale games.
+Changes made in 2023.
+
+## Important Changes
+* GameBoard Seed Parameter
+  * There is a new parameter in the GameBoard class that allows 
+  a specific seed to be set. This can be used to help with testing 
+  during game development.
+* Avatar Class
+  * The avatar class now has new implementations for an inventory 
+  system. Documentation is provided in the class file.
+* Vector Class
+  * The Vector class is used to simplify handling coordinates. 
+  Some new implementations include ways to increase the values of an already existing Vector,
+  combining two Vectors to create a new one, and returning the Vector's information as 
+  a tuple.
+* TODO
+  * GameBoard, Type hinted, Basically everything that was changed needs to be written.
+  * Explain importance of type hinting, starting with pseudocode and UMLs, etc. Discuss planning process.
+
 
 ## How to run
 
