@@ -30,12 +30,13 @@ class ByteVisualiser:
 
     def prerender(self):
         self.screen.fill(self.config.BACKGROUND_COLOR)
-        if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
+        if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN != 0:
             # NEXT TURN
-            self.adapter.continue_animation()
+            self.adapter.recalc_animation(
+                self.turn_logs[f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN + 1:04d}'])
         else:
             # NEXT ANIMATION FRAME
-            self.adapter.recalc_animation(self.turn_logs[f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN+1:04d}'])
+            self.adapter.continue_animation()
         self.tick += 1
 
     def render(self):

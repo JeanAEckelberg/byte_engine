@@ -108,21 +108,12 @@ class ByteSprite(pyg.sprite.Sprite):
             raise ValueError(f'{self.__class__.__name__}.screen must be a pyg.Screen object.')
         self.__screen = screen
 
-    def select_active_sheet(self, data: dict, layer: int, pos: Vector) -> None:
+    def update(self, data: dict, layer: int, pos: Vector) -> None:
         self.__frame_index = 0  # Starts the new spritesheet at the beginning
 
-        # The coordinates for the top left of the rectangle of the sheet to be used for loading the sprite
+    def render(self, layer: int, pos: Vector) -> None:
+
+        self.__frame_index = self.__frame_index % self.__config.NUMBER_OF_FRAMES_PER_TURN
         self.rect.topleft = (
-        pos.x * self.__config.TILE_SIZE * self.__config.SCALE + self.__config.GAME_BOARD_MARGIN_LEFT,
-        pos.y * self.__config.TILE_SIZE * self.__config.SCALE + self.__config.GAME_BOARD_MARGIN_TOP)
-        # Add implementation here for selecting the sprite sheet to use
-
-    def render(self, layer: int) -> None:
-        if layer is None or layer != self.layer:
-            return None
-
-        # Places the given sprite at the rectangle's location
-        self.screen.blit(self.active_sheet[self.__frame_index], self.rect)
-
-        # Selects the next sprite for the next frame
-        self.__frame_index = (self.__frame_index + 1) % self.__config.NUMBER_OF_FRAMES_PER_TURN
+            pos.x * self.__config.TILE_SIZE * self.__config.SCALE + self.__config.GAME_BOARD_MARGIN_LEFT,
+            pos.y * self.__config.TILE_SIZE * self.__config.SCALE + self.__config.GAME_BOARD_MARGIN_TOP)
