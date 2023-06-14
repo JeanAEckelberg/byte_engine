@@ -5,7 +5,6 @@ from Visualiser2.utils.log_reader import logs_to_dict
 from pathlib import Path
 from Visualiser2.adapter import Adapter
 
-
 class ByteVisualiser:
 
     def __init__(self):
@@ -23,6 +22,7 @@ class ByteVisualiser:
         self.simple_font = pygame.font.Font(None, 50)
 
         self.tick: int = 0
+        self.populate_bytesprite = pygame.sprite.Group()
 
     def load(self):
         self.turn_logs = logs_to_dict()

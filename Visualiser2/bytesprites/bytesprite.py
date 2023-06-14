@@ -117,3 +117,4 @@ class ByteSprite(pyg.sprite.Sprite):
         self.rect.topleft = (
             pos.x * self.__config.TILE_SIZE * self.__config.SCALE + self.__config.GAME_BOARD_MARGIN_LEFT,
             pos.y * self.__config.TILE_SIZE * self.__config.SCALE + self.__config.GAME_BOARD_MARGIN_TOP)
+

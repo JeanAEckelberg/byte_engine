@@ -1,7 +1,10 @@
+import pygame
+
 class Adapter:
     def __init__(self, screen):
         self.screen = screen
         self.bytesprites = []
+        self.populate_bytesprite = pygame.sprite.Group()
 
     def on_event(self, event):
         pass
