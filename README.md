@@ -108,11 +108,24 @@ Changes made in 2023.
   * The most notable change in this file is MAX_NUMBER_OF_ACTIONS_PER_TURN. It is used for 
   allowing multiple actions to be taken in one turn. Adjust as necessary.
 
-* TODO
-  * GameBoard
-  * ~ Type hinted
-  * Basically everything that was changed needs to be written.
-  * Explain importance of type hinting, starting with pseudocode and UMLs, etc. Discuss planning process.
+
+## Development Notes
+
+* Type Hinting
+  * Type hinting is very useful in Python because it prevents any confusion on
+  what type an object is supposed to be, what value a method returns, etc. Make 
+  sure to type hint any and everything to eliminate any confusion.
+* Planning
+  * When planning, it's suggested to write out pseudocode, create UMLs, and any 
+  other documentation that will help with the process. It is easy to forget what 
+  is discussed between meetings without a plan. 
+  * Write everything that should be implemented, 
+  what files need to be created, their purpose in the project, and more. UML diagrams 
+  help see how classes will interact and inherit from each other. 
+  * Lastly, documentation is a great method to stay organized too. Having someone to 
+  write what is discussed in meetings can be useful; you won't easily lose track of 
+  what's discussed.
+
 
 
 ## How to run
