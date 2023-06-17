@@ -9,10 +9,22 @@ Changes made in 2023.
   type hint any changes made for the same reason.
   
 
-* Item Changes
-  * The item class has extra parameters. You can now define an item's durability, its value
-  for different uses (e.g., sell pricing), and a stack size system. Refer to the class for 
-  a more detailed explanation.
+* Item Class
+    * The item class has many parameters that can be used in a few different ways to allow
+    for flexibility.
+    * Value:
+      * This allows for an item to have a value of some sort. This can be used to determine
+      points gained for collecting the item, or its sell price. The meaning can change depending 
+      on the project.
+    * Durability:
+      * Durability can represent how many uses an item has. What happens after is determined by 
+      the development team.
+    * Quantity:
+      * This allows for consolidating and representing multiple items in a single item object.
+    * Stack Size:
+      * Stack Size determines how many item objects can be consolidated together into a single 
+      object at once. This can be thought of as a denominator in a fraction.
+    * Reference the Item class for further documentation.
 
 
 * GameBoard Class
@@ -80,15 +92,29 @@ Changes made in 2023.
   if needed.
 
 
+* Avatar VS Player Classes
+  * These two classes are often confused with each other. Here are their differences.
+  * Avatar:
+    * The Avatar class represents the character that's in the game. The Avatar is 
+    what moves around and interacts with other GameObjects
+  * Player:
+    * The Player object encapsulates the Avatar class and represents the physical 
+    people competing in the competition. This is why it has parameters such as team_name.
+    It is also why the controllers takes a Player object as a parameter and not an Avatar
+    object.
+
+
 * Controllers
   * Interact Controller Class
     * This class controls how players interact with the environment and other GameObjects.
   * Inventory Controller Class
     * This class controls how players select a certain item in their inventory to then 
     become their held item.
-  * Master Controller
+  * Master Controller Class
     * This controller is used to manage what happens in each turn and update the 
     overarching information of the game's state.
+  * Movement Controller Class
+    * This class manages moving the player through the game board by using the given enums.
 
 
 * Generate Game File
@@ -104,7 +130,7 @@ Changes made in 2023.
   a tuple.
 
 
-* Congif File
+* Config File
   * The most notable change in this file is MAX_NUMBER_OF_ACTIONS_PER_TURN. It is used for 
   allowing multiple actions to be taken in one turn. Adjust as necessary.
 
