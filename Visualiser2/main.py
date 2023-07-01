@@ -73,7 +73,7 @@ class ByteVisualiser:
                     if len(self.bytesprite_map[y][x]) < z + 1:
                         self.bytesprite_map[y][x].append(None)
 
-                    if self.bytesprite_map[y][x][z] is None or self.bytesprite_map[y][x][z].object_type == temp_tile[
+                    if self.bytesprite_map[y][x][z] is None or self.bytesprite_map[y][x][z].object_type != temp_tile[
                         'object_type']:
                         sprite_class: ByteSprite | None = next(t for t in self.bytesprite_templates.sprites() if
                                                                isinstance(t, ByteSprite) and t.object_type == temp_tile[
@@ -87,6 +87,9 @@ class ByteVisualiser:
                     self.bytesprite_map[y][x][z].update(temp_tile, z, Vector(y=y, x=x))
                     temp_tile = temp_tile.get('occupied_by')
                     z += 1
+
+                while len(self.bytesprite_map[y][x]) > z:
+                    self.bytesprite_map[y][x].pop()
 
     def continue_animation(self) -> None:
         row: list
