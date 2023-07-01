@@ -53,6 +53,11 @@ class ByteVisualiser:
         self.tick += 1
 
     def recalc_animation(self, turn_data: dict) -> None:
+        """
+
+        :param turn_data:
+        :return: None
+        """
         game_map: [[dict]] = turn_data['game_board']['game_map']
         row: list
         for y, row in enumerate(game_map):
@@ -61,7 +66,7 @@ class ByteVisualiser:
                 self.bytesprite_map.append(list())
             for x, tile in enumerate(row):
                 if len(self.bytesprite_map[y]) < x + 1:
-                    self.bytesprite_map.append(list())
+                    self.bytesprite_map[y].append(list())
                 temp_tile: dict | None = tile
                 z: int = 0
                 while temp_tile is not None:
