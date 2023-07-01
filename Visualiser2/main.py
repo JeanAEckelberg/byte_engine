@@ -54,40 +54,52 @@ class ByteVisualiser:
 
     def recalc_animation(self, turn_data: dict) -> None:
         """
-
-        :param turn_data:
+        Determine what bytesprites are needed at which location and calls logic to determine active spritesheet and render
+        :param turn_data: A dictionary of all the turn data for current turn
         :return: None
         """
         game_map: [[dict]] = turn_data['game_board']['game_map']
+        # Iterate on each row on the game map
         row: list
         for y, row in enumerate(game_map):
-            tile: dict
+            # Add rows to bytesprite_map if needed
             if len(self.bytesprite_map) < y + 1:
                 self.bytesprite_map.append(list())
+            # Iterate on each tile in the row
+            tile: dict
             for x, tile in enumerate(row):
+                # Add tiles to row if needed
                 if len(self.bytesprite_map[y]) < x + 1:
                     self.bytesprite_map[y].append(list())
+                # Render layers on tile
                 temp_tile: dict | None = tile
                 z: int = 0
                 while temp_tile is not None:
+                    # Add layers if needed
                     if len(self.bytesprite_map[y][x]) < z + 1:
                         self.bytesprite_map[y][x].append(None)
 
+                    # Create or replace bytesprite at current tile on this current layer
                     if self.bytesprite_map[y][x][z] is None or self.bytesprite_map[y][x][z].object_type != temp_tile[
                         'object_type']:
                         sprite_class: ByteSprite | None = next(t for t in self.bytesprite_templates.sprites() if
                                                                isinstance(t, ByteSprite) and t.object_type == temp_tile[
                                                                    'object_type'])
+                        # Check that a bytesprite template exists for current object type
                         if sprite_class is None:
                             raise ValueError(
                                 f'Must provide a bytesprite for each object type! Missing object_type: {temp_tile["object_type"]}')
 
+                        # Instantiate a new bytesprite on current layer
                         self.bytesprite_map[y][x][z] = sprite_class.__class__(self.screen)
 
+                    # Call render logic on bytesprite
                     self.bytesprite_map[y][x][z].update(temp_tile, z, Vector(y=y, x=x))
+                    # increase iteration
                     temp_tile = temp_tile.get('occupied_by')
                     z += 1
 
+                # clean up additional layers
                 while len(self.bytesprite_map[y][x]) > z:
                     self.bytesprite_map[y][x].pop()
 
