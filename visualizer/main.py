@@ -2,10 +2,10 @@ import sys
 
 import pygame
 
-from Visualiser.adapter import Adapter
-from Visualiser.bytesprites.bytesprite import ByteSprite
-from Visualiser.config import Config
-from Visualiser.utils.log_reader import logs_to_dict
+from visualizer.adapter import Adapter
+from visualizer.bytesprites.bytesprite import ByteSprite
+from visualizer.config import Config
+from visualizer.utils.log_reader import logs_to_dict
 from game.utils.vector import Vector
 
 

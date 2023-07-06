@@ -1,7 +1,7 @@
 import pygame
-from Visualiser.bytesprites.exampleTileBS import ExampleTileBS
-from Visualiser.bytesprites.exampleWallBS import ExampleWallBS
-from Visualiser.bytesprites.exampleBS import ExampleBS
+from visualizer.bytesprites.exampleTileBS import ExampleTileBS
+from visualizer.bytesprites.exampleWallBS import ExampleWallBS
+from visualizer.bytesprites.exampleBS import ExampleBS
 
 class Adapter:
     def __init__(self, screen):
