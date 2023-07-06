@@ -2,10 +2,10 @@ import sys
 
 import pygame
 
-from Visualiser2.adapter import Adapter
-from Visualiser2.bytesprites.bytesprite import ByteSprite
-from Visualiser2.config import Config
-from Visualiser2.utils.log_reader import logs_to_dict
+from Visualiser.adapter import Adapter
+from Visualiser.bytesprites.bytesprite import ByteSprite
+from Visualiser.config import Config
+from Visualiser.utils.log_reader import logs_to_dict
 from game.utils.vector import Vector
 
 
@@ -35,7 +35,7 @@ class ByteVisualiser:
 
     def prerender(self):
         self.screen.fill(self.config.BACKGROUND_COLOR)
-        self.prerender()
+        self.adapter.prerender()
 
     def render(self):
         if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
@@ -82,6 +82,8 @@ class ByteVisualiser:
                     # Create or replace bytesprite at current tile on this current layer
                     if self.bytesprite_map[y][x][z] is None or self.bytesprite_map[y][x][z].object_type != temp_tile[
                         'object_type']:
+                        if len(self.bytesprite_templates.sprites()) == 0:
+                            raise ValueError(f'must provide bytesprites for visualization!')
                         sprite_class: ByteSprite | None = next(t for t in self.bytesprite_templates.sprites() if
                                                                isinstance(t, ByteSprite) and t.object_type == temp_tile[
                                                                    'object_type'])
