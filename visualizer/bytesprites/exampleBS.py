@@ -14,6 +14,8 @@ class ExampleBS(ByteSprite):
 
     def update(self, data: dict, layer: int, pos: Vector) -> None:
         super().update(data, layer, pos)
+
+        # Logic for selecting active animation
         if data['inventory'][data['held_index']] is not None:
             self.active_sheet = self.spritesheets[1]
         elif random.randint(1, 6) == 6:
