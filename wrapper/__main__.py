@@ -34,6 +34,9 @@ if __name__ == '__main__':
     vis_subpar = spar.add_parser('visualize', aliases=['v'],
                                  help='Runs the visualizer! "v -h" shows more options')
 
+    all_subpar = spar.add_parser('gen,run,vis', aliases=['grv'],
+                                 help='Generate, Run, Visualize! "grv -h" shows more options')
+
     # Parse Command Line
     par_args = par.parse_args()
     
@@ -65,6 +68,13 @@ if __name__ == '__main__':
         engine.loop()
 
     elif action in ['visualize', 'v']:
+        visualiser = ByteVisualiser()
+        visualiser.loop()
+
+    elif action in ['gen,run,vis', 'grv']:
+        generate()
+        engine = Engine(False)
+        engine.loop()
         visualiser = ByteVisualiser()
         visualiser.loop()
 

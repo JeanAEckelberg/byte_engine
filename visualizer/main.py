@@ -2,11 +2,11 @@ import sys
 
 import pygame
 
+from game.utils.vector import Vector
 from visualizer.adapter import Adapter
 from visualizer.bytesprites.bytesprite import ByteSprite
 from visualizer.config import Config
 from visualizer.utils.log_reader import logs_to_dict
-from game.utils.vector import Vector
 
 
 class ByteVisualiser:
@@ -98,7 +98,8 @@ class ByteVisualiser:
                     # Call render logic on bytesprite
                     self.bytesprite_map[y][x][z].update(temp_tile, z, Vector(y=y, x=x))
                     # increase iteration
-                    temp_tile = temp_tile.get('occupied_by')
+                    temp_tile = temp_tile.get('occupied_by') if temp_tile.get(
+                        'occupied_by') is not None else temp_tile.get('held_item')
                     z += 1
 
                 # clean up additional layers
