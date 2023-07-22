@@ -28,9 +28,7 @@ class Adapter:
         return self.populate_bytesprite.copy()
 
     def render(self, sidebars: Sidebars) -> None:
-        sidebars.left.fill('#FF7F00')
-        sidebars.top.fill('#7FFF00')
-        sidebars.bottom.fill('#00FF7F')
-        sidebars.right.fill('#007FFF')
+        # to access sidebars do sidebars.[whichever sidebar you are doing].fill([hex color])
+        ...
 
     def clean_up(self): ...
