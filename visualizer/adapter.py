@@ -14,17 +14,13 @@ class Adapter:
         self.screen = screen
         self.bytesprites = []
         self.populate_bytesprite = pygame.sprite.Group()
-        self.text = Text(screen, 'Wow, text', 12)
-        self.text2 = Text(self.screen, 'Wow, you clicked the button', 12, 'arial', '#950af2', Vector(100, 150))
-        self.button = Button(self.screen, "Wow, button", 12, '#fff000', '#1ceb42', self.on_click())
-        self.clicked = False
+        # create text and buttons here
 
-    def on_click(self) -> any:
-        self.clicked = True
+    # define any methods button may run
 
     def on_event(self, event):
-        for self.event in pygame.event.get():
-            self.button.mouse_clicked(event)
+        # self.button.mouse_clicked(event)
+        ...
 
     def prerender(self):
         ...
@@ -43,20 +39,9 @@ class Adapter:
         return self.populate_bytesprite.copy()
 
     def render(self):
-        if random.randint(0, 4) == 4:
-            self.text.color = '#fff000'
-        else:
-            self.text.color = '#daa520'
-        self.text.position = Vector(100 + random.randint(-25, 25), 50)
-
-        self.button.position = Vector(100, 100)
-        self.button.mouse_hover()
-
-        self.text.render()
-        if self.clicked:
-            self.text2.render()
-
-        self.button.render()
+        # self.button.render()
+        # any logic for rendering text, buttons, and other visuals
+        ...
 
     def clean_up(self):
         ...
