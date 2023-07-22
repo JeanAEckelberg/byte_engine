@@ -2,12 +2,15 @@ import pygame
 from visualizer.bytesprites.exampleTileBS import ExampleTileBS
 from visualizer.bytesprites.exampleWallBS import ExampleWallBS
 from visualizer.bytesprites.exampleBS import ExampleBS
+from visualizer.utils.sidebars import Sidebars
+from visualizer.bytesprites.bytesprite import ByteSprite
+
 
 class Adapter:
     def __init__(self, screen):
-        self.screen = screen
-        self.bytesprites = []
-        self.populate_bytesprite = pygame.sprite.Group()
+        self.screen: pygame.Surface = screen
+        self.bytesprites: list[ByteSprite] = []
+        self.populate_bytesprite: pygame.sprite.Group = pygame.sprite.Group()
 
     def on_event(self, event): ...
 
@@ -24,6 +27,8 @@ class Adapter:
         self.populate_bytesprite.add(ExampleBS(self.screen))
         return self.populate_bytesprite.copy()
 
-    def render(self): ...
+    def render(self, sidebars: Sidebars) -> None:
+        # to access sidebars do sidebars.[whichever sidebar you are doing]
+        ...
 
     def clean_up(self): ...
