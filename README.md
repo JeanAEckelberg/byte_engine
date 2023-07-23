@@ -1,4 +1,4 @@
-# byte_engine
+# Byte Engine
 Revamped base game engine for use in NDACM Byte-le Royale games.
 Changes made in 2023.
 

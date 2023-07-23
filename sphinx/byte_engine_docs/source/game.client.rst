@@ -1,4 +1,4 @@
-game.client package
+Client Subpackage
 ===================
 
 Submodules

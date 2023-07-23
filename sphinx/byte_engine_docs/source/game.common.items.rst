@@ -1,11 +1,8 @@
-game.common.items package
-=========================
+Items Package
+=============
 
-Submodules
+Item Class
 ----------
-
-game.common.items.item module
------------------------------
 
 .. automodule:: game.common.items.item
    :members:
