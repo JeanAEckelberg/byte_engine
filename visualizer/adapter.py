@@ -7,14 +7,15 @@ from visualizer.bytesprites.exampleBS import ExampleBS
 from game.utils.vector import Vector
 from visualizer.utils.text import Text
 from visualizer.utils.button import Button
+from visualizer.utils.sidebars import Sidebars
+from visualizer.bytesprites.bytesprite import ByteSprite
 
 
 class Adapter:
     def __init__(self, screen):
-        self.screen = screen
-        self.bytesprites = []
-        self.populate_bytesprite = pygame.sprite.Group()
-        # create text and buttons here
+        self.screen: pygame.Surface = screen
+        self.bytesprites: list[ByteSprite] = []
+        self.populate_bytesprite: pygame.sprite.Group = pygame.sprite.Group()
 
     # define any methods button may run
 
@@ -41,6 +42,7 @@ class Adapter:
     def render(self):
         # self.button.render()
         # any logic for rendering text, buttons, and other visuals
+        # to access sidebars do sidebars.[whichever sidebar you are doing]
         ...
 
     def clean_up(self):
