@@ -2,31 +2,31 @@ import pygame
 from game.utils.vector import Vector
 from typing import Optional, TypeAlias
 
-"""
-Class that creates text to be displayed in the visualizer
-
-Defaults used unless otherwise stated:
-font: Bauhaus93
-color: #daa520          (yellowish)
-position: Vector(0, 0)  (representing pixels on screen, top left pixel)
-
-Parameters:
-screen          :  Screen being used for display
-font_size       :  Font size used for text
-font_name       :  Name of font used for text
-color           :  Color used for text
-position        :  Position of text to be displayed
-text            :  Text to be displayed
-
-In future projects, defaults for text style should be changed according to style of game for ease of code
-"""
-
 # Typing alias for color
 Color: TypeAlias = str | int | tuple[int, int, int, Optional[int]] | list[
     int, int, int, Optional[int]] | pygame.Color
 
 
 class Text:
+    """
+    Class that creates text to be displayed in the visualizer
+
+    Defaults used unless otherwise stated:
+    font: Bauhaus93
+    color: #daa520          (yellowish)
+    position: Vector(0, 0)  (representing pixels on screen, top left pixel)
+
+    Parameters:
+    screen          :  Screen being used for display
+    font_size       :  Font size used for text
+    font_name       :  Name of font used for text
+    color           :  Color used for text
+    position        :  Position of text to be displayed
+    text            :  Text to be displayed
+
+    In future projects, defaults for text style should be changed according to style of game for ease of code
+    """
+
     def __init__(self, screen: pygame.Surface, text: str, font_size: int, font_name: str = 'bauhaus93',
                  color: Color = pygame.Color('#daa520'), position: Vector = Vector(0, 0)):
         self.__is_init = True
