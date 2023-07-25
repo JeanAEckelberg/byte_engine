@@ -4,7 +4,6 @@ from visualizer.utils.text import Text
 from game.utils.vector import Vector
 from typing import Optional, Callable
 from typing import TypeAlias
-from visualizer.config import Config
 
 # Typing alias for color
 Color: TypeAlias = str | int | tuple[int, int, int, Optional[int]] | list[
@@ -136,10 +135,10 @@ class Button(Text):
     Parameters:
     Text              :  All parameters from the Text class (screen, text, font_size, font_name, fg_color, position)
     action            :  Action performed when button is clicked
-    colors            :  Of type ButtonColors, contains all colors used in Button class         Default - ButtonColors()
-    padding           :  Amount of padding given to bg rect                                     Default - 5
-    clicked_duration  :  Duration of click on button (seconds), multiplied by frame rate        Default - 0.1
-    border_radius     :  Level of smoothing to corners of button                                Default - 5
+    colors            :  Of type ButtonColors, contains all colors used in Button class       Default - ButtonColors()
+    padding           :  Amount of padding given to bg rect                                   Default - 5
+    click_duration  :  Duration of click on button (milliseconds)                           Default - 100
+    border_radius     :  Level of smoothing to corners of button                              Default - 5
 
     In future projects, defaults for button style should be changed according to style of game for ease of code
     """
@@ -150,13 +149,13 @@ class Button(Text):
                  colors: ButtonColors = ButtonColors(),
                  padding: int = 5,
                  border_radius: int = 5,
-                 clicked_duration: int = 0.10,
+                 click_duration: int = 100,
                  position: Vector = Vector(0, 0)):
         super().__init__(screen, text, font_size, font_name, colors.fg_color, position)
         self.colors: ButtonColors = colors
         self.padding: int = padding
         self.border_radius: int = border_radius
-        self.clicked_duration: float = clicked_duration * Config().FRAME_RATE
+        self.click_duration: int = click_duration
         self.action: Callable = action
         # Get mouse used for interaction of buttons
         self.mouse: pygame.mouse = pygame.mouse
@@ -165,7 +164,7 @@ class Button(Text):
         # Set current bg color to bg color
         self.__bg_current_color: Color = colors.bg_color
         # Set up counter system to display clicked colors
-        self.__isClicked: int = self.clicked_duration + 1
+        self.__isClicked: int = math.floor(self.click_duration + 1)
         self.__clickedTime: int = 0
 
     # Getter methods
@@ -183,8 +182,8 @@ class Button(Text):
         return self.__border_radius
 
     @property
-    def clicked_duration(self) -> float:
-        return self.__clicked_duration
+    def click_duration(self) -> int:
+        return self.__click_duration
 
     @property
     def mouse(self) -> pygame.mouse:
@@ -214,11 +213,11 @@ class Button(Text):
             raise ValueError(f'{self.__class__.__name__}.border_radius must be an int.')
         self.__border_radius = border_radius
 
-    @clicked_duration.setter
-    def clicked_duration(self, clicked_duration: float) -> None:
-        if clicked_duration is None or not isinstance(clicked_duration, float):
-            raise ValueError(f'{self.__class__.__name__}.clicked_duration must be an float.')
-        self.__clicked_duration = clicked_duration
+    @click_duration.setter
+    def click_duration(self, click_duration: float) -> None:
+        if click_duration is None or not isinstance(click_duration, int):
+            raise ValueError(f'{self.__class__.__name__}.click_duration must be an int.')
+        self.__click_duration = click_duration
 
     @mouse.setter
     def mouse(self, mouse: pygame.mouse) -> None:
@@ -247,13 +246,13 @@ class Button(Text):
 
     # Method for rendering button, called by render method in adapter class
     def render(self) -> None:
-        # Count isClicked up by seconds (get_ticks gets time in milliseconds), adjust for frame rate and floor
-        self.__isClicked = math.floor(((pygame.time.get_ticks() / 1000) - self.__clickedTime) * Config().FRAME_RATE)
+        # Count isClicked up by seconds (get_ticks gets time in milliseconds)
+        self.__isClicked = math.floor(pygame.time.get_ticks() - self.__clickedTime)
         # Get bg_rect
         bg_rect: pygame.Rect = self.get_bg_rect()
         # Hover logic for button
         # If the clicked color has not been visible for ~1sec, do not change
-        if self.__isClicked > self.clicked_duration:
+        if self.__isClicked > self.click_duration:
             self.color = self.colors.fg_color
             self.__bg_current_color = self.colors.bg_color
             # If mouse position collides with rect, change to hover color
@@ -272,7 +271,7 @@ class Button(Text):
         if bg_rect.collidepoint(self.__mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 self.__isClicked = 0
-                self.__clickedTime = pygame.time.get_ticks() / 1000
+                self.__clickedTime = pygame.time.get_ticks()
                 self.color = self.colors.fg_color_clicked
                 self.__bg_current_color = self.colors.bg_color_clicked
                 self.execute()
