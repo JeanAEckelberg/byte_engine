@@ -1,13 +1,14 @@
 import sys
 
 import pygame
-
+from typing import Callable
 from game.utils.vector import Vector
 from visualizer.adapter import Adapter
 from visualizer.bytesprites.bytesprite import ByteSprite
 from visualizer.config import Config
 from visualizer.utils.log_reader import logs_to_dict
 from visualizer.utils.sidebars import Sidebars
+from threading import Thread
 
 
 class ByteVisualiser:
@@ -17,7 +18,6 @@ class ByteVisualiser:
         self.config = Config()
         self.turn_logs: dict[str:dict] = {}
         self.size: Vector = self.config.SCREEN_SIZE
-        # size = width, height = 1366, 768
         self.tile_size: int = self.config.TILE_SIZE
 
         self.screen = pygame.display.set_mode((self.size.x, self.size.y))
@@ -123,7 +123,32 @@ class ByteVisualiser:
         self.clock.tick(self.config.FRAME_RATE)
 
     def loop(self):
-        self.load()
+
+        thread: Thread = Thread(target=self.load)
+        thread.start()
+
+        # Start Menu loop
+        in_menu: bool = True
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: sys.exit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE: sys.exit()
+                    if event.key == pygame.K_RETURN: in_menu = False
+
+                in_menu = self.adapter.start_menu_event(event)
+
+            self.adapter.start_menu_render()
+
+            pygame.display.flip()
+
+            if not in_menu:
+                break
+            self.clock.tick(self.config.FRAME_RATE)
+
+        thread.join()
+
         while True:
             # pygame events used to exit the loop
             for event in pygame.event.get():

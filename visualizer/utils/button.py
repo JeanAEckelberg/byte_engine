@@ -2,7 +2,7 @@ import pygame
 import math
 from visualizer.utils.text import Text
 from game.utils.vector import Vector
-from typing import Optional, Callable
+from typing import Optional, Callable, Any
 from typing import TypeAlias
 
 # Typing alias for color
@@ -241,7 +241,7 @@ class Button(Text):
              self.rect.height + (self.padding * 2)])
 
     # Method that executes action parameter
-    def execute(self, *args, **kwargs) -> any:
+    def execute(self, *args, **kwargs) -> Any:
         return self.action(*args, **kwargs)
 
     # Method for rendering button, called by render method in adapter class
@@ -264,7 +264,7 @@ class Button(Text):
         super().render()
 
     # Method for when button is clicked, called by on_event method in adapter
-    def mouse_clicked(self, event: pygame.event) -> None:
+    def mouse_clicked(self, event: pygame.event, *args, **kwargs) -> Any:
         # Get bg_rect
         bg_rect: pygame.Rect = self.get_bg_rect()
         # If both the mouse is hovering over the button and clicks, change color and execute self.action
@@ -274,4 +274,4 @@ class Button(Text):
                 self.__clickedTime = pygame.time.get_ticks()
                 self.color = self.colors.fg_color_clicked
                 self.__bg_current_color = self.colors.bg_color_clicked
-                self.execute()
+                return self.execute(*args, **kwargs)

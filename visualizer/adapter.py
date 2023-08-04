@@ -1,6 +1,7 @@
 import random
 
 import pygame
+from typing import Callable, Any
 from visualizer.bytesprites.exampleTileBS import ExampleTileBS
 from visualizer.bytesprites.exampleWallBS import ExampleWallBS
 from visualizer.bytesprites.exampleBS import ExampleBS
@@ -9,6 +10,7 @@ from visualizer.utils.text import Text
 from visualizer.utils.button import Button, ButtonColors
 from visualizer.utils.sidebars import Sidebars
 from visualizer.bytesprites.bytesprite import ByteSprite
+from visualizer.templates.start_menu_templates import Basic
 
 
 class Adapter:
@@ -16,8 +18,15 @@ class Adapter:
         self.screen: pygame.Surface = screen
         self.bytesprites: list[ByteSprite] = []
         self.populate_bytesprite: pygame.sprite.Group = pygame.sprite.Group()
+        self.start_menu = Basic(screen, 'Basic Title')
 
     # Define any methods button may run
+
+    def start_menu_event(self, event: pygame.event) -> Any:
+        return self.start_menu.events(event)
+
+    def start_menu_render(self):
+        self.start_menu.render()
 
     def on_event(self, event):
         # self.button.mouse_clicked(event)
