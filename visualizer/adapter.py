@@ -1,7 +1,12 @@
+import random
+
 import pygame
 from visualizer.bytesprites.exampleTileBS import ExampleTileBS
 from visualizer.bytesprites.exampleWallBS import ExampleWallBS
 from visualizer.bytesprites.exampleBS import ExampleBS
+from game.utils.vector import Vector
+from visualizer.utils.text import Text
+from visualizer.utils.button import Button, ButtonColors
 from visualizer.utils.sidebars import Sidebars
 from visualizer.bytesprites.bytesprite import ByteSprite
 
@@ -12,13 +17,20 @@ class Adapter:
         self.bytesprites: list[ByteSprite] = []
         self.populate_bytesprite: pygame.sprite.Group = pygame.sprite.Group()
 
-    def on_event(self, event): ...
+    # Define any methods button may run
 
-    def prerender(self): ...
+    def on_event(self, event):
+        # self.button.mouse_clicked(event)
+        ...
 
-    def continue_animation(self): ...
+    def prerender(self):
+        ...
 
-    def recalc_animation(self, turn_log: dict): ...
+    def continue_animation(self):
+        ...
+
+    def recalc_animation(self, turn_log: dict):
+        ...
 
     def populate_bytesprites(self) -> pygame.sprite.Group:
         # Instantiate all bytesprites for each object ands add them here
@@ -28,7 +40,10 @@ class Adapter:
         return self.populate_bytesprite.copy()
 
     def render(self, sidebars: Sidebars) -> None:
+        # self.button.render()
+        # any logic for rendering text, buttons, and other visuals
         # to access sidebars do sidebars.[whichever sidebar you are doing]
         ...
 
-    def clean_up(self): ...
+    def clean_up(self):
+        ...
