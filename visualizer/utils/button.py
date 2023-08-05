@@ -21,9 +21,9 @@ class ButtonColors:
     fg_color           :  Used to store default text color              Default - #daa520
     fg_color_hover     :  Text color for hovering over button           Default - #fff000
     fg_color_clicked   :  Text color for clicking button                Default - #1ceb42
-    bg_color           :  bg color for button                           Default - #846311
-    bg_color_hover     :  bg color for hovering over button             Default - #936e13
-    bg_color_clicked   :  bg color for clicking button                  Default - #efb21b
+    bg_color           :  bg color for button                           Default - #7851a9
+    bg_color_hover     :  bg color for hovering over button             Default - #9879bf
+    bg_color_clicked   :  bg color for clicking button                  Default - #604187
 
     In future projects, defaults for button colors should be changed according to style of game for ease of code
     """
@@ -31,9 +31,9 @@ class ButtonColors:
     def __init__(self, fg_color: Color = pygame.Color('#daa520'),
                  fg_color_hover: Color = pygame.Color('#fff000'),
                  fg_color_clicked: Color = pygame.Color('#1ceb42'),
-                 bg_color: Color = pygame.Color('#846311'),
-                 bg_color_hover: Color = pygame.Color('#936e13'),
-                 bg_color_clicked: Color = pygame.Color('#efb21b')):
+                 bg_color: Color = pygame.Color('#7851a9'),
+                 bg_color_hover: Color = pygame.Color('#9879bf'),
+                 bg_color_clicked: Color = pygame.Color('#604187')):
         self.fg_color: Color = fg_color
         self.fg_color_hover: Color = fg_color_hover
         self.fg_color_clicked: Color = fg_color_clicked
@@ -236,6 +236,7 @@ class Button(Text):
 
     # Method to get the bg rect for the button
     def get_bg_rect(self) -> pygame.Rect:
+        self.position = Vector(*self.rect.topleft)
         return pygame.Rect(
             [self.rect.x - self.padding, self.rect.y - self.padding, self.rect.width + (self.padding * 2),
              self.rect.height + (self.padding * 2)])

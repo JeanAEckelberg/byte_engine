@@ -37,11 +37,17 @@ class ByteVisualiser:
 
     def prerender(self):
         self.screen.fill(self.config.BACKGROUND_COLOR)
+        self.sidebars.top.fill(self.config.BACKGROUND_COLOR)
+        self.sidebars.bottom.fill(self.config.BACKGROUND_COLOR)
+        self.sidebars.left.fill(self.config.BACKGROUND_COLOR)
+        self.sidebars.right.fill(self.config.BACKGROUND_COLOR)
         self.adapter.prerender()
 
-    def render(self):
+    def render(self) -> bool:
         if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
             # NEXT TURN
+            if self.turn_logs.get(f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN + 1:04d}') is None:
+                return False
             self.recalc_animation(self.turn_logs[f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN + 1:04d}'])
             self.adapter.recalc_animation(
                 self.turn_logs[f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN + 1:04d}'])
@@ -57,6 +63,7 @@ class ByteVisualiser:
         self.screen.blit(self.sidebars.right, self.sidebars.right_rect)
         pygame.display.flip()
         self.tick += 1
+        return True
 
     def recalc_animation(self, turn_data: dict) -> None:
         """
@@ -128,27 +135,29 @@ class ByteVisualiser:
         thread.start()
 
         # Start Menu loop
-        in_menu: bool = True
+        in_phase: bool = True
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE: sys.exit()
-                    if event.key == pygame.K_RETURN: in_menu = False
+                    if event.key == pygame.K_RETURN: in_phase = False
 
-                in_menu = self.adapter.start_menu_event(event)
+                if in_phase:
+                    in_phase = self.adapter.start_menu_event(event)
 
             self.adapter.start_menu_render()
 
             pygame.display.flip()
 
-            if not in_menu:
+            if not in_phase:
                 break
             self.clock.tick(self.config.FRAME_RATE)
 
         thread.join()
 
+        in_phase = True
         while True:
             # pygame events used to exit the loop
             for event in pygame.event.get():
@@ -156,12 +165,41 @@ class ByteVisualiser:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE: sys.exit()
+                    if event.key == pygame.K_RETURN: in_phase = False
 
                 self.adapter.on_event(event)
 
             self.prerender()
-            self.render()
+
+            if in_phase:
+                in_phase = self.render()
+
+            if not in_phase:
+                break
             self.postrender()
+
+        in_phase = True
+        self.adapter.results_load(self.turn_logs['results'])
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: sys.exit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE: sys.exit()
+                    if event.key == pygame.K_RETURN: in_phase = False
+
+                if in_phase:
+                    in_phase = self.adapter.results_event(event)
+
+            self.adapter.results_render()
+
+            pygame.display.flip()
+
+            if not in_phase:
+                break
+            self.clock.tick(self.config.FRAME_RATE)
+
+        sys.exit()
 
 
 if __name__ == '__main__':

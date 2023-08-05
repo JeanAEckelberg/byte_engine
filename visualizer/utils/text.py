@@ -49,6 +49,7 @@ class Text:
 
     # Render text and rectangle to screen
     def render(self) -> None:
+        self.position = Vector(*self.__rect.topleft)
         self.screen.blit(self.__text_surface, self.__rect)
 
     # Getter methods

@@ -1,3 +1,4 @@
+import threading
 from datetime import datetime
 import importlib
 import json
@@ -259,7 +260,7 @@ class Engine:
         else:
             data = self.master_controller.create_turn_log(self.clients, self.tick_number)
 
-        write_json_file(data, os.path.join(LOGS_DIR, f'turn_{self.tick_number:04d}.json'))
+        threading.Thread(write_json_file(data, os.path.join(LOGS_DIR, f'turn_{self.tick_number:04d}.json'))).start()
 
         # Perform a game over check
         if self.master_controller.game_over:
