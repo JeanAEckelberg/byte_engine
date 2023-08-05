@@ -227,7 +227,6 @@ class Button(Text):
 
     @action.setter
     def action(self, action: Callable) -> None:
-        print(action)
         if action is None or not isinstance(action, Callable):
             raise ValueError(f'{self.__class__.__name__}.action must be of type Callable')
         self.__action = action
