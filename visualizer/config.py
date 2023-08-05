@@ -8,12 +8,12 @@ class Config:
     __SCREEN_SIZE: Vector = Vector(x=1366, y=768)  # width, height
     __FRAME_RATE: int = 12
     __BACKGROUND_COLOR: (int, int, int) = 0, 0, 0
-    __GAME_BOARD_MARGIN_LEFT: int = 400
+    __GAME_BOARD_MARGIN_LEFT: int = 395
     __GAME_BOARD_MARGIN_TOP: int = 100
-    __SIDEBAR_TOP_DIMENSIONS: Vector = Vector(x=1300, y=100)  # width, height
-    __SIDEBAR_BOTTOM_DIMENSIONS: Vector = Vector(x=1300, y=100)
-    __SIDEBAR_LEFT_DIMENSIONS: Vector = Vector(x=100, y=800)
-    __SIDEBAR_RIGHT_DIMENSIONS: Vector = Vector(x=100, y=800)
+    __SIDEBAR_TOP_DIMENSIONS: Vector = Vector(x=1366, y=80)  # width, height
+    __SIDEBAR_BOTTOM_DIMENSIONS: Vector = Vector(x=1366, y=80)
+    __SIDEBAR_LEFT_DIMENSIONS: Vector = Vector(x=200, y=768)
+    __SIDEBAR_RIGHT_DIMENSIONS: Vector = Vector(x=200, y=768)
     __SIDEBAR_TOP_PADDING: int = 5  # how much space there is around it
     __SIDEBAR_BOTTOM_PADDING: int = 5
     __SIDEBAR_LEFT_PADDING: int = 5

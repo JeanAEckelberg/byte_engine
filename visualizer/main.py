@@ -20,11 +20,10 @@ class ByteVisualiser:
         self.size: Vector = self.config.SCREEN_SIZE
         self.tile_size: int = self.config.TILE_SIZE
 
-        self.screen = pygame.display.set_mode((self.size.x, self.size.y))
+        self.screen = pygame.display.set_mode(self.size.as_tuple())
         self.adapter = Adapter(self.screen)
 
         self.clock = pygame.time.Clock()
-        self.simple_font = pygame.font.Font(None, 50)
 
         self.tick: int = 0
         self.bytesprite_templates = pygame.sprite.Group()
