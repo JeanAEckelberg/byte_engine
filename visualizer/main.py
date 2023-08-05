@@ -177,6 +177,7 @@ class ByteVisualiser:
                 break
             self.postrender()
 
+        # Results
         in_phase = True
         self.adapter.results_load(self.turn_logs['results'])
         while True:

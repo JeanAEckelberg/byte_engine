@@ -44,7 +44,7 @@ class Text:
         # get rectangle used
         self.__rect: pygame.Rect = self.__text_surface.get_rect()
         # Set top left position of rect to position
-        self.__rect.topleft: tuple[int, int] = self.position.as_tuple()
+        self.__rect.topleft = self.position.as_tuple()
         self.__is_init = False
 
     # Render text and rectangle to screen
@@ -96,7 +96,7 @@ class Text:
         # Reevaluate text
         self.__text_surface: pygame.Surface = self.__font.render(self.text, True, self.color)
         self.__rect: pygame.Rect = self.__text_surface.get_rect()
-        self.__rect.topleft: tuple[int, int] = self.position.as_tuple()
+        self.__rect.topleft = self.position.as_tuple()
 
     @font_name.setter
     def font_name(self, font_name: str) -> None:
@@ -108,7 +108,7 @@ class Text:
         self.__font: pygame.font.Font = pygame.font.SysFont(self.font_name, self.font_size)
         self.__text_surface: pygame.Surface = self.__font.render(self.text, True, self.color)
         self.__rect: pygame.Rect = self.__text_surface.get_rect()
-        self.__rect.topleft: tuple[int, int] = self.position.as_tuple()
+        self.__rect.topleft = self.position.as_tuple()
 
     @font_size.setter
     def font_size(self, font_size: int) -> None:
@@ -120,7 +120,7 @@ class Text:
         self.__font: pygame.font.Font = pygame.font.SysFont(self.font_name, self.font_size)
         self.__text_surface: pygame.Surface = self.__font.render(self.text, True, self.color)
         self.__rect: pygame.Rect = self.__text_surface.get_rect()
-        self.__rect.topleft: tuple[int, int] = self.position.as_tuple()
+        self.__rect.topleft = self.position.as_tuple()
 
     @color.setter
     def color(self, color: Color) -> None:
@@ -131,7 +131,7 @@ class Text:
             # Reevaluate text with new font color
             self.__text_surface: pygame.Surface = self.__font.render(self.text, True, self.color)
             self.__rect: pygame.Rect = self.__text_surface.get_rect()
-            self.__rect.topleft: tuple[int, int] = self.position.as_tuple()
+            self.__rect.topleft = self.position.as_tuple()
         except (ValueError, TypeError):
             raise ValueError(
                 f'{self.__class__.__name__}.color must be a one of the following types: str or int or tuple(int, int, '
@@ -145,4 +145,4 @@ class Text:
         if self.__is_init:
             return
         # Reevaluate text position with new position
-        self.__rect.topleft: tuple[int, int] = self.position.as_tuple()
+        self.__rect.topleft = self.position.as_tuple()
