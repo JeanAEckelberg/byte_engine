@@ -9,7 +9,7 @@ from game.common.map.game_board import GameBoard
 def generate(seed: int = random.randint(0, 1000000000)):
     print('Generating game map...')
 
-    temp: GameBoard = GameBoard(seed,map_size=Vector(6,6), locations={(Vector(1,1),):[Avatar()]}, walled=True)
+    temp: GameBoard = GameBoard(seed,map_size=Vector(6,6), locations={(Vector(1,1),):[Avatar()], (Vector(4,4),):[Avatar()]}, walled=True)
     temp.generate_map()
     data: dict = {'game_board':temp.to_json()}
     # for x in range(1, MAX_TICKS + 1):
