@@ -116,6 +116,7 @@ class MasterController(Controller):
             for i in range(MAX_NUMBER_OF_ACTIONS_PER_TURN):
                 try:
                     self.movement_controller.handle_actions(client.actions[i], client, self.current_world_data["game_board"])
+                    self.interact_controller.handle_actions(client.actions[i], client, self.current_world_data["game_board"])
                 except IndexError:
                     pass
 

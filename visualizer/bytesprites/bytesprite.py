@@ -28,11 +28,13 @@ class ByteSprite(pyg.sprite.Sprite):
             self.__config.NUMBER_OF_FRAMES_PER_TURN, colorkey)
             for row in range(num_of_states)]
 
+        self.rect: pyg.Rect = pyg.Rect(top_left.as_tuple(), (self.__config.TILE_SIZE * self.__config.SCALE,) * 2)
+
         self.spritesheets = [
-            [pyg.transform.scale(frame, (self.__config.TILE_SIZE * self.__config.SCALE,) * 2) for frame in
+            [pyg.transform.scale(frame, self.rect.size) for frame in
              sheet] for sheet in self.spritesheets]
 
-        self.rect: pyg.Rect = pyg.Rect(top_left.as_tuple(), (self.__config.TILE_SIZE * self.__config.SCALE,) * 2)
+
 
         self.active_sheet: list[pyg.Surface] = self.spritesheets[0]
         self.object_type: int = object_type
