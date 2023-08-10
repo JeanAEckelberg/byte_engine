@@ -9,7 +9,7 @@ class Item(GameObject):
 
     Value:
         The value of an item can be anything depending on the purpose of the game. For example, if a player can
-        sell an item to a shop for gold/money, the value attribute would be used. However, this value may be used
+        sell an item to a shop for monetary value, the value attribute would be used. However, this value may be used
         for anything to better fit the purpose of the game being created.
 
     ----------------------------------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ class Item(GameObject):
         If the player can pick up an item without any inventory issues, the entire item and its quantity will be
         added.
 
-        *** Refer to avatar.py for a more in-depth explanation of how picking up items work with examples. ***
+        * Refer to avatar.py for a more in-depth explanation of how picking up items work with examples. *
     """
 
     def __init__(self, value: int = 1, durability: int | None = None, quantity: int = 1, stack_size: int = 1):
