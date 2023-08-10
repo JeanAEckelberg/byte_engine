@@ -6,10 +6,12 @@ from typing import Self
 
 class Occupiable(GameObject):
     """
-    This object exists to encapsulate all objects that could be placed on the gameboard.
+    Occupiable objects exist to encapsulate all objects that could be placed on the gameboard.
 
-    Occupiable objects can only be occupied by GameObjects. None is acceptable for this too. Item inherits
-    from GameObjects, but it is not allowed to be on an Occupiable object.
+    These objects can only be occupied by GameObjects, so inheritance is important. The ``None`` value is
+    acceptable for this too, showing that nothing is occupying the object.
+
+    Note: The class Item inherits from GameObject, but it is not allowed to be on an Occupiable object.
     """
 
     def __init__(self, occupied_by: GameObject = None, **kwargs):

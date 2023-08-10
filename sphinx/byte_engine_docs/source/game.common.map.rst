@@ -1,45 +1,32 @@
-game.common.map package
-=======================
-
-Submodules
-----------
-
-game.common.map.game\_board module
-----------------------------------
+Gameboard Class
+---------------
 
 .. automodule:: game.common.map.game_board
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.common.map.occupiable module
----------------------------------
+Occupiable Class
+----------------
 
 .. automodule:: game.common.map.occupiable
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.common.map.tile module
----------------------------
+Tile Class
+----------
 
 .. automodule:: game.common.map.tile
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.common.map.wall module
----------------------------
+Wall Class
+----------
 
 .. automodule:: game.common.map.wall
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: game.common.map
-   :members:
-   :undoc-members:
-   :show-inheritance:

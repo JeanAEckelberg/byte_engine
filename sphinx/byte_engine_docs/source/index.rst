@@ -14,6 +14,7 @@ document.
 .. Note to self: work on formatting everything individually first and then uncomment include game.rst
 .. toctree::
    game.common.items
+   game.common.map
 
 .. .. include:: game.rst
 .. .. include:: readme.rst
