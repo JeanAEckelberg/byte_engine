@@ -23,15 +23,16 @@ class GameBoard(GameObject):
         For example, a Vector object with an 'x' of 5 and a 'y' of 7 will create a board 5 tiles wide and
         7 tiles long.
 
-            Example:
-                _ _ _ _ _  y = 0
-                |       |
-                |       |
-                |       |
-                |       |
-                |       |
-                |       |
-                _ _ _ _ _  y = 6
+        Example:
+        ::
+            _ _ _ _ _  y = 0
+            |       |
+            |       |
+            |       |
+            |       |
+            |       |
+            |       |
+            _ _ _ _ _  y = 6
 
     -----
 
@@ -49,7 +50,7 @@ class GameBoard(GameObject):
             If you want a GameObject to be at a specific coordinate, ensure that the key-value pair is
             *ONE* Vector and *ONE* GameObject.
             An example of this would be the following:
-
+            ::
                 locations = { (vector_2_4) : [station_0] }
 
             In this example, vector_2_4 contains the coordinates (2, 4). (Note that this naming convention
@@ -58,9 +59,11 @@ class GameBoard(GameObject):
 
         Dynamically:
             If you want to assign multiple GameObjects to different coordinates, use a key-value
-            pair of any length. **NOTE**: The length of the tuple and list *MUST* be equal, otherwise it will not
-            work. In this case, the assignments will be random. An example of this would be the following:
+            pair of any length.
 
+            **NOTE**: The length of the tuple and list *MUST* be equal, otherwise it will not
+            work. In this case, the assignments will be random. An example of this would be the following:
+            ::
                 locations =
                     {
                         (vector_0_0, vector_1_1, vector_2_2) : [station_0, station_1, station_2]
@@ -76,7 +79,7 @@ class GameBoard(GameObject):
 
         Lastly, another example will be shown to explain that you can combine both static and
         dynamic assignments in the same dictionary:
-
+        ::
             locations =
                 {
                     (vector_0_0) : [station_0],
@@ -98,8 +101,10 @@ class GameBoard(GameObject):
         For example, let the dimensions of the map be (5, 7). There will be wall Objects horizontally across
         x = 0 and x = 4. There will also be wall Objects vertically at y = 0 and y = 6
 
-            Below is a visual example of this, with 'x' being where the wall Objects are.
+        Below is a visual example of this, with 'x' being where the wall Objects are.
 
+        Example:
+        ::
             x x x x x   y = 0
             x       x
             x       x
