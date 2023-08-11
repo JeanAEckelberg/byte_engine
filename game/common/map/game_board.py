@@ -13,7 +13,7 @@ from game.utils.vector import Vector
 
 class GameBoard(GameObject):
     """
-    `Notes for creating the GameBoard:`
+    `GameBoard Class Notes:`
 
     -----
 

@@ -5,7 +5,9 @@ from typing import Self
 
 class Item(GameObject):
     """
-    `Items have 4 different attributes: value, durability, quantity, stack-size.`
+    `Item Class Notes:`
+
+    Items have 4 different attributes: value, durability, quantity, stack-size.
 
     -----
 

@@ -10,7 +10,7 @@ from typing import Self
 # create station object that contains occupied_by
 class OccupiableStation(Occupiable, Station):
     """
-    `Occupiable Station Notes:`
+    `OccupiableStation Class Notes:`
 
         Occupiable Station objects inherit from both the Occupiable and Station classes. This allows for other objects to
         be "on top" of the Occupiable Station. For example, an Avatar object can be on top of this object. Since Stations
@@ -19,7 +19,7 @@ class OccupiableStation(Occupiable, Station):
         Any GameObject or Item can be in an Occupiable Station.
 
         Occupiable Station Example is a small file that shows an example of how this class can be
-        used. You can expand on the class' functionality as needed.
+        used. The example class can be deleted or expanded upon if necessary.
     """
     def __init__(self, held_item: Item | None = None, occupied_by: GameObject | None = None):
         super().__init__(occupied_by=occupied_by, held_item=held_item)

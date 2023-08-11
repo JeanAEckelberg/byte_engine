@@ -8,7 +8,7 @@ from typing import Self
 # create Station object from GameObject that allows item to be contained in it
 class Station(GameObject):
     """
-    `Station Notes:`
+    `Station Class Notes:`
 
         Station objects inherit from GameObject and can contain Item objects in them.
 
