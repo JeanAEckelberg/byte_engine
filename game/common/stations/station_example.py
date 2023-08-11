@@ -11,4 +11,5 @@ class StationExample(Station):
         self.object_type = ObjectType.STATION_EXAMPLE
 
     def take_action(self, avatar: Avatar) -> Item | None:
+        # the avatar takes the item from this station
         avatar.pick_up(self.held_item)

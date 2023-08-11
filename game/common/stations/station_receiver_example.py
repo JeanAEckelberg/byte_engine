@@ -11,4 +11,5 @@ class StationReceiverExample(Station):
         self.object_type = ObjectType.STATION_RECEIVER_EXAMPLE
 
     def take_action(self, avatar: Avatar) -> None:
+        # this station receives the avatar's held item and keeps it
         self.held_item = avatar.drop_held_item()
