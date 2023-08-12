@@ -19,8 +19,8 @@ document.
 
 .. Note to self: work on formatting everything individually first and then uncomment include game.rst
 .. toctree::
-   game.common.map
-   game.common.stations
+   game.common.avatar
+.. game
 
 .. .. include:: ../../../README.md
 ..   :parser: myst_parser.sphinx_

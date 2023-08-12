@@ -1,8 +1,5 @@
-game.common package
-===================
-
-Subpackages
------------
+Common Package
+==============
 
 .. toctree::
    :maxdepth: 4
@@ -11,53 +8,55 @@ Subpackages
    game.common.map
    game.common.stations
 
-Submodules
-----------
-
-game.common.action module
--------------------------
+Action Class
+------------
 
 .. automodule:: game.common.action
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.common.avatar module
--------------------------
+-----
+
+Avatar Class
+------------
 
 .. automodule:: game.common.avatar
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.common.enums module
-------------------------
+-----
+
+Enums File
+----------
+
+**NOTE:** The use of the enum structure is to make is easier to execute certain tasks. It also helps with
+identifying types of Objects throughout the project.
+
+When developing the game, add any extra enums as necessary.
 
 .. automodule:: game.common.enums
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.common.game\_object module
--------------------------------
+-----
+
+GameObject Class
+----------------
 
 .. automodule:: game.common.game_object
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.common.player module
--------------------------
+-----
+
+Player Class
+------------
 
 .. automodule:: game.common.player
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: game.common
    :members:
    :undoc-members:
    :show-inheritance:

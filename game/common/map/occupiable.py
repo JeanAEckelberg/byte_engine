@@ -8,6 +8,8 @@ class Occupiable(GameObject):
     """
     `Occupiable Class Notes:`
 
+    -----
+
         Occupiable objects exist to encapsulate all objects that could be placed on the gameboard.
 
         These objects can only be occupied by GameObjects, so inheritance is important. The ``None`` value is

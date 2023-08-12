@@ -10,6 +10,8 @@ class Station(GameObject):
     """
     `Station Class Notes:`
 
+    -----
+
         Station objects inherit from GameObject and can contain Item objects in them.
 
         Players can interact with Stations in different ways by using the ``take_action()`` method. Whatever is specified

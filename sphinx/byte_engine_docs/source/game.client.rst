@@ -1,4 +1,4 @@
-Client Subpackage
+Client Package
 ===================
 
 Submodules

@@ -13,7 +13,7 @@ Game Package Contents
 Submodules
 ----------
 
-game.config module
+Config File
 ------------------
 
 .. automodule:: game.config
@@ -21,7 +21,7 @@ game.config module
    :undoc-members:
    :show-inheritance:
 
-game.engine module
+Engine File
 ------------------
 
 .. automodule:: game.engine

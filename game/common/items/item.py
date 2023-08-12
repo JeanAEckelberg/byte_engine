@@ -7,6 +7,8 @@ class Item(GameObject):
     """
     `Item Class Notes:`
 
+    -----
+
     Items have 4 different attributes: value, durability, quantity, stack-size.
 
     -----

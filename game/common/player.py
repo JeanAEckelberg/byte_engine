@@ -6,9 +6,14 @@ from game.common.enums import *
 
 class Player(GameObject):
     """
-    The Player class is what represents the team that's competing. The player can contain a list of Actions to
-    execute each turn. The avatar is what's used to execute actions (e.g., interacting with stations, picking up
-    items, etc.).
+    `Player Class Notes:`
+
+    -----
+
+        The Player class is what represents the team that's competing. The player can contain a list of Actions to
+        execute each turn. The avatar is what's used to execute actions (e.g., interacting with stations, picking up
+        items, etc.). For more details on the difference between the Player and Avatar classes, refer to the README
+        document.
     """
     def __init__(self, code: object | None = None, team_name: str | None = None, actions: list[ActionType] = [],
                  avatar: Avatar | None = None):

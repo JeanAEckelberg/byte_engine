@@ -12,6 +12,8 @@ class Tile(Occupiable):
     """
     `Tile Class Notes:`
 
+    -----
+
         The Tile class exists to encapsulate all objects that could be placed on the gameboard.
 
         Tiles will represent things like the floor in the game. They inherit from Occupiable, which allows for tiles to
