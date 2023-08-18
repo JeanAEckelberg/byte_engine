@@ -1,165 +1,190 @@
-game.test\_suite.tests package
-==============================
+Tests Package
+=============
 
-Submodules
-----------
-
-game.test\_suite.tests.test\_avatar module
-------------------------------------------
-
-.. automodule:: game.test_suite.tests.test_avatar
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-game.test\_suite.tests.test\_avatar\_inventory module
------------------------------------------------------
-
-.. automodule:: game.test_suite.tests.test_avatar_inventory
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-game.test\_suite.tests.test\_example module
--------------------------------------------
+Test Example File
+-----------------
 
 .. automodule:: game.test_suite.tests.test_example
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_game\_board module
------------------------------------------------
+-----
+
+Test Avatar Class
+----------------
+
+.. automodule:: game.test_suite.tests.test_avatar
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+-----
+
+Test Avatar Inventory
+---------------------
+
+.. automodule:: game.test_suite.tests.test_avatar_inventory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+-----
+
+Test Gameboard Class
+-------------------
 
 .. automodule:: game.test_suite.tests.test_game_board
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_game\_board\_no\_gen module
---------------------------------------------------------
+-----
+
+Test Gameboard (No Generation)
+------------------------------
 
 .. automodule:: game.test_suite.tests.test_game_board_no_gen
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_initialization module
---------------------------------------------------
+-----
+
+Test Initialization File
+------------------------
 
 .. automodule:: game.test_suite.tests.test_initialization
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_interact\_controller module
---------------------------------------------------------
+-----
+
+Test Interact Controller File
+-----------------------------
 
 .. automodule:: game.test_suite.tests.test_interact_controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_inventory\_controller module
----------------------------------------------------------
+-----
+
+Test Inventory Controller Class
+-------------------------------
 
 .. automodule:: game.test_suite.tests.test_inventory_controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_item module
-----------------------------------------
+-----
+
+Test Item Class
+---------------
 
 .. automodule:: game.test_suite.tests.test_item
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_master\_controller module
-------------------------------------------------------
+-----
+
+Test Master Controller Class
+----------------------------
 
 .. automodule:: game.test_suite.tests.test_master_controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_movement\_controller module
---------------------------------------------------------
+-----
+
+Test Movement Controller Class
+------------------------------
 
 .. automodule:: game.test_suite.tests.test_movement_controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_movement\_controller\_if\_occupiable\_station\_is\_occupiable module
--------------------------------------------------------------------------------------------------
+-----
+
+Test Movement Controller with Occupiable Stations the Avatar can Occupy
+-----------------------------------------------------------------------
 
 .. automodule:: game.test_suite.tests.test_movement_controller_if_occupiable_station_is_occupiable
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_movement\_controller\_if\_occupiable\_stations module
-----------------------------------------------------------------------------------
+-----
+
+Test Movement Controller with Occupiable Stations
+-------------------------------------------------
 
 .. automodule:: game.test_suite.tests.test_movement_controller_if_occupiable_stations
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_movement\_controller\_if\_stations module
-----------------------------------------------------------------------
+-----
+
+Test Movement Controller with Stations the Avatar Occupy
+--------------------------------------------------------
 
 .. automodule:: game.test_suite.tests.test_movement_controller_if_stations
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_movement\_controller\_if\_wall module
-------------------------------------------------------------------
+-----
+
+Test Movement Controller with Walls
+-----------------------------------
 
 .. automodule:: game.test_suite.tests.test_movement_controller_if_wall
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_occupiable\_station module
--------------------------------------------------------
+-----
+
+Test Occupiable Station Class
+-----------------------------
 
 .. automodule:: game.test_suite.tests.test_occupiable_station
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_player module
-------------------------------------------
+-----
+
+Test Player Class
+-----------------
 
 .. automodule:: game.test_suite.tests.test_player
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_station module
--------------------------------------------
+-----
+
+Test Station Class
+------------------
 
 .. automodule:: game.test_suite.tests.test_station
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.test\_suite.tests.test\_tile module
-----------------------------------------
+-----
 
-.. automodule:: game.test_suite.tests.test_tile
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
+Test Tile Class
 ---------------
 
-.. automodule:: game.test_suite.tests
+.. automodule:: game.test_suite.tests.test_tile
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,53 +1,50 @@
-game.controllers package
+Controllers Package
 ========================
 
-Submodules
-----------
-
-game.controllers.controller module
-----------------------------------
+Controller Class
+----------------
 
 .. automodule:: game.controllers.controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.controllers.interact\_controller module
---------------------------------------------
+-----
+
+Interact Controller Class
+-------------------------
 
 .. automodule:: game.controllers.interact_controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.controllers.inventory\_controller module
----------------------------------------------
+-----
+
+Inventory Controller Class
+--------------------------
 
 .. automodule:: game.controllers.inventory_controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.controllers.master\_controller module
-------------------------------------------
+-----
+
+Master Controller Class
+-----------------------
 
 .. automodule:: game.controllers.master_controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.controllers.movement\_controller module
---------------------------------------------
+-----
+
+Movement Controller Class
+-------------------------
 
 .. automodule:: game.controllers.movement_controller
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: game.controllers
    :members:
    :undoc-members:
    :show-inheritance:

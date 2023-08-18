@@ -20,10 +20,10 @@ document.
 .. Note to self: work on formatting everything individually first and then uncomment include game.rst
 .. toctree::
    game.common.avatar
-.. game
+   game
 
-.. .. include:: ../../../README.md
-..   :parser: myst_parser.sphinx_
+.. include:: ../../../README.md
+   :parser: myst_parser.sphinx_
 
 
 .. .. include:: game.rst
