@@ -1,53 +1,50 @@
-game.utils package
-==================
+Utils Package
+=============
 
-Submodules
-----------
-
-game.utils.generate\_game module
---------------------------------
+Generate Game
+-------------
 
 .. automodule:: game.utils.generate_game
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.utils.helpers module
--------------------------
+-----
+
+Helpers
+-------
 
 .. automodule:: game.utils.helpers
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.utils.thread module
-------------------------
+-----
+
+Thread
+------
 
 .. automodule:: game.utils.thread
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.utils.validation module
-----------------------------
+-----
+
+Validation
+----------
 
 .. automodule:: game.utils.validation
    :members:
    :undoc-members:
    :show-inheritance:
 
-game.utils.vector module
-------------------------
+-----
+
+Vector
+------
 
 .. automodule:: game.utils.vector
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: game.utils
    :members:
    :undoc-members:
    :show-inheritance:

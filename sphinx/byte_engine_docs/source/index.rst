@@ -9,17 +9,15 @@ Welcome to NDACM's Byte Engine Documentation!
 
 ----
 
-NDSU's ACM chapter hosts an annual competition called \'Byte-le Royale.\' This competition, created by <name here>,
+NDSU's ACM chapter hosts an annual competition called "Byte-le Royale." This competition, created by <name here>,
 promotes working with others and developing critical thinking skills, while challenging competitors under a time limit.
 
-This project provides the framework for developing games for Byte-le. For extra information, refer to the README
-document.
+This project provides the framework for developing games for Byte-le. The README document is attached to this page.
+Refer to that for additional info to what's here!
 
 -----
 
-.. Note to self: work on formatting everything individually first and then uncomment include game.rst
 .. toctree::
-   game.common.avatar
    game
 
 .. include:: ../../../README.md

@@ -1,21 +1,10 @@
 Client Package
 ===================
 
-Submodules
-----------
-
-game.client.user\_client module
--------------------------------
+User Client
+-----------
 
 .. automodule:: game.client.user_client
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: game.client
    :members:
    :undoc-members:
    :show-inheritance:

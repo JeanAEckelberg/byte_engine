@@ -1,5 +1,5 @@
-base\_client module
-===================
+Base Client
+===========
 
 .. automodule:: base_client
    :members:
