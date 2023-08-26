@@ -20,6 +20,11 @@ Refer to that for additional info to what's here!
 .. toctree::
    game
 
+-----
+
+README Document
+===============
+
 .. include:: ../../../README.md
    :parser: myst_parser.sphinx_
 

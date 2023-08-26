@@ -14,7 +14,6 @@ class Item(GameObject):
     -----
 
     Value:
-    ------
         The value of an item can be anything depending on the purpose of the game. For example, if a player can
         sell an item to a shop for monetary value, the value attribute would be used. However, this value may be
         used for anything to better fit the purpose of the game being created.
@@ -22,7 +21,6 @@ class Item(GameObject):
     -----
 
     Durability:
-    -----------
         The value of an item's durability can be either None or an integer.
         If durability is an integer, the stack size *must* be 1. Think of Minecraft and the mechanics of tools. You
         can only have one sword with a durability (they don't stack).
@@ -34,7 +32,6 @@ class Item(GameObject):
     -----
 
     Quantity and Stack Size:
-    ------------------------
         These two work in tandem. Fractions (x/y) will be used to better explain the concept.
 
         Quantity simply refers to the amount of the current item the player has. For example, having 5 gold, 10
@@ -54,9 +51,7 @@ class Item(GameObject):
 
     -----
 
-    pick_up Method:
-    ---------------
-
+    Pick Up Method:
         When picking up an item, it will first check the item's ObjectType. If the Object interacted with is not of
         the ObjectType ITEM enum, an error will be thrown.
 
