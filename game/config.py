@@ -2,6 +2,11 @@ import os
 
 from game.common.enums import *
 
+"""
+This file is important for configuring settings for the project. All parameters in this file have comments to explain 
+what they do already. Refer to this file to clear any confusion, and make any changes as necessary.
+"""
+
 # Runtime settings / Restrictions --------------------------------------------------------------------------------------
 # The engine requires these to operate
 MAX_TICKS = 500                                     # max number of ticks the server will run regardless of game state
