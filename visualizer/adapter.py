@@ -12,6 +12,7 @@ from visualizer.utils.button import Button, ButtonColors
 from visualizer.utils.sidebars import Sidebars
 from visualizer.bytesprites.bytesprite import ByteSprite
 from visualizer.templates.menu_templates import Basic, MenuTemplate
+from visualizer.templates.playback_template import PlaybackTemplate, PlaybackButtons
 
 
 class Adapter:
@@ -25,6 +26,7 @@ class Adapter:
         self.bytesprites: list[ByteSprite] = []
         self.populate_bytesprite: pygame.sprite.Group = pygame.sprite.Group()
         self.menu: MenuTemplate = Basic(screen, 'Basic Title')
+        self.playback: PlaybackTemplate = PlaybackTemplate(screen)
         self.turn_number: int = 0
         self.turn_max: int = MAX_TICKS
 
@@ -48,7 +50,7 @@ class Adapter:
         """
         self.menu.start_render()
 
-    def on_event(self, event) -> None:
+    def on_event(self, event) -> PlaybackButtons:
         """
         By giving this method an event, this method can execute whatever is specified. An example is provided below
         and commented out. Use as necessary.
@@ -58,7 +60,7 @@ class Adapter:
 
         # The line below is an example of what this method could be used for.
         # self.button.mouse_clicked(event)
-        ...
+        return self.playback.playback_events(event)
 
     def prerender(self) -> None:
         """
@@ -84,13 +86,14 @@ class Adapter:
         self.populate_bytesprite.add(ExampleBS(self.screen))
         return self.populate_bytesprite.copy()
 
-    def render(self, sidebars: Sidebars) -> None:
+    def render(self) -> None:
         # self.button.render()
         # any logic for rendering text, buttons, and other visuals
         # to access sidebars do sidebars.[whichever sidebar you are doing]
-        text = Text(sidebars.top, f'{self.turn_number} / {self.turn_max}', 48)
-        text.rect.center = sidebars.top_rect.center
+        text = Text(self.screen, f'{self.turn_number} / {self.turn_max}', 48)
+        text.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().midtop), Vector(0, 50)).as_tuple()
         text.render()
+        self.playback.playback_render()
 
     def clean_up(self) -> None:
         ...

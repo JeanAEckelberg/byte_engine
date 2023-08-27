@@ -1,13 +1,20 @@
+import math
 import sys
+import os
 
+import numpy
 import pygame
+import cv2
+from PIL import Image
+
+import game.config
 from typing import Callable
 from game.utils.vector import Vector
 from visualizer.adapter import Adapter
 from visualizer.bytesprites.bytesprite import ByteSprite
 from visualizer.config import Config
 from visualizer.utils.log_reader import logs_to_dict
-from visualizer.utils.sidebars import Sidebars
+from visualizer.templates.playback_template import PlaybackButtons
 from threading import Thread
 
 
@@ -28,7 +35,11 @@ class ByteVisualiser:
         self.tick: int = 0
         self.bytesprite_templates = pygame.sprite.Group()
         self.bytesprite_map: [[[ByteSprite]]] = list()
-        self.sidebars: Sidebars = Sidebars()
+
+        self.default_frame_rate: int = self.config.FRAME_RATE
+
+        self.playback_speed: float = 1
+        self.recording: bool = False
 
     def load(self):
         self.turn_logs = logs_to_dict()
@@ -36,13 +47,12 @@ class ByteVisualiser:
 
     def prerender(self):
         self.screen.fill(self.config.BACKGROUND_COLOR)
-        self.sidebars.top.fill(self.config.BACKGROUND_COLOR)
-        self.sidebars.bottom.fill(self.config.BACKGROUND_COLOR)
-        self.sidebars.left.fill(self.config.BACKGROUND_COLOR)
-        self.sidebars.right.fill(self.config.BACKGROUND_COLOR)
         self.adapter.prerender()
 
-    def render(self) -> bool:
+    def render(self, playback_buttons: PlaybackButtons) -> bool:
+        # Run playback buttons method
+        self.playback_controls(playback_buttons)
+
         if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
             # NEXT TURN
             if self.turn_logs.get(f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN + 1:04d}') is None:
@@ -55,14 +65,60 @@ class ByteVisualiser:
             self.continue_animation()
             self.adapter.continue_animation()
 
-        self.adapter.render(self.sidebars)
-        self.screen.blit(self.sidebars.top, self.sidebars.top_rect)
-        self.screen.blit(self.sidebars.bottom, self.sidebars.bottom_rect)
-        self.screen.blit(self.sidebars.left, self.sidebars.left_rect)
-        self.screen.blit(self.sidebars.right, self.sidebars.right_rect)
+        self.adapter.render()
         pygame.display.flip()
+
+        # If recording, save frames into video
+        if self.recording:
+            self.save_video()
         self.tick += 1
         return True
+
+    # Method to deal with playback_controls in visualizer (called in render method)
+    def playback_controls(self, playback_buttons: PlaybackButtons) -> None:
+        # If recording, do not allow button to work
+        if not self.recording:
+            # Save button
+            if playback_buttons.save_button:
+                self.recording = True
+                self.playback_speed = 10
+                self.tick = 0
+            # Prev button to go back a frame
+            if playback_buttons.prev_button:
+                whole, part = divmod(self.tick, self.config.NUMBER_OF_FRAMES_PER_TURN)
+                self.tick = (whole - (0 if part > 0 else 1)) * self.config.NUMBER_OF_FRAMES_PER_TURN
+            # Next button to go forward a frame
+            if playback_buttons.next_button:
+                whole, part = divmod(self.tick, self.config.NUMBER_OF_FRAMES_PER_TURN)
+                self.tick = (whole + (2 if part > 0 else 1)) * self.config.NUMBER_OF_FRAMES_PER_TURN
+            # Start button to restart visualizer
+            if playback_buttons.start_button:
+                self.tick = 0
+            # End button to end visualizer
+            if playback_buttons.end_button:
+                self.tick = self.config.NUMBER_OF_FRAMES_PER_TURN * (game.config.MAX_TICKS + 1)
+            # Pause button to pause visualizer (allow looping of turn animation)
+            if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0 and playback_buttons.pause_button:
+                self.tick = max(self.tick - self.config.NUMBER_OF_FRAMES_PER_TURN, 0)
+            if playback_buttons.normal_speed_button:
+                self.playback_speed = 1
+            if playback_buttons.fast_speed_button:
+                self.playback_speed = 2
+            if playback_buttons.fastest_speed_button:
+                self.playback_speed = 3
+
+    # Method to deal with saving game to mp4 (called in render if save button pressed)
+    def save_video(self) -> None:
+        # Convert to PIL Image
+        new_image = pygame.image.tostring(self.screen.copy(), "RGBA", False)
+        new_image = Image.frombytes("RGBA", self.screen.get_rect().size, new_image)
+        # Scale image
+        new_image.thumbnail(self.scaled)
+        # Convert to OpenCV Image with numpy
+        new_image = numpy.array(new_image)
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_RGBA2BGRA)
+        # Write image and go to next turn
+        self.writer.write(new_image)
 
     def recalc_animation(self, turn_data: dict) -> None:
         """
@@ -126,7 +182,7 @@ class ByteVisualiser:
 
     def postrender(self):
         self.adapter.clean_up()
-        self.clock.tick(self.config.FRAME_RATE)
+        self.clock.tick(math.floor(self.default_frame_rate * self.playback_speed))
 
     def loop(self):
 
@@ -152,12 +208,19 @@ class ByteVisualiser:
 
             if not in_phase:
                 break
-            self.clock.tick(self.config.FRAME_RATE)
+            self.clock.tick(math.floor(self.default_frame_rate * self.playback_speed))
 
         thread.join()
 
-        in_phase = True
+        size = (self.config.SCREEN_SIZE.x, self.config.SCREEN_SIZE.y)
+        self.scaled = (math.ceil(size[0] / 2), math.ceil(size[1] / 2))
+        self.writer = cv2.VideoWriter("out.mp4", cv2.VideoWriter_fourcc(*'H264'), math.floor(self.default_frame_rate * self.playback_speed), self.scaled)
+
+        in_phase: bool = True
+        playback_buttons: PlaybackButtons = PlaybackButtons()
+
         while True:
+            temp_playback_buttons: PlaybackButtons = PlaybackButtons()
             # pygame events used to exit the loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
@@ -166,12 +229,23 @@ class ByteVisualiser:
                     if event.key == pygame.K_ESCAPE: sys.exit()
                     if event.key == pygame.K_RETURN: in_phase = False
 
-                self.adapter.on_event(event)
+                temp_playback_buttons = self.adapter.on_event(event)
+
+            if temp_playback_buttons.pause_button:
+                playback_buttons.pause_button = not playback_buttons.pause_button
+            playback_buttons.end_button = temp_playback_buttons.end_button
+            playback_buttons.start_button = temp_playback_buttons.start_button
+            playback_buttons.prev_button = temp_playback_buttons.prev_button
+            playback_buttons.next_button = temp_playback_buttons.next_button
+            playback_buttons.save_button = temp_playback_buttons.save_button
+            playback_buttons.normal_speed_button = temp_playback_buttons.normal_speed_button
+            playback_buttons.fast_speed_button = temp_playback_buttons.fast_speed_button
+            playback_buttons.fastest_speed_button = temp_playback_buttons.fastest_speed_button
 
             self.prerender()
 
             if in_phase:
-                in_phase = self.render()
+                in_phase = self.render(playback_buttons)
 
             if not in_phase:
                 break
@@ -195,10 +269,15 @@ class ByteVisualiser:
 
             pygame.display.flip()
 
+            if self.recording:
+                self.save_video()
+
             if not in_phase:
                 break
-            self.clock.tick(self.config.FRAME_RATE)
+            self.clock.tick(math.floor(self.default_frame_rate * self.playback_speed))
 
+        if self.recording:
+            self.writer.release()
         sys.exit()
 
 
