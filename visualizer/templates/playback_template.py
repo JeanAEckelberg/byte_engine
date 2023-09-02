@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Any
+from functools import reduce
+from enum import Flag, auto
 
 import pygame
 
@@ -13,17 +14,16 @@ while the game is running, with buttons including pause, speed up, slow down, re
 """
 
 
-@dataclass
-class PlaybackButtons:
-    pause_button: bool = False
-    save_button: bool = False
-    next_button: bool = False
-    prev_button: bool = False
-    start_button: bool = False
-    end_button: bool = False
-    normal_speed_button: bool = False
-    fast_speed_button: bool = False
-    fastest_speed_button: bool = False
+class PlaybackButtons(Flag):
+    PAUSE_BUTTON = auto()
+    SAVE_BUTTON = auto()
+    NEXT_BUTTON = auto()
+    PREV_BUTTON = auto()
+    START_BUTTON = auto()
+    END_BUTTON = auto()
+    NORMAL_SPEED_BUTTON = auto()
+    FAST_SPEED_BUTTON = auto()
+    FASTEST_SPEED_BUTTON = auto()
 
 
 class PlaybackTemplate:
@@ -37,15 +37,18 @@ class PlaybackTemplate:
 
     def __init__(self, screen: pygame.Surface):
         self.screen: pygame.Surface = screen
-        self.pause_button: Button = Button(self.screen, 'Pause', lambda: True, font_size=18)
-        self.next_button: Button = Button(self.screen, 'Next', lambda: True, font_size=18)
-        self.prev_button: Button = Button(self.screen, 'Prev', lambda: True, font_size=18)
-        self.start_button: Button = Button(self.screen, 'Start', lambda: True, font_size=18)
-        self.end_button: Button = Button(self.screen, 'End', lambda: True, font_size=18)
-        self.save_button: Button = Button(self.screen, 'Save', lambda: True, font_size=18)
-        self.normal_speed_button: Button = Button(self.screen, '1x', lambda: True, font_size=18)
-        self.fast_speed_button: Button = Button(self.screen, '2x', lambda: True, font_size=18)
-        self.fastest_speed_button: Button = Button(self.screen, '3x', lambda: True, font_size=18)
+        self.pause_button: Button = Button(self.screen, 'Pause', lambda: PlaybackButtons.PAUSE_BUTTON, font_size=18)
+        self.next_button: Button = Button(self.screen, 'Next', lambda: PlaybackButtons.NEXT_BUTTON, font_size=18)
+        self.prev_button: Button = Button(self.screen, 'Prev', lambda: PlaybackButtons.PREV_BUTTON, font_size=18)
+        self.start_button: Button = Button(self.screen, 'Start', lambda: PlaybackButtons.START_BUTTON, font_size=18)
+        self.end_button: Button = Button(self.screen, 'End', lambda: PlaybackButtons.END_BUTTON, font_size=18)
+        self.save_button: Button = Button(self.screen, 'Save', lambda: PlaybackButtons.SAVE_BUTTON, font_size=18)
+        self.normal_speed_button: Button = Button(self.screen, '1x', lambda: PlaybackButtons.NORMAL_SPEED_BUTTON,
+                                                  font_size=18)
+        self.fast_speed_button: Button = Button(self.screen, '2x', lambda: PlaybackButtons.FAST_SPEED_BUTTON,
+                                                font_size=18)
+        self.fastest_speed_button: Button = Button(self.screen, '4x', lambda: PlaybackButtons.FASTEST_SPEED_BUTTON,
+                                                   font_size=18)
 
         self.prev_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
                                                           Vector(-80, 225)).as_tuple()
@@ -78,13 +81,13 @@ class PlaybackTemplate:
         self.fastest_speed_button.render()
 
     def playback_events(self, event: pygame.event) -> PlaybackButtons:
-        return PlaybackButtons(
-            pause_button=self.pause_button.mouse_clicked(event),
-            save_button=self.save_button.mouse_clicked(event),
-            next_button=self.next_button.mouse_clicked(event),
-            prev_button=self.prev_button.mouse_clicked(event),
-            start_button=self.start_button.mouse_clicked(event),
-            end_button=self.end_button.mouse_clicked(event),
-            normal_speed_button=self.normal_speed_button.mouse_clicked(event),
-            fast_speed_button=self.fast_speed_button.mouse_clicked(event),
-            fastest_speed_button=self.fastest_speed_button.mouse_clicked(event))
+        return reduce(lambda a, b: a | b,
+                                      (self.pause_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                                       self.save_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                                       self.next_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                                       self.prev_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                                       self.start_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                                       self.end_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                                       self.normal_speed_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                                       self.fast_speed_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                                       self.fastest_speed_button.mouse_clicked(event, default=PlaybackButtons(0))))

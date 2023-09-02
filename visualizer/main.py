@@ -38,7 +38,8 @@ class ByteVisualiser:
 
         self.default_frame_rate: int = self.config.FRAME_RATE
 
-        self.playback_speed: float = 1
+        self.playback_speed: int = 1
+        self.paused: bool = False
         self.recording: bool = False
 
     def load(self):
@@ -49,9 +50,9 @@ class ByteVisualiser:
         self.screen.fill(self.config.BACKGROUND_COLOR)
         self.adapter.prerender()
 
-    def render(self, playback_buttons: PlaybackButtons) -> bool:
+    def render(self, button_pressed: PlaybackButtons) -> bool:
         # Run playback buttons method
-        self.playback_controls(playback_buttons)
+        self.playback_controls(button_pressed)
 
         if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
             # NEXT TURN
@@ -75,37 +76,39 @@ class ByteVisualiser:
         return True
 
     # Method to deal with playback_controls in visualizer (called in render method)
-    def playback_controls(self, playback_buttons: PlaybackButtons) -> None:
+    def playback_controls(self, button_pressed: PlaybackButtons) -> None:
         # If recording, do not allow button to work
         if not self.recording:
             # Save button
-            if playback_buttons.save_button:
+            if PlaybackButtons.SAVE_BUTTON in button_pressed:
                 self.recording = True
                 self.playback_speed = 10
                 self.tick = 0
             # Prev button to go back a frame
-            if playback_buttons.prev_button:
+            if PlaybackButtons.PREV_BUTTON in button_pressed:
                 whole, part = divmod(self.tick, self.config.NUMBER_OF_FRAMES_PER_TURN)
                 self.tick = (whole - (0 if part > 0 else 1)) * self.config.NUMBER_OF_FRAMES_PER_TURN
             # Next button to go forward a frame
-            if playback_buttons.next_button:
+            if PlaybackButtons.NEXT_BUTTON in button_pressed:
                 whole, part = divmod(self.tick, self.config.NUMBER_OF_FRAMES_PER_TURN)
                 self.tick = (whole + (2 if part > 0 else 1)) * self.config.NUMBER_OF_FRAMES_PER_TURN
             # Start button to restart visualizer
-            if playback_buttons.start_button:
+            if PlaybackButtons.START_BUTTON in button_pressed:
                 self.tick = 0
             # End button to end visualizer
-            if playback_buttons.end_button:
+            if PlaybackButtons.END_BUTTON in button_pressed:
                 self.tick = self.config.NUMBER_OF_FRAMES_PER_TURN * (game.config.MAX_TICKS + 1)
             # Pause button to pause visualizer (allow looping of turn animation)
-            if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0 and playback_buttons.pause_button:
+            if PlaybackButtons.PAUSE_BUTTON in button_pressed:
+                self.paused = not self.paused
+            if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0 and self.paused:
                 self.tick = max(self.tick - self.config.NUMBER_OF_FRAMES_PER_TURN, 0)
-            if playback_buttons.normal_speed_button:
+            if PlaybackButtons.NORMAL_SPEED_BUTTON in button_pressed:
                 self.playback_speed = 1
-            if playback_buttons.fast_speed_button:
+            if PlaybackButtons.FAST_SPEED_BUTTON in button_pressed:
                 self.playback_speed = 2
-            if playback_buttons.fastest_speed_button:
-                self.playback_speed = 3
+            if PlaybackButtons.FASTEST_SPEED_BUTTON in button_pressed:
+                self.playback_speed = 4
 
     # Method to deal with saving game to mp4 (called in render if save button pressed)
     def save_video(self) -> None:
@@ -182,7 +185,7 @@ class ByteVisualiser:
 
     def postrender(self):
         self.adapter.clean_up()
-        self.clock.tick(math.floor(self.default_frame_rate * self.playback_speed))
+        self.clock.tick(self.default_frame_rate * self.playback_speed)
 
     def loop(self):
 
@@ -208,19 +211,18 @@ class ByteVisualiser:
 
             if not in_phase:
                 break
-            self.clock.tick(math.floor(self.default_frame_rate * self.playback_speed))
+            self.clock.tick(self.default_frame_rate * self.playback_speed)
 
         thread.join()
 
         size = (self.config.SCREEN_SIZE.x, self.config.SCREEN_SIZE.y)
         self.scaled = (math.ceil(size[0] / 2), math.ceil(size[1] / 2))
-        self.writer = cv2.VideoWriter("out.mp4", cv2.VideoWriter_fourcc(*'H264'), math.floor(self.default_frame_rate * self.playback_speed), self.scaled)
+        self.writer = cv2.VideoWriter("out.mp4", cv2.VideoWriter_fourcc(*'H264'), self.default_frame_rate, self.scaled)
 
         in_phase: bool = True
-        playback_buttons: PlaybackButtons = PlaybackButtons()
+        playback_buttons: PlaybackButtons = PlaybackButtons(0)
 
         while True:
-            temp_playback_buttons: PlaybackButtons = PlaybackButtons()
             # pygame events used to exit the loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
@@ -229,18 +231,7 @@ class ByteVisualiser:
                     if event.key == pygame.K_ESCAPE: sys.exit()
                     if event.key == pygame.K_RETURN: in_phase = False
 
-                temp_playback_buttons = self.adapter.on_event(event)
-
-            if temp_playback_buttons.pause_button:
-                playback_buttons.pause_button = not playback_buttons.pause_button
-            playback_buttons.end_button = temp_playback_buttons.end_button
-            playback_buttons.start_button = temp_playback_buttons.start_button
-            playback_buttons.prev_button = temp_playback_buttons.prev_button
-            playback_buttons.next_button = temp_playback_buttons.next_button
-            playback_buttons.save_button = temp_playback_buttons.save_button
-            playback_buttons.normal_speed_button = temp_playback_buttons.normal_speed_button
-            playback_buttons.fast_speed_button = temp_playback_buttons.fast_speed_button
-            playback_buttons.fastest_speed_button = temp_playback_buttons.fastest_speed_button
+                playback_buttons = self.adapter.on_event(event)
 
             self.prerender()
 

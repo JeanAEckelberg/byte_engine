@@ -264,14 +264,15 @@ class Button(Text):
         super().render()
 
     # Method for when button is clicked, called by on_event method in adapter
-    def mouse_clicked(self, event: pygame.event, *args, **kwargs) -> Any:
+    def mouse_clicked(self, event: pygame.event, default: Any = None, *args, **kwargs) -> Any:
         # Get bg_rect
         bg_rect: pygame.Rect = self.get_bg_rect()
         # If both the mouse is hovering over the button and clicks, change color and execute self.action
-        if bg_rect.collidepoint(self.__mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and self.__isClicked > self.click_duration:
-            if event.button == 1:
-                self.__isClicked = 0
-                self.__clickedTime = pygame.time.get_ticks()
-                self.color = self.colors.fg_color_clicked
-                self.__bg_current_color = self.colors.bg_color_clicked
-                return self.execute(*args, **kwargs)
+        if bg_rect.collidepoint(self.__mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and \
+                self.__isClicked > self.click_duration and event.button == 1:
+            self.__isClicked = 0
+            self.__clickedTime = pygame.time.get_ticks()
+            self.color = self.colors.fg_color_clicked
+            self.__bg_current_color = self.colors.bg_color_clicked
+            return self.execute(*args, **kwargs)
+        return default
