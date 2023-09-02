@@ -220,9 +220,9 @@ class ByteVisualiser:
         self.writer = cv2.VideoWriter("out.mp4", cv2.VideoWriter_fourcc(*'H264'), self.default_frame_rate, self.scaled)
 
         in_phase: bool = True
-        playback_buttons: PlaybackButtons = PlaybackButtons(0)
 
         while True:
+            playback_buttons: PlaybackButtons = PlaybackButtons(0)
             # pygame events used to exit the loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()

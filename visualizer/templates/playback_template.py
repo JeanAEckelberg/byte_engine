@@ -82,12 +82,12 @@ class PlaybackTemplate:
 
     def playback_events(self, event: pygame.event) -> PlaybackButtons:
         return reduce(lambda a, b: a | b,
-                                      (self.pause_button.mouse_clicked(event, default=PlaybackButtons(0)),
-                                       self.save_button.mouse_clicked(event, default=PlaybackButtons(0)),
-                                       self.next_button.mouse_clicked(event, default=PlaybackButtons(0)),
-                                       self.prev_button.mouse_clicked(event, default=PlaybackButtons(0)),
-                                       self.start_button.mouse_clicked(event, default=PlaybackButtons(0)),
-                                       self.end_button.mouse_clicked(event, default=PlaybackButtons(0)),
-                                       self.normal_speed_button.mouse_clicked(event, default=PlaybackButtons(0)),
-                                       self.fast_speed_button.mouse_clicked(event, default=PlaybackButtons(0)),
-                                       self.fastest_speed_button.mouse_clicked(event, default=PlaybackButtons(0))))
+                      (self.pause_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                       self.save_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                       self.next_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                       self.prev_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                       self.start_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                       self.end_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                       self.normal_speed_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                       self.fast_speed_button.mouse_clicked(event, default=PlaybackButtons(0)),
+                       self.fastest_speed_button.mouse_clicked(event, default=PlaybackButtons(0))))
