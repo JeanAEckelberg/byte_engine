@@ -92,14 +92,16 @@ class ByteVisualiser:
                 self.recording = True
                 self.playback_speed = 10
                 self.tick = 0
+            if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0 and self.paused:
+                self.tick = max(self.tick - self.config.NUMBER_OF_FRAMES_PER_TURN, 0)
             # Prev button to go back a frame
             if PlaybackButtons.PREV_BUTTON in button_pressed:
-                whole, part = divmod(self.tick, self.config.NUMBER_OF_FRAMES_PER_TURN)
-                self.tick = (whole - (0 if part > 0 else 1)) * self.config.NUMBER_OF_FRAMES_PER_TURN
+                turn = self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN
+                self.tick = (turn - 1) * self.config.NUMBER_OF_FRAMES_PER_TURN
             # Next button to go forward a frame
             if PlaybackButtons.NEXT_BUTTON in button_pressed:
-                whole, part = divmod(self.tick, self.config.NUMBER_OF_FRAMES_PER_TURN)
-                self.tick = (whole + (2 if part > 0 else 1)) * self.config.NUMBER_OF_FRAMES_PER_TURN
+                turn = self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN
+                self.tick = (turn + 1) * self.config.NUMBER_OF_FRAMES_PER_TURN
             # Start button to restart visualizer
             if PlaybackButtons.START_BUTTON in button_pressed:
                 self.tick = 0
@@ -109,8 +111,6 @@ class ByteVisualiser:
             # Pause button to pause visualizer (allow looping of turn animation)
             if PlaybackButtons.PAUSE_BUTTON in button_pressed:
                 self.paused = not self.paused
-            if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0 and self.paused:
-                self.tick = max(self.tick - self.config.NUMBER_OF_FRAMES_PER_TURN, 0)
             if PlaybackButtons.NORMAL_SPEED_BUTTON in button_pressed:
                 self.playback_speed = 1
             if PlaybackButtons.FAST_SPEED_BUTTON in button_pressed:

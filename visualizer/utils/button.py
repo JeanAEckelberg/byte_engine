@@ -269,7 +269,7 @@ class Button(Text):
         bg_rect: pygame.Rect = self.get_bg_rect()
         # If both the mouse is hovering over the button and clicks, change color and execute self.action
         if bg_rect.collidepoint(self.__mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and \
-                self.__isClicked > self.click_duration and event.button == 1:
+                event.button == 1:
             self.__isClicked = 0
             self.__clickedTime = pygame.time.get_ticks()
             self.color = self.colors.fg_color_clicked
