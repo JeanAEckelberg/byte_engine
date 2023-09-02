@@ -17,7 +17,7 @@ class GameBoard(GameObject):
 
     -----
 
-    map_size:
+    Map Size:
     ---------
         map_size is a Vector object, allowing you to specify the size of the (x, y) plane of the game board.
         For example, a Vector object with an 'x' of 5 and a 'y' of 7 will create a board 5 tiles wide and
@@ -36,7 +36,7 @@ class GameBoard(GameObject):
 
     -----
 
-    locations:
+    Locations:
     ----------
         This is the bulkiest part of the generation.
 
@@ -93,7 +93,7 @@ class GameBoard(GameObject):
 
     -----
 
-    walled:
+    Walled:
     -------
         This is simply a bool value that will create a wall barrier on the boundary of the game_board. If
         walled is True, the wall will be created for you.
