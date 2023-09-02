@@ -22,18 +22,18 @@ class ByteVisualiser:
 
     def __init__(self):
         pygame.init()
-        self.config = Config()
+        self.config: Config = Config()
         self.turn_logs: dict[str:dict] = {}
         self.size: Vector = self.config.SCREEN_SIZE
         self.tile_size: int = self.config.TILE_SIZE
 
-        self.screen = pygame.display.set_mode(self.size.as_tuple())
-        self.adapter = Adapter(self.screen)
+        self.screen: pygame.display = pygame.display.set_mode(self.size.as_tuple())
+        self.adapter: Adapter = Adapter(self.screen)
 
-        self.clock = pygame.time.Clock()
+        self.clock: pygame.time.Clock = pygame.time.Clock()
 
         self.tick: int = 0
-        self.bytesprite_templates = pygame.sprite.Group()
+        self.bytesprite_templates: pygame.sprite.Group = pygame.sprite.Group()
         self.bytesprite_map: [[[ByteSprite]]] = list()
 
         self.default_frame_rate: int = self.config.FRAME_RATE
@@ -42,17 +42,22 @@ class ByteVisualiser:
         self.paused: bool = False
         self.recording: bool = False
 
-    def load(self):
-        self.turn_logs = logs_to_dict()
+        size: tuple[int, int] = (self.config.SCREEN_SIZE.x, self.config.SCREEN_SIZE.y)
+        # Scale for video saving (division can be adjusted, higher division = lower quality)
+        self.scaled: tuple[int, int] = (size[0] // 2, size[1] // 2)
+        self.writer: cv2.VideoWriter = cv2.VideoWriter("out.mp4", cv2.VideoWriter_fourcc(*'H264'), self.default_frame_rate, self.scaled)
+
+    def load(self) -> None:
+        self.turn_logs: dict = logs_to_dict()
         self.bytesprite_templates = self.adapter.populate_bytesprites()
 
-    def prerender(self):
+    def prerender(self) -> None:
         self.screen.fill(self.config.BACKGROUND_COLOR)
         self.adapter.prerender()
 
     def render(self, button_pressed: PlaybackButtons) -> bool:
         # Run playback buttons method
-        self.playback_controls(button_pressed)
+        self.__playback_controls(button_pressed)
 
         if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
             # NEXT TURN
@@ -61,6 +66,7 @@ class ByteVisualiser:
             self.recalc_animation(self.turn_logs[f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN + 1:04d}'])
             self.adapter.recalc_animation(
                 self.turn_logs[f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN + 1:04d}'])
+
         else:
             # NEXT ANIMATION FRAME
             self.continue_animation()
@@ -72,11 +78,13 @@ class ByteVisualiser:
         # If recording, save frames into video
         if self.recording:
             self.save_video()
+            # Reduce ticks to just one frame per turn for saving video (can be adjusted)
+            self.tick += self.config.NUMBER_OF_FRAMES_PER_TURN - 1
         self.tick += 1
         return True
 
-    # Method to deal with playback_controls in visualizer (called in render method)
-    def playback_controls(self, button_pressed: PlaybackButtons) -> None:
+    # Method to deal with playback_controls in visualizer ran in render method
+    def __playback_controls(self, button_pressed: PlaybackButtons) -> None:
         # If recording, do not allow button to work
         if not self.recording:
             # Save button
@@ -115,8 +123,8 @@ class ByteVisualiser:
         # Convert to PIL Image
         new_image = pygame.image.tostring(self.screen.copy(), "RGBA", False)
         new_image = Image.frombytes("RGBA", self.screen.get_rect().size, new_image)
-        # Scale image
-        new_image.thumbnail(self.scaled)
+        # Scale image (using Bicubic, can be adjusted)
+        new_image.thumbnail(self.scaled, Image.BICUBIC)
         # Convert to OpenCV Image with numpy
         new_image = numpy.array(new_image)
         new_image = cv2.cvtColor(new_image, cv2.COLOR_RGBA2BGRA)
@@ -134,8 +142,7 @@ class ByteVisualiser:
         row: list
         for y, row in enumerate(game_map):
             # Add rows to bytesprite_map if needed
-            if len(self.bytesprite_map) < y + 1:
-                self.bytesprite_map.append(list())
+            self.__add_rows(y)
             # Iterate on each tile in the row
             tile: dict
             for x, tile in enumerate(row):
@@ -147,24 +154,10 @@ class ByteVisualiser:
                 z: int = 0
                 while temp_tile is not None:
                     # Add layers if needed
-                    if len(self.bytesprite_map[y][x]) < z + 1:
-                        self.bytesprite_map[y][x].append(None)
+                    self.__add_needed_layers(x, y, z)
 
                     # Create or replace bytesprite at current tile on this current layer
-                    if self.bytesprite_map[y][x][z] is None or self.bytesprite_map[y][x][z].object_type != temp_tile[
-                        'object_type']:
-                        if len(self.bytesprite_templates.sprites()) == 0:
-                            raise ValueError(f'must provide bytesprites for visualization!')
-                        sprite_class: ByteSprite | None = next(t for t in self.bytesprite_templates.sprites() if
-                                                               isinstance(t, ByteSprite) and t.object_type == temp_tile[
-                                                                   'object_type'])
-                        # Check that a bytesprite template exists for current object type
-                        if sprite_class is None:
-                            raise ValueError(
-                                f'Must provide a bytesprite for each object type! Missing object_type: {temp_tile["object_type"]}')
-
-                        # Instantiate a new bytesprite on current layer
-                        self.bytesprite_map[y][x][z] = sprite_class.__class__(self.screen)
+                    self.__create_bytesprite(x, y, z, temp_tile)
 
                     # Call render logic on bytesprite
                     self.bytesprite_map[y][x][z].update(temp_tile, z, Vector(y=y, x=x))
@@ -174,8 +167,39 @@ class ByteVisualiser:
                     z += 1
 
                 # clean up additional layers
-                while len(self.bytesprite_map[y][x]) > z:
-                    self.bytesprite_map[y][x].pop()
+                self.__clean_up_layers(x, y, z)
+
+    # Add rows to bytesprite_map ran in recalc_animation method
+    def __add_rows(self, y: int) -> None:
+        if len(self.bytesprite_map) < y + 1:
+            self.bytesprite_map.append(list())
+
+    # Add layers ran in recalc_animation method
+    def __add_needed_layers(self, x: int, y: int, z: int) -> None:
+        if len(self.bytesprite_map[y][x]) < z + 1:
+            self.bytesprite_map[y][x].append(None)
+
+    # Create bytesprite at current tile ran in recalc_animation method
+    def __create_bytesprite(self, x: int, y: int, z: int, temp_tile: dict | None) -> None:
+        if self.bytesprite_map[y][x][z] is None or self.bytesprite_map[y][x][z].object_type != temp_tile[
+            'object_type']:
+            if len(self.bytesprite_templates.sprites()) == 0:
+                raise ValueError(f'must provide bytesprites for visualization!')
+            sprite_class: ByteSprite | None = next(t for t in self.bytesprite_templates.sprites() if
+                                                   isinstance(t, ByteSprite) and t.object_type == temp_tile[
+                                                       'object_type'])
+            # Check that a bytesprite template exists for current object type
+            if sprite_class is None:
+                raise ValueError(
+                    f'Must provide a bytesprite for each object type! Missing object_type: {temp_tile["object_type"]}')
+
+            # Instantiate a new bytesprite on current layer
+            self.bytesprite_map[y][x][z] = sprite_class.__class__(self.screen)
+
+    # Additional layer clean up method ran in recalc_animation method
+    def __clean_up_layers(self, x: int, y: int, z: int) -> None:
+        while len(self.bytesprite_map[y][x]) > z:
+            self.bytesprite_map[y][x].pop()
 
     def continue_animation(self) -> None:
         row: list
@@ -183,17 +207,35 @@ class ByteVisualiser:
         sprite: ByteSprite
         [[[sprite.set_image_and_render() for sprite in tile] for tile in row] for row in self.bytesprite_map]
 
-    def postrender(self):
+    def postrender(self) -> None:
         self.adapter.clean_up()
         self.clock.tick(self.default_frame_rate * self.playback_speed)
 
-    def loop(self):
-
+    def loop(self) -> None:
         thread: Thread = Thread(target=self.load)
         thread.start()
 
         # Start Menu loop
         in_phase: bool = True
+        self.__start_menu_loop(in_phase)
+
+        thread.join()
+
+        # Playback Menu loop
+        in_phase = True
+        self.__play_back_menu_loop(in_phase)
+
+        # Results
+        in_phase = True
+        self.__results_loop(in_phase)
+
+        if self.recording:
+            self.writer.release()
+
+        sys.exit()
+
+    # Start menu loop ran in loop method
+    def __start_menu_loop(self, in_phase: bool) -> None:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
@@ -213,14 +255,8 @@ class ByteVisualiser:
                 break
             self.clock.tick(self.default_frame_rate * self.playback_speed)
 
-        thread.join()
-
-        size = (self.config.SCREEN_SIZE.x, self.config.SCREEN_SIZE.y)
-        self.scaled = (math.ceil(size[0] / 2), math.ceil(size[1] / 2))
-        self.writer = cv2.VideoWriter("out.mp4", cv2.VideoWriter_fourcc(*'H264'), self.default_frame_rate, self.scaled)
-
-        in_phase: bool = True
-
+    # Playback menu loop ran in loop method
+    def __play_back_menu_loop(self, in_phase: bool) -> None:
         while True:
             playback_buttons: PlaybackButtons = PlaybackButtons(0)
             # pygame events used to exit the loop
@@ -242,8 +278,8 @@ class ByteVisualiser:
                 break
             self.postrender()
 
-        # Results
-        in_phase = True
+    # Results loop method ran in loop method
+    def __results_loop(self, in_phase: bool) -> None:
         self.adapter.results_load(self.turn_logs['results'])
         while True:
             for event in pygame.event.get():
@@ -266,10 +302,6 @@ class ByteVisualiser:
             if not in_phase:
                 break
             self.clock.tick(math.floor(self.default_frame_rate * self.playback_speed))
-
-        if self.recording:
-            self.writer.release()
-        sys.exit()
 
 
 if __name__ == '__main__':
