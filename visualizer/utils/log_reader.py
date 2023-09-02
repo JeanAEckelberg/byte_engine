@@ -3,7 +3,7 @@ import game.config as gc
 import json
 
 
-def logs_to_dict() -> dict[str: dict]:
+def logs_to_dict() -> dict:
     temp: dict = {}
     for file in Path(gc.LOGS_DIR).glob('*.json'):
         with open(file, 'r') as f:

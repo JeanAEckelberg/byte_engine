@@ -39,7 +39,7 @@ class MenuTemplate:
         return self.start_button.mouse_clicked(event) if self.start_button.mouse_clicked(
             event) is not None else True
 
-    def start_render(self):
+    def start_render(self) -> None:
         self.start_button.render()
 
     def load_results_screen(self, results: dict): ...
@@ -48,7 +48,7 @@ class MenuTemplate:
         return self.results_button.mouse_clicked(event) if self.results_button.mouse_clicked(
             event) is not None else True
 
-    def results_render(self):
+    def results_render(self) -> None:
         self.results_button.render()
 
 
@@ -56,7 +56,7 @@ class Basic(MenuTemplate):
     """
     The Basic class is a default template that can be used for the menu screens. It inherits from MenuTemplate and
     expands on the inherited methods. If different templates are desired, create more classes in this file. This
-    Basic class can be used as a template for any future clasess.
+    Basic class can be used as a template for any future classes.
     """
 
     def __init__(self, screen: pygame.Surface, title: str):
@@ -67,21 +67,21 @@ class Basic(MenuTemplate):
 
         self.winning_team_name: Text = Text(screen, '', 0)
 
-    def start_render(self):
+    def start_render(self) -> None:
         super().start_render()
         self.title.render()
 
-    def load_results_screen(self, results: dict):
+    def load_results_screen(self, results: dict) -> None:
         winning_teams = self.__get_winning_teams(results['players'])
         self.winning_team_name = Text(self.screen, winning_teams, 36)
         self.winning_team_name.rect.center = self.screen.get_rect().center
 
-    def results_render(self):
+    def results_render(self) -> None:
         super().results_render()
         self.title.render()
         self.winning_team_name.render()
 
-    def __get_winning_teams(self, players: list):
+    def __get_winning_teams(self, players: list) -> str:
         m = max(map(lambda player: player['avatar']['score'], players))  # Gets the max score from all results
 
         # Compares each player in the given list to the max score
