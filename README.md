@@ -13,7 +13,7 @@ Changes made in 2023.
 * Item Class
     * The item class has many parameters that can be used in a few different ways to allow
     for flexibility.
-  
+
     * Value:
       * This allows for an item to have a value of some sort. This can be used to determine
       points gained for collecting the item, or its sell price. The meaning can change depending 
@@ -46,7 +46,7 @@ Changes made in 2023.
     * This parameter allows for user-defined specifications of where to put certain GameObjects 
     on the game map. It is an extensive system used to do this, so refer to the file for 
     further documentation.
-    
+
   * Walled Parameter
     * This is a boolean that determines whether to place Wall objects on the border of the game 
     map.
@@ -126,7 +126,7 @@ Changes made in 2023.
     * The Avatar class represents the character that is in the game. The Avatar is 
     what moves around, interacts with other GameObjects, gains points, and whatever else 
     the developers implement.
-    
+
   * Player:
     * The Player object encapsulates the Avatar class and represents the physical 
     people competing in the competition. This is why it has parameters such as team_name.
