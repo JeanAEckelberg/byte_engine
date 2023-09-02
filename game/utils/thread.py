@@ -3,6 +3,13 @@ import traceback
 
 
 class Thread(threading.Thread):
+    """
+    `Thread Class Notes:`
+        Threads are how the engine communicates with user clients. These Threads are built to catch errors. If an error
+        is caught, it will be logged, but the program will continue to run.
+
+        If multithreading is needed for whatever reason, this class would be used for that.
+    """
     def __init__(self, func, args):
         threading.Thread.__init__(self)
         self.args = args

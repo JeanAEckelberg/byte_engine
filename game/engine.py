@@ -15,6 +15,7 @@ from game.controllers.master_controller import MasterController
 from game.utils.helpers import write_json_file
 from game.utils.thread import Thread, CommunicationThread
 from game.utils.validation import verify_code, verify_num_clients
+from game.client.user_client import UserClient
 
 
 class Engine:
@@ -92,7 +93,7 @@ class Engine:
                         f'Player is using "open" which is forbidden.')
 
                 # Attempt creation of the client object
-                obj = None
+                obj: UserClient | None = None
                 try:
                     # Import client's code
                     im = importlib.import_module(f'{filename}', CLIENT_DIRECTORY)
