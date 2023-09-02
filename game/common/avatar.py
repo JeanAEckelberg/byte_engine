@@ -10,8 +10,6 @@ class Avatar(GameObject):
     """
     `Avatar Inventory Notes:`
 
-    -----
-
         The avatar's inventory is a list of items. Each item has a quantity and a stack_size (the max amount of an
         item that can be held in a stack. Think of the Minecraft inventory).
 

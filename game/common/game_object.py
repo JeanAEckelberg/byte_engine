@@ -8,8 +8,6 @@ class GameObject:
     """
     `GameObject Class Notes:`
 
-    -----
-
         This class is widely used throughout the project to represent different types of Objects that are interacted
         with in the game. If a new class is created and needs to be logged to the JSON files, make sure it inherits
         from GameObject.

@@ -15,8 +15,6 @@ class GameBoard(GameObject):
     """
     `GameBoard Class Notes:`
 
-    -----
-
     Map Size:
     ---------
         map_size is a Vector object, allowing you to specify the size of the (x, y) plane of the game board.

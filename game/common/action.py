@@ -5,8 +5,6 @@ class Action:
     """
     `Action Class:`
 
-    -----
-
         This class encapsulates the different actions a player can execute while playing the game.
 
         **NOTE**: This is not currently implemented in this version of the Byte Engine. If you want more complex

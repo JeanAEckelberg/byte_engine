@@ -6,8 +6,6 @@ class Wall(GameObject):
     """
     `Wall Class Note:`
 
-    -----
-
         The Wall class is used for creating objects that border the map. These are impassable.
     """
     def __init__(self):

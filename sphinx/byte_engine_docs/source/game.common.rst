@@ -13,7 +13,7 @@ Action Class
 
 .. automodule:: game.common.action
    :members:
-   :undoc-members:
+   :no-undoc-members:
    :show-inheritance:
 
 -----
@@ -23,7 +23,7 @@ Avatar Class
 
 .. automodule:: game.common.avatar
    :members:
-   :undoc-members:
+   :no-undoc-members:
    :show-inheritance:
 
 -----
@@ -38,7 +38,7 @@ When developing the game, add any extra enums as necessary.
 
 .. automodule:: game.common.enums
    :members:
-   :undoc-members:
+   :no-undoc-members:
    :show-inheritance:
 
 -----
@@ -48,7 +48,7 @@ GameObject Class
 
 .. automodule:: game.common.game_object
    :members:
-   :undoc-members:
+   :no-undoc-members:
    :show-inheritance:
 
 -----
@@ -58,5 +58,5 @@ Player Class
 
 .. automodule:: game.common.player
    :members:
-   :undoc-members:
+   :no-undoc-members:
    :show-inheritance:

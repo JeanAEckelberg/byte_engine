@@ -27,9 +27,6 @@ README Document
 .. include:: ../../../README.md
    :parser: myst_parser.sphinx_
 
-
-.. .. include:: game.rst
-
 Indices and tables
 ==================
 

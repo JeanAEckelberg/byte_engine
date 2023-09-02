@@ -12,8 +12,6 @@ class OccupiableStation(Occupiable, Station):
     """
     `OccupiableStation Class Notes:`
 
-    -----
-
         Occupiable Station objects inherit from both the Occupiable and Station classes. This allows for other objects to
         be "on top" of the Occupiable Station. For example, an Avatar object can be on top of this object. Since Stations
         can contain items, items can be stored in this object too.

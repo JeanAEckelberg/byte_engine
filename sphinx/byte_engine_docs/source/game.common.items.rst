@@ -3,5 +3,5 @@ Item Class
 
 .. automodule:: game.common.items.item
    :members:
-   :undoc-members:
+   :no-undoc-members:
    :show-inheritance:
