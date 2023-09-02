@@ -22,36 +22,24 @@ class MasterController(Controller):
         Give Client Objects:
             Takes a list of Player objects and places each one in the game world.
 
-        -----
-
         Game Loop Logic:
             Increments the turn count as the game plays (look at the engine to see how it's controlled more).
-
-        -----
 
         Interpret Current Turn Data:
             This accesses the gameboard in the first turn of the game and generates the game's seed.
 
-        -----
-
         Client Turn Arguments:
             There are lines of code commented out that create Action Objects instead of using the enum. If your project
             needs Actions Objects instead of the enums, comment out the enums and use Objects as necessary.
-
-        -----
 
         Turn Logic:
             This method executes every movement and interact behavior from every client in the game. This is done by
             using every other type of Controller object that was created in the project that needs to be managed
             here (InteractController, MovementController, other game-specific controllers, etc.).
 
-        -----
-
         Create Turn Log:
             This method creates a dictionary that stores the turn, all client objects, and the gameboard's JSON file to
             be used as the turn log.
-
-        -----
 
         Return Final Results:
             This method creates a dictionary that stores a list of the clients' JSON files. This represents the final

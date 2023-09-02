@@ -65,9 +65,9 @@ class GameBoard(GameObject):
             work. In this case, the assignments will be random. An example of this would be the following:
             ::
                 locations =
-                    {
-                        (vector_0_0, vector_1_1, vector_2_2) : [station_0, station_1, station_2]
-                    }
+                {
+                    (vector_0_0, vector_1_1, vector_2_2) : [station_0, station_1, station_2]
+                }
 
             (Note that the tuple and list both have a length of 3).
 

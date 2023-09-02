@@ -12,7 +12,7 @@ Test Example File
 -----
 
 Test Avatar Class
-----------------
+-----------------
 
 .. automodule:: game.test_suite.tests.test_avatar
    :members:
@@ -32,7 +32,7 @@ Test Avatar Inventory
 -----
 
 Test Gameboard Class
--------------------
+--------------------
 
 .. automodule:: game.test_suite.tests.test_game_board
    :members:

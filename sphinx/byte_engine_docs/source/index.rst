@@ -19,6 +19,7 @@ Refer to that for additional info to what's here!
 
 .. toctree::
    game
+   modules
 
 -----
 
