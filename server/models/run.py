@@ -1,0 +1,19 @@
+from server.models.base import Base
+from sqlalchemy import LargeBinary, Boolean, Column, CheckConstraint, ForeignKey, Integer, String, DateTime
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+
+
+class Run(Base):
+    __tablename__: str = 'run'
+    run_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    group_run_id: Mapped[int] = mapped_column(Integer(), ForeignKey("group_run.group_run_id"))
+    run_time: Mapped[DateTime] = mapped_column(DateTime(), nullable=False)
+    winner: bool = mapped_column(Boolean(), nullable=False)
+    player_1: Mapped[int] = mapped_column(Integer(), nullable=False)
+    player_2: Mapped[int] = mapped_column(Integer(), nullable=False)
+    seed: Mapped[int] = mapped_column(Integer(), nullable=False)
+
+    # results is a JSON file that's read in, so it needs to be a LargeBinary object.
+    results: Mapped[str] = mapped_column(LargeBinary(), nullable=False)
+
+
