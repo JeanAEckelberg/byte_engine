@@ -1,6 +1,7 @@
+from sqlalchemy import Boolean, CheckConstraint, String
+from sqlalchemy.orm import Mapped, mapped_column
+
 from server.models.base import Base
-from sqlalchemy import LargeBinary, Boolean, Column, CheckConstraint, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 
 class TeamType(Base):
