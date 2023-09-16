@@ -6,7 +6,7 @@ from server.models.base import Base
 
 class Run(Base):
     __tablename__: str = 'run'
-    run_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    run_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
     group_run_id: Mapped[int] = mapped_column(Integer(), ForeignKey("group_run.group_run_id"))
     run_time: Mapped[str] = mapped_column(DateTime(), nullable=False)
     winner: Mapped[bool] = mapped_column(Boolean(), nullable=False)
