@@ -16,5 +16,3 @@ class Run(Base):
 
     # results is a JSON file that's read in, so it needs to be a LargeBinary object.
     results: Mapped[str] = mapped_column(LargeBinary(), nullable=False)
-
-

@@ -10,6 +10,3 @@ class Errors(Base):
     run_id: Mapped[int] = mapped_column(Integer(), ForeignKey("run.run_id"))  # run id
     submission_id: Mapped[int] = mapped_column(Integer(), ForeignKey("submission.submission_id"))  # submission id fk
     error_txt: Mapped[str] = mapped_column(String(), nullable=True)
-
-
-
