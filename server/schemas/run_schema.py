@@ -17,6 +17,6 @@ class RunBase(BaseModel):
 
 
 class RunSchema(RunBase):
-    group_runs: list[group_run_schema.GroupRunBase] = []
-    errors: list[errors_schema.ErrorsBase] = []
+    group_run: group_run_schema.GroupRunBase
+    errors: errors_schema.ErrorsBase
     turn_tables: list[turn_table_schema.TurnTableBase] = []

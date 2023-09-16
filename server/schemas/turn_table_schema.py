@@ -14,4 +14,4 @@ class TurnTableBase(BaseModel):
 
 
 class TurnTableSchema(TurnTableBase):
-    runs: list[run_schema.RunBase] = []
+    run: run_schema.RunBase

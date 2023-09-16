@@ -13,7 +13,8 @@ class TeamBase(BaseModel):
         from_attributes = True
 
 
+# University <-> Team: Many to One
 class TeamSchema(TeamBase):
-    uni_id: list[university_schema.UniversityBase] = []
-    team_type_id: list[team_type_schema.TeamTypeBase] = []
+    uni_id: int = university_schema.UniversityBase
+    team_type_id: int = team_type_schema.TeamTypeBase
     submissions: list[submission_schema.SubmissionBase] = []
