@@ -226,7 +226,9 @@ class GameBoard(GameObject):
         zipped_list: [tuple[list[Vector], list[GameObject]]] = list(zip(vector_list, game_object_list))
         last_vec: Vector = zipped_list[-1][0]
 
-        remaining_objects: list[GameObject] | None = self.__occupied_filter(game_object_list[len(zipped_list):]) if len(self.__occupied_filter(game_object_list)) > len(zipped_list) else None
+        remaining_objects: list[GameObject] | None = self.__occupied_filter(game_object_list[len(zipped_list):]) \
+            if len(self.__occupied_filter(game_object_list)) > len(zipped_list) \
+            else None
         for vector, game_object in zipped_list:
             if isinstance(game_object, Avatar):  # If the GameObject is an Avatar, assign it the coordinate position
                 game_object.position = vector
