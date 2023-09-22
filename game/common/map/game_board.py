@@ -229,6 +229,8 @@ class GameBoard(GameObject):
         remaining_objects: list[GameObject] | None = self.__occupied_filter(game_object_list[len(zipped_list):]) \
             if len(self.__occupied_filter(game_object_list)) > len(zipped_list) \
             else None
+
+        # Will cap at smallest list when zipping two together
         for vector, game_object in zipped_list:
             if isinstance(game_object, Avatar):  # If the GameObject is an Avatar, assign it the coordinate position
                 game_object.position = vector
@@ -246,6 +248,7 @@ class GameBoard(GameObject):
         if remaining_objects is None:
             return
 
+        # stack remaining game_objects on last vector
         temp_tile: GameObject = self.game_map[last_vec.y][last_vec.x]
 
         while hasattr(temp_tile.occupied_by, 'occupied_by'):
