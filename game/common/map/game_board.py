@@ -220,9 +220,21 @@ class GameBoard(GameObject):
             self.__help_populate(j, v)
 
     def __occupied_filter(self, game_object_list: list[GameObject]) -> list[GameObject]:
+        """
+        A helper method that returns a list of game objects that have the 'occupied_by' attribute.
+        :param game_object_list:
+        :return: a list of game object
+        """
         return [game_object for game_object in game_object_list if hasattr(game_object, 'occupied_by')]
 
     def __help_populate(self, vector_list: list[Vector], game_object_list: list[GameObject]) -> None:
+        """
+        A helper method that helps populate the game map.
+        :param vector_list:
+        :param game_object_list:
+        :return: None
+        """
+
         zipped_list: [tuple[list[Vector], list[GameObject]]] = list(zip(vector_list, game_object_list))
         last_vec: Vector = zipped_list[-1][0]
 
