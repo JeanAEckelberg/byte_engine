@@ -175,11 +175,11 @@ class GameBoard(GameObject):
         if locations is not None and not isinstance(locations, dict):
             raise ValueError("Locations must be a dict. The key must be a tuple of Vector Objects, and the "
                              "value a list of GameObject.")
-        if locations is not None:
-            for k, v in locations.items():
-                if len(k) != len(v):
-                    raise ValueError("Cannot set the locations for the game_board. A key has a different "
-                                     "length than its key.")
+        # if locations is not None:
+        #     for k, v in locations.items():
+        #         if len(k) != len(v):
+        #             raise ValueError("Cannot set the locations for the game_board. A key has a different "
+        #                              "length than its key.")
 
         self.__locations = locations
 
@@ -212,16 +212,18 @@ class GameBoard(GameObject):
 
     def __populate_map(self) -> None:
         for k, v in self.locations.items():
-            if len(k) != len(v) or (len(k) == 0 or len(v) == 0):  # Key-Value lengths must be > 0 and equal
-                raise ValueError("A key-value pair from game_board.locations has mismatching lengths. "
-                                 "They must be the same length, regardless of size.")
+            if len(k) == 0 or len(v) == 0:  # Key-Value lengths must be > 0 and equal
+                raise ValueError("A key-value pair from game_board.locations has a length of 0. ")
 
             # random.sample returns a randomized list which is used in __help_populate()
             j = random.sample(k, k=len(k))
             self.__help_populate(j, v)
 
     def __help_populate(self, vector_list: list[Vector], v: list[GameObject]) -> None:
-        for j, i in zip(vector_list, v):
+        zipped_list: [tuple[list[Vector], list[GameObject]]] = list(zip(vector_list, v))
+        last_vec: Vector = zipped_list[-1][0]
+        remaining_objects: list[GameObject] | None = [x for x in v[len(zipped_list):] if hasattr(x, 'occupied_by')] if len([x for x in v if hasattr(x, 'occupied_by')]) > len(zipped_list) else None
+        for j, i in zipped_list:
             if isinstance(i, Avatar):  # If the GameObject is an Avatar, assign it the coordinate position
                 i.position = j
 
@@ -234,6 +236,21 @@ class GameBoard(GameObject):
                 raise ValueError("Last item on the given tile doesn't have the 'occupied_by' attribute.")
 
             temp_tile.occupied_by = i
+
+        if remaining_objects is None:
+            return
+
+        temp_tile: GameObject = self.game_map[last_vec.y][last_vec.x]
+
+        while hasattr(temp_tile.occupied_by, 'occupied_by'):
+            temp_tile = temp_tile.occupied_by
+
+        for i in remaining_objects:
+            if temp_tile is None:
+                raise ValueError("Last item on the given tile doesn't have the 'occupied_by' attribute.")
+
+            temp_tile.occupied_by = i
+            temp_tile = temp_tile.occupied_by
 
     def get_objects(self, look_for: ObjectType) -> list[tuple[Vector, list[GameObject]]]:
         to_return: list[tuple[Vector, list[GameObject]]] = list()
