@@ -1,5 +1,5 @@
 import random
-from typing import Self
+from typing import Self, Callable
 
 from game.common.avatar import Avatar
 from game.common.enums import *
@@ -222,7 +222,7 @@ class GameBoard(GameObject):
     def __help_populate(self, vector_list: list[Vector], game_object_list: list[GameObject]) -> None:
         zipped_list: [tuple[list[Vector], list[GameObject]]] = list(zip(vector_list, game_object_list))
         last_vec: Vector = zipped_list[-1][0]
-        occupied_filter = lambda list: [game_object for game_object in list if hasattr(game_object, 'occupied_by')]
+        occupied_filter: Callable[[list[GameObject]], list[GameObject]] = lambda list: [game_object for game_object in list if hasattr(game_object, 'occupied_by')]
         remaining_objects: list[GameObject] | None = occupied_filter(game_object_list[len(zipped_list):]) if len(occupied_filter(game_object_list)) > len(zipped_list) else None
         for vector, game_object in zipped_list:
             if isinstance(game_object, Avatar):  # If the GameObject is an Avatar, assign it the coordinate position
