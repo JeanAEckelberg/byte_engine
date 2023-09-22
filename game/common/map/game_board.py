@@ -219,15 +219,16 @@ class GameBoard(GameObject):
             j = random.sample(k, k=len(k))
             self.__help_populate(j, v)
 
-    def __help_populate(self, vector_list: list[Vector], v: list[GameObject]) -> None:
-        zipped_list: [tuple[list[Vector], list[GameObject]]] = list(zip(vector_list, v))
+    def __help_populate(self, vector_list: list[Vector], game_object_list: list[GameObject]) -> None:
+        zipped_list: [tuple[list[Vector], list[GameObject]]] = list(zip(vector_list, game_object_list))
         last_vec: Vector = zipped_list[-1][0]
-        remaining_objects: list[GameObject] | None = [x for x in v[len(zipped_list):] if hasattr(x, 'occupied_by')] if len([x for x in v if hasattr(x, 'occupied_by')]) > len(zipped_list) else None
-        for j, i in zipped_list:
-            if isinstance(i, Avatar):  # If the GameObject is an Avatar, assign it the coordinate position
-                i.position = j
+        occupied_filter = lambda list: [game_object for game_object in list if hasattr(game_object, 'occupied_by')]
+        remaining_objects: list[GameObject] | None = occupied_filter(game_object_list[len(zipped_list):]) if len(occupied_filter(game_object_list)) > len(zipped_list) else None
+        for vector, game_object in zipped_list:
+            if isinstance(game_object, Avatar):  # If the GameObject is an Avatar, assign it the coordinate position
+                game_object.position = vector
 
-            temp_tile: GameObject = self.game_map[j.y][j.x]
+            temp_tile: GameObject = self.game_map[vector.y][vector.x]
 
             while hasattr(temp_tile.occupied_by, 'occupied_by'):
                 temp_tile = temp_tile.occupied_by
@@ -235,7 +236,7 @@ class GameBoard(GameObject):
             if temp_tile is None:
                 raise ValueError("Last item on the given tile doesn't have the 'occupied_by' attribute.")
 
-            temp_tile.occupied_by = i
+            temp_tile.occupied_by = game_object
 
         if remaining_objects is None:
             return
@@ -245,11 +246,11 @@ class GameBoard(GameObject):
         while hasattr(temp_tile.occupied_by, 'occupied_by'):
             temp_tile = temp_tile.occupied_by
 
-        for i in remaining_objects:
+        for game_object in remaining_objects:
             if temp_tile is None:
                 raise ValueError("Last item on the given tile doesn't have the 'occupied_by' attribute.")
 
-            temp_tile.occupied_by = i
+            temp_tile.occupied_by = game_object
             temp_tile = temp_tile.occupied_by
 
     def get_objects(self, look_for: ObjectType) -> list[tuple[Vector, list[GameObject]]]:
