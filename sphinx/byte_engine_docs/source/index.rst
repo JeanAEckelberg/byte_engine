@@ -14,18 +14,19 @@ thinking skills, while challenging competitors under a time limit.
 This project provides the framework for developing games for Byte-le. The README document is attached to this page.
 Refer to that for additional info to what's here!
 
------
-
-.. toctree::
-   game
-
------
 
 README Document
 ===============
 
 .. include:: ../../../README.md
    :parser: myst_parser.sphinx_
+
+-----
+
+.. toctree::
+   game
+
+-----
 
 Indices and tables
 ==================

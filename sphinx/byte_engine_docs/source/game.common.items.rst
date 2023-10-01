@@ -1,5 +1,8 @@
+Items Package
+=============
+
 Item Class
-==========
+----------
 
 .. automodule:: game.common.items.item
    :members:
