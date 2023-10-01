@@ -15,4 +15,4 @@ class GroupRun(Base):
     launcher_version: Mapped[str] = mapped_column(String(10), nullable=False)
     runs_per_client: Mapped[int] = mapped_column(Integer(), nullable=False)
     is_finished: Mapped[bool] = mapped_column(Boolean(), default=False, nullable=False)
-    runs: Mapped[list[Run]] = relationship()
+    runs: Mapped[list[Run]] = relationship(back_populates='group_run')
