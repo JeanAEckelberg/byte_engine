@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from sqlalchemy import ForeignKey, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+from .submission import Submission
 
 
 class Errors(Base):
@@ -10,3 +13,5 @@ class Errors(Base):
     run_id: Mapped[int] = mapped_column(Integer(), ForeignKey("run.run_id"))  # run id
     submission_id: Mapped[int] = mapped_column(Integer(), ForeignKey("submission.submission_id"))  # submission id fk
     error_txt: Mapped[str] = mapped_column(String(), nullable=True)
+
+    submission: Mapped[Submission] = relationship(back_populates='error')

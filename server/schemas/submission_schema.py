@@ -5,7 +5,6 @@ import team_schema, errors_schema
 
 class SubmissionBase(BaseModel):
     submission_id: int
-    team_id_uuid: int
     submission_time: str
     file_txt: str
 
@@ -13,6 +12,10 @@ class SubmissionBase(BaseModel):
         from_attributes = True
 
 
-class SubmissionSchema(SubmissionBase):
-    team_id: list[team_schema.TeamBase] = []
-    errors: list[errors_schema.ErrorsBase] = []
+class SubmissionWTeam(SubmissionBase):
+    team_id_uuid: int
+
+
+class SubmissionSchema(SubmissionWTeam):
+    team: team_schema.TeamBase
+    error: errors_schema.ErrorsBase
