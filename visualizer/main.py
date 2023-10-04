@@ -162,8 +162,9 @@ class ByteVisualiser:
                     # Call render logic on bytesprite
                     self.bytesprite_map[y][x][z].update(temp_tile, z, Vector(y=y, x=x))
                     # increase iteration
-                    temp_tile = temp_tile.get('occupied_by') if temp_tile.get(
-                        'occupied_by') is not None else temp_tile.get('held_item')
+                    temp_tile = temp_tile.get('occupied_by') if temp_tile.get('occupied_by') is not None \
+                        else (temp_tile.get('held_item') if self.config.VISUALIZE_HELD_ITEMS
+                              else None)
                     z += 1
 
                 # clean up additional layers
@@ -205,7 +206,7 @@ class ByteVisualiser:
         row: list
         tile: list
         sprite: ByteSprite
-        [[[sprite.set_image_and_render() for sprite in tile] for tile in row] for row in self.bytesprite_map]
+        [sprite.set_image_and_render() for row in self.bytesprite_map for tile in row for sprite in tile]
 
     def postrender(self) -> None:
         self.adapter.clean_up()
