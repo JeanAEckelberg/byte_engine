@@ -15,3 +15,4 @@ class Team(Base):
     team_name: Mapped[str] = mapped_column(String(), CheckConstraint("team_name != ''"), unique=True, nullable=False)
 
     submissions: Mapped[list['Submission']] = relationship(back_populates="team")
+
