@@ -18,4 +18,4 @@ class SubmissionWTeam(SubmissionBase):
 
 class SubmissionSchema(SubmissionWTeam):
     team: team_schema.TeamBase
-    error: errors_schema.ErrorsBase
+    error: errors_schema.ErrorsWRun

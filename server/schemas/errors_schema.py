@@ -13,6 +13,14 @@ class ErrorsBase(BaseModel):
         from_attributes = True
 
 
+class ErrorsWRun(ErrorsBase):
+    run: run_schema.RunBase
+
+
+class ErrorsWSubmission(ErrorsBase):
+    submission: submission_schema.SubmissionBase
+
+
 class ErrorsSchema(ErrorsBase):
     run: run_schema.RunBase
     submission: submission_schema.SubmissionBase

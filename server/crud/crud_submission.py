@@ -28,6 +28,12 @@ def read_all_by_team_id(db: Session, team_uuid: uuid) -> list[Type[Submission]]:
             .all())
 
 
+def read_all_W_filter(db: Session, **kwargs) -> [Submission]:
+    return (db.query(Submission)
+            .filter_by(**kwargs)
+            .all())
+
+
 def update(db: Session, id: int, submission: SubmissionWTeam) -> Submission | None:
     db_submission: Submission | None = (db.query(Submission)
                                         .filter(and_(Submission.submission_id == id,
