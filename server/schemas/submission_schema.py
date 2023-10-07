@@ -5,7 +5,6 @@ import team_schema, errors_schema
 
 class SubmissionBase(BaseModel):
     submission_id: int
-    error_id: int
     submission_time: str
     file_txt: str
 

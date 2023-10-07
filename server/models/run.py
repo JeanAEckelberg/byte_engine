@@ -1,5 +1,5 @@
 from sqlalchemy import LargeBinary, Boolean, ForeignKey, Integer, DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
@@ -16,3 +16,4 @@ class Run(Base):
 
     # results is a JSON file that's read in, so it needs to be a LargeBinary object.
     results: Mapped[str] = mapped_column(LargeBinary(), nullable=False)
+    error: Mapped['Errors'] = relationship(back_populates='run')
