@@ -9,9 +9,9 @@ from .base import Base
 class Submission(Base):
     __tablename__: str = 'submission'
     submission_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
-    team_id_uuid: Mapped[int] = mapped_column(Integer(), ForeignKey("team.team_id_uuid"))
+    team_uuid: Mapped[int] = mapped_column(Integer(), ForeignKey('team.team_uuid'))
     submission_time: Mapped[str] = mapped_column(DateTime(), nullable=False)
     file_txt: Mapped[str] = mapped_column(LargeBinary(), nullable=False)
 
-    team: Mapped['Team'] = relationship(back_populates="submissions")
-    errors: Mapped[list['Errors']] = relationship(back_populates='submission')
+    team: Mapped['Team'] = relationship(back_populates='submissions')
+    submission_run_infos: Mapped[list['SubmissionRunInfo']] = relationship(back_populates='submission')

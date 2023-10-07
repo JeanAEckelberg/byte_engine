@@ -2,20 +2,21 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from models.base import Base
 from database import SessionLocal, engine
-from crud import crud_errors, crud_submission
+from crud import crud_submission
 from models.run import Run
-from models.errors import Errors
+from models.submission_run_info import SubmissionRunInfo
 from models.group_run import GroupRun
 from models.team import Team
 from models.team_type import TeamType
 from models.submission import Submission
 from models.turn_table import TurnTable
 from models.university import University
-from schemas.university_schema import *
-from schemas.submission_schema import *
-from schemas.errors_schema import *
+from models.submission import Submission
 
-Base.metadata.create_all(bind=engine)
+from server.schemas.submission.submission_schema import SubmissionSchema
+from server.schemas.submission.submission_w_team import SubmissionWTeam
+
+Base().metadata.create_all(bind=engine)
 
 app = FastAPI()
 

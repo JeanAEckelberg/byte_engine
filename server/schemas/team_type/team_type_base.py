@@ -1,4 +1,3 @@
-from __future__ import annotations
 from pydantic import BaseModel
 
 
@@ -8,7 +7,3 @@ class TeamTypeBase(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-class TeamTypeSchema(TeamTypeBase):
-    teams: list['TeamBase'] = []

@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
 
 from server.models.group_run import GroupRun
-from server.schemas.group_run_schema import GroupRunSchema, GroupRunBase
+from server.schemas.group_run.group_run_schema import GroupRunBase
 
 
 def create(db: Session, group_run: GroupRunBase) -> GroupRun:

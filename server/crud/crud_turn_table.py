@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
 
 from server.models.turn_table import TurnTable
-from server.schemas.turn_table_schema import TurnTableBase, TurnTableSchema
+from server.schemas.turn_table.turn_table_schema import TurnTableBase
 
 
 def create(db: Session, turn_table: TurnTableBase) -> TurnTable:
@@ -11,6 +10,7 @@ def create(db: Session, turn_table: TurnTableBase) -> TurnTable:
     db.commit()
     db.refresh(db_turn_table)
     return db_turn_table
+
 
 def create_all(db: Session, turn_tables: [TurnTableBase]) -> None:
     inserts: list[TurnTable] = [TurnTable(**turn_table.model_dump(exclude={'turn_id'})) for turn_table in turn_tables]
