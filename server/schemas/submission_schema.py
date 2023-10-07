@@ -16,5 +16,7 @@ class SubmissionWTeam(SubmissionBase):
 
 
 class SubmissionSchema(SubmissionWTeam):
+
     team: 'TeamBase'
     error: 'ErrorsWRun'
+
