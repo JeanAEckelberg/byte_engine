@@ -35,8 +35,8 @@ def root():
     return {"message": "Hello World"}
 
 
-@app.get('/get_errors_for_submission', response_model=list[ErrorsBase])
-def get_errors_for_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
+@app.get('/get_submission/', response_model=SubmissionSchema)
+def get_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
     # Retrieves a list of submissions where the submission id and uuids match
     submission_list: list[Submission] | None = crud_submission.read_all_W_filter(
         db, submission_id=submission.submission_id, team_id_uuid=submission.team_id_uuid)
@@ -44,9 +44,12 @@ def get_errors_for_submission(submission: SubmissionWTeam, db: Session = Depends
     if submission_list is None:
         raise HTTPException(status_code=404, detail="Submission not found!")
 
-    return submission_list[0].errors
+    return submission_list[0]  # returns a single SubmissionSchema to give the submission data to the user
 
-# @app.get('/')
+
+@app.get('/get_submissions/{vid}', response_model=list[SubmissionSchema])
+def get_submissions(vid: int, db: Session = Depends(get_db)):
+    return crud_submission.read_all_by_team_id(db, vid)
 
 
 # @app.get('/unis/', response_model=list[UniversityBase])
