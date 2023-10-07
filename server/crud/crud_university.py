@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
 
 from server.models.university import University
-from server.schemas.university_schema import UniversityBase, UniversitySchema
+from server.schemas.university.university_schema import UniversityBase
 
 
 def create(db: Session, university: UniversityBase) -> University:

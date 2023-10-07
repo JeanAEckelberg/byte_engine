@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
 
 from server.models.run import Run
-from server.schemas.run_schema import RunBase, RunSchema
+from server.schemas.run.run_schema import RunBase
 
 
 def create(db: Session, run: RunBase) -> Run:

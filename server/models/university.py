@@ -10,5 +10,5 @@ class University(Base):
     uni_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
     uni_name: Mapped[str] = mapped_column(String(100), CheckConstraint("uni_name != ''"), nullable=False, unique=True)
 
-    team: Mapped[list['Team']] = relationship(back_populates='university')
+    teams: Mapped[list['Team']] = relationship(back_populates='university')
 

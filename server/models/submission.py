@@ -13,5 +13,5 @@ class Submission(Base):
     submission_time: Mapped[str] = mapped_column(DateTime(), nullable=False)
     file_txt: Mapped[str] = mapped_column(LargeBinary(), nullable=False)
 
-    team: Mapped['Team'] = relationship(back_populates='submission')
-    submission_run_info: Mapped[list['SubmissionRunInfo']] = relationship(back_populates='submission')
+    team: Mapped['Team'] = relationship(back_populates='submissions')
+    submission_run_infos: Mapped[list['SubmissionRunInfo']] = relationship(back_populates='submission')

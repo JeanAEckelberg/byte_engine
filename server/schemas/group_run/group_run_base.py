@@ -1,4 +1,3 @@
-from __future__ import annotations
 from pydantic import BaseModel
 
 
@@ -11,8 +10,3 @@ class GroupRunBase(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-class GroupRunSchema(GroupRunBase):
-    run: list['RunBase']
-    group_teams: list['GroupTeamsBase']

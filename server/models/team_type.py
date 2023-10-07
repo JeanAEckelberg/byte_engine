@@ -11,4 +11,4 @@ class TeamType(Base):
                                                 unique=True)
     eligible: Mapped[bool] = mapped_column(Boolean(), nullable=False)
 
-    team: Mapped[list['Team']] = relationship(back_populates='team_type')
+    teams: Mapped[list['Team']] = relationship(back_populates='team_type')

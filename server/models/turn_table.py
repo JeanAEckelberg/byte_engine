@@ -11,6 +11,6 @@ class TurnTable(Base):
     run_id: Mapped[int] = mapped_column(Integer(), ForeignKey('run.run_id'))
     turn_data: Mapped[str] = mapped_column(LargeBinary(), nullable=False)
 
-    run: Mapped['Run'] = relationship(back_populates='turn_table')
+    run: Mapped['Run'] = relationship(back_populates='turn_tables')
 
 

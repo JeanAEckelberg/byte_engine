@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
 from server.models.submission import Submission
-from server.schemas.submission_schema import SubmissionBase, SubmissionWTeam, SubmissionSchema
+from server.schemas.submission.submission_w_team import SubmissionWTeam
 
 
 def create(db: Session, submission: SubmissionWTeam) -> Submission:
@@ -24,7 +24,7 @@ def read(db: Session, id: int) -> Submission | None:
 
 def read_all_by_team_id(db: Session, team_uuid: uuid) -> list[Type[Submission]]:
     return (db.query(Submission)
-            .filter(Submission.team_id_uuid == team_uuid)
+            .filter(Submission.team_uuid == team_uuid)
             .all())
 
 
@@ -37,7 +37,7 @@ def read_all_W_filter(db: Session, **kwargs) -> [Submission]:
 def update(db: Session, id: int, submission: SubmissionWTeam) -> Submission | None:
     db_submission: Submission | None = (db.query(Submission)
                                         .filter(and_(Submission.submission_id == id,
-                                                     Submission.team_id_uuid == submission.team_id_uuid))
+                                                     Submission.team_uuid == submission.team_id_uuid))
                                         .one_or_none())
     if db_submission is None:
         return
@@ -53,7 +53,7 @@ def update(db: Session, id: int, submission: SubmissionWTeam) -> Submission | No
 def delete(db: Session, id: int, submission: SubmissionWTeam) -> None:
     db_submission: Submission | None = (db.query(Submission)
                                         .filter(and_(Submission.submission_id == id,
-                                                     Submission.team_id_uuid == submission.team_id_uuid))
+                                                     Submission.team_uuid == submission.team_id_uuid))
                                         .one_or_none())
     if db_submission is None:
         return

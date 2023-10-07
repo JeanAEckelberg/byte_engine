@@ -14,6 +14,6 @@ class Run(Base):
     # results is a JSON file that's read in, so it needs to be a LargeBinary object.
     results: Mapped[str] = mapped_column(LargeBinary(), nullable=False)
 
-    submission_run_info: Mapped[list['SubmissionRunInfo']] = relationship(back_populates='run')
-    group_run: Mapped['GroupRun'] = relationship(back_populates='run')
-    turn_table: Mapped[list['TurnTable']] = relationship(back_populates='run')
+    submission_run_infos: Mapped[list['SubmissionRunInfo']] = relationship(back_populates='run')
+    group_run: Mapped['GroupRun'] = relationship(back_populates='runs')
+    turn_tables: Mapped[list['TurnTable']] = relationship(back_populates='run')

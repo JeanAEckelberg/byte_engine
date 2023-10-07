@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
 
 from server.models.team_type import TeamType
-from server.schemas.team_type_schema import TeamTypeBase, TeamTypeSchema
+from server.schemas.team_type.team_type_schema import TeamTypeBase
 
 
 def create(db: Session, team_type: TeamTypeBase) -> TeamType:

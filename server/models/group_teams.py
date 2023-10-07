@@ -12,5 +12,5 @@ class GroupTeams(Base):
     team_uuid: Mapped[int] = mapped_column(Integer(), ForeignKey('team.team_uuid'))
     group_run_id: Mapped[int] = mapped_column(Integer(), ForeignKey('group_run.group_run_id'))
 
-    team: Mapped['Team'] = relationship(back_populates='group_team')
-    group_run: Mapped['GroupRun'] = relationship(back_populates='group_team')
+    team: Mapped['Team'] = relationship(back_populates='group_teams')
+    group_run: Mapped['GroupRun'] = relationship(back_populates='group_teams')
