@@ -46,7 +46,7 @@ def get_errors_for_submission(submission: SubmissionWTeam, db: Session = Depends
 
     return submission_list[0].errors
 
-@app.get('/')
+# @app.get('/')
 
 
 # @app.get('/unis/', response_model=list[UniversityBase])
