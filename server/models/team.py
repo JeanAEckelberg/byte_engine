@@ -4,7 +4,6 @@ from sqlalchemy import CheckConstraint, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
-from .submission import Submission
 from uuid import uuid4
 
 
@@ -15,4 +14,4 @@ class Team(Base):
     team_type_id: Mapped[int] = mapped_column(Integer(), ForeignKey("team_type.team_type_id"))
     team_name: Mapped[str] = mapped_column(String(), CheckConstraint("team_name != ''"), unique=True, nullable=False)
 
-    submissions: Mapped[list[Submission]] = relationship(back_populates="team")
+    submissions: Mapped[list['Submission']] = relationship(back_populates="team")
