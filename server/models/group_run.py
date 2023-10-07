@@ -15,3 +15,6 @@ class GroupRun(Base):
     runs_per_client: Mapped[int] = mapped_column(Integer(), nullable=False)
     is_finished: Mapped[bool] = mapped_column(Boolean(), default=False, nullable=False)
     runs: Mapped[list['Run']] = relationship(back_populates='group_run')
+
+    # results
+    run: Mapped['Run'] = relationship(back_populates='group_run')

@@ -1,6 +1,5 @@
 from __future__ import annotations
 from pydantic import BaseModel
-import group_run_schema, errors_schema, turn_table_schema
 
 
 class RunBase(BaseModel):
@@ -17,6 +16,8 @@ class RunBase(BaseModel):
 
 
 class RunSchema(RunBase):
-    group_run: group_run_schema.GroupRunBase
-    errors: errors_schema.ErrorsWSubmission
-    turn_tables: list[turn_table_schema.TurnTableBase] = []
+    group_run: 'GroupRunBase'
+    errors: 'ErrorsWSubmission'
+    turn_tables: list['TurnTableBase'] = []
+    player_1: 'SubmissionBase'
+    player_2: 'SubmissionBase'
