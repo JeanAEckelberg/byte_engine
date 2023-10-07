@@ -9,7 +9,6 @@ from visualizer.bytesprites.exampleBS import AvatarBytespriteFactoryExample
 from game.utils.vector import Vector
 from visualizer.utils.text import Text
 from visualizer.utils.button import Button, ButtonColors
-from visualizer.utils.sidebars import Sidebars
 from visualizer.bytesprites.bytesprite import ByteSprite
 from visualizer.templates.menu_templates import Basic, MenuTemplate
 from visualizer.templates.playback_template import PlaybackTemplate, PlaybackButtons
