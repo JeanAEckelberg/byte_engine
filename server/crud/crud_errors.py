@@ -22,10 +22,20 @@ def read(db: Session, id: int) -> Errors | None:
             .first())
 
 
+def read_all(db: Session) -> [Errors]:
+    return db.query(Errors).all()
+
+
+def read_all_W_filter(db: Session, **kwargs) -> [Errors]:
+    return (db.query(Errors)
+            .filter_by(**kwargs)
+            .all())
+
+
 def update(db: Session, id: int, errors: ErrorsBase) -> Errors | None:
     db_errors: Errors | None = (db.query(Errors)
-                                        .filter(Errors.error_id == id)
-                                        .one_or_none())
+                                .filter(Errors.error_id == id)
+                                .one_or_none())
     if db_errors is None:
         return
 
@@ -39,8 +49,8 @@ def update(db: Session, id: int, errors: ErrorsBase) -> Errors | None:
 
 def delete(db: Session, id: int, errors: ErrorsBase) -> None:
     db_errors: Errors | None = (db.query(Errors)
-                                        .filter(Errors.error_id == id)
-                                        .one_or_none())
+                                .filter(Errors.error_id == id)
+                                .one_or_none())
     if db_errors is None:
         return
 

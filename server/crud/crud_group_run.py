@@ -1,4 +1,3 @@
-
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
@@ -20,10 +19,20 @@ def read(db: Session, id: int) -> GroupRun | None:
             .first())
 
 
+def read_all(db: Session) -> [GroupRun]:
+    return db.query(GroupRun).all()
+
+
+def read_all_W_filter(db: Session, **kwargs) -> [GroupRun]:
+    return (db.query(GroupRun)
+            .filter_by(**kwargs)
+            .all())
+
+
 def update(db: Session, id: int, group_run: GroupRunBase) -> GroupRun | None:
     db_group_run: GroupRun | None = (db.query(GroupRun)
-                                        .filter(GroupRun.group_run_id == id)
-                                        .one_or_none())
+                                     .filter(GroupRun.group_run_id == id)
+                                     .one_or_none())
     if db_group_run is None:
         return
 
@@ -37,8 +46,8 @@ def update(db: Session, id: int, group_run: GroupRunBase) -> GroupRun | None:
 
 def delete(db: Session, id: int, group_run: GroupRunBase) -> None:
     db_group_run: GroupRun | None = (db.query(GroupRun)
-                                        .filter(GroupRun.group_run_id == id)
-                                        .one_or_none())
+                                     .filter(GroupRun.group_run_id == id)
+                                     .one_or_none())
     if db_group_run is None:
         return
 
