@@ -14,4 +14,4 @@ class Submission(Base):
     file_txt: Mapped[str] = mapped_column(LargeBinary(), nullable=False)
 
     team: Mapped['Team'] = relationship(back_populates="submissions")
-    error: Mapped['Errors'] = relationship(back_populates='submission')
+    errors: Mapped[list['Errors']] = relationship(back_populates='submission')
