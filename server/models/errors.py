@@ -14,3 +14,4 @@ class Errors(Base):
     error_txt: Mapped[str] = mapped_column(String(), nullable=True)
 
     submission: Mapped['Submission'] = relationship(back_populates='error')
+    run: Mapped['Run'] = relationship(back_populates='error')

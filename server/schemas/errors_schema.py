@@ -14,5 +14,5 @@ class ErrorsBase(BaseModel):
 
 
 class ErrorsSchema(ErrorsBase):
-    runs_id: list[run_schema.RunBase] = []
-    submission_id: list[submission_schema.SubmissionBase] = []
+    run: run_schema.RunBase
+    submission: submission_schema.SubmissionBase
