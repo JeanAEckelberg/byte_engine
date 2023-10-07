@@ -1,6 +1,5 @@
 from __future__ import annotations
 from pydantic import BaseModel
-import run_schema
 
 
 class TurnTableBase(BaseModel):
@@ -14,4 +13,4 @@ class TurnTableBase(BaseModel):
 
 
 class TurnTableSchema(TurnTableBase):
-    run: run_schema.RunBase
+    run: 'RunBase'

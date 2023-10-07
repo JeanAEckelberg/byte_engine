@@ -1,6 +1,6 @@
 from __future__ import annotations
+
 from pydantic import BaseModel
-import team_schema, submission_run_info_schema
 
 
 class SubmissionBase(BaseModel):
@@ -17,5 +17,5 @@ class SubmissionWTeam(SubmissionBase):
 
 
 class SubmissionSchema(SubmissionWTeam):
-    team: team_schema.TeamBase
-    submission_run_info: list[submission_run_info_schema.SubmissionRunInfoBase]
+    team: 'TeamBase'
+    submission_run_info: list['SubmissionRunInfoBase']

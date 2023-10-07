@@ -1,6 +1,5 @@
 from __future__ import annotations
 from pydantic import BaseModel
-import university_schema, team_type_schema, submission_schema, group_teams_schema
 
 
 class TeamBase(BaseModel):
@@ -18,7 +17,7 @@ class TeamIdSchema(TeamBase):
 
 # University <-> Team: Many to One
 class TeamSchema(TeamBase):
-    university: university_schema.UniversityBase
-    team_type: team_type_schema.TeamTypeBase
-    submission: list[submission_schema.SubmissionBase]
-    group_teams: list[group_teams_schema.GroupTeamsBase]
+    university: 'UniversityBase'
+    team_type: 'TeamTypeBase'
+    submission: list['SubmissionBase']
+    group_teams: list['GroupTeamsBase']

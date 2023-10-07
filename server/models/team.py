@@ -20,3 +20,4 @@ class Team(Base):
     team_type: Mapped['TeamType'] = relationship(back_populates='team')
     group_teams: Mapped[list['GroupTeams']] = relationship(back_populates='team')
 
+

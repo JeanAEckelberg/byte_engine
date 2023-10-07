@@ -1,6 +1,5 @@
 from __future__ import annotations
 from pydantic import BaseModel
-import run_schema, submission_schema
 
 
 class SubmissionRunInfoBase(BaseModel):
@@ -14,13 +13,13 @@ class SubmissionRunInfoBase(BaseModel):
 
 
 class SubmissionRunInfoWRun(SubmissionRunInfoBase):
-    run: run_schema.RunBase
+    run: 'RunBase'
 
 
 class SubmissionRunInfoWSubmission(SubmissionRunInfoBase):
-    submission: submission_schema.SubmissionBase
+    submission: 'SubmissionBase'
 
 
 class SubmissionRunInfoSchema(SubmissionRunInfoBase):
-    run: run_schema.RunBase
-    submission: submission_schema.SubmissionBase
+    run: 'RunBase'
+    submission: 'SubmissionBase'
