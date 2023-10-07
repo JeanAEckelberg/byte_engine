@@ -1,5 +1,5 @@
 from sqlalchemy import Integer, Boolean, CheckConstraint, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from .base import Base
 
@@ -10,3 +10,5 @@ class TeamType(Base):
     team_type_name: Mapped[str] = mapped_column(String(15), CheckConstraint("team_type_name != ''"), nullable=False,
                                                 unique=True)
     eligible: Mapped[bool] = mapped_column(Boolean(), nullable=False)
+
+    team: Mapped[list['Team']] = relationship(back_populates='team_type')

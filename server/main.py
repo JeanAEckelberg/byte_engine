@@ -4,7 +4,7 @@ from models.base import Base
 from database import SessionLocal, engine
 from crud import crud_errors, crud_submission
 from models.run import Run
-from models.errors import Errors
+from models.submission_run_info import SubmissionRunInfo
 from models.group_run import GroupRun
 from models.team import Team
 from models.team_type import TeamType
