@@ -4,7 +4,6 @@ from sqlalchemy import Boolean, Integer, String, DateTime
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from .base import Base
-from .run import Run
 
 
 class GroupRun(Base):
@@ -15,4 +14,4 @@ class GroupRun(Base):
     launcher_version: Mapped[str] = mapped_column(String(10), nullable=False)
     runs_per_client: Mapped[int] = mapped_column(Integer(), nullable=False)
     is_finished: Mapped[bool] = mapped_column(Boolean(), default=False, nullable=False)
-    runs: Mapped[list[Run]] = relationship(back_populates='group_run')
+    runs: Mapped[list['Run']] = relationship(back_populates='group_run')

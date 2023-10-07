@@ -22,21 +22,20 @@ def read(db: Session, id: int) -> GroupRun | None:
 
 def update(db: Session, id: int, group_run: GroupRunBase) -> GroupRun | None:
     db_group_run: GroupRun | None = (db.query(GroupRun)
-                                        .filter(and_(GroupRun.group_run_id == id,
-                                                     GroupRun.is_finished == group_run.is_finished))
+                                        .filter(GroupRun.group_run_id == id)
                                         .one_or_none())
     if db_group_run is None:
         return
 
-    for group_run.is_finished, group_run_id in group_run.model_dump().items():
-        setattr(db_group_run, group_run.is_finished, True) if group_run_id == group_run_id else False
+    for key, value in group_run.model_dump().items():
+        setattr(db_group_run, key, value) if value is not None else None
 
     db.commit()
     db.refresh(db_group_run)
     return db_group_run
 
 
-def delete(db: Session, id: int, submission: GroupRunBase) -> None:
+def delete(db: Session, id: int, group_run: GroupRunBase) -> None:
     db_group_run: GroupRun | None = (db.query(GroupRun)
                                         .filter(GroupRun.group_run_id == id)
                                         .one_or_none())
