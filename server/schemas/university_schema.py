@@ -13,4 +13,4 @@ class UniversityBase(BaseModel):
 
 # University <-> Team: Many to One
 class UniversitySchema(UniversityBase):
-    teams: list[team_schema.TeamBase] = []
+    team: list[team_schema.TeamBase]

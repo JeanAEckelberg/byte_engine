@@ -3,8 +3,8 @@ from pydantic import BaseModel
 import run_schema, submission_schema
 
 
-class ErrorsBase(BaseModel):
-    error_id: int
+class SubmissionRunInfoBase(BaseModel):
+    submission_run_info_id: int
     run_id: int
     submission_id: int
     error_txt: str
@@ -13,14 +13,14 @@ class ErrorsBase(BaseModel):
         from_attributes = True
 
 
-class ErrorsWRun(ErrorsBase):
+class SubmissionRunInfoWRun(SubmissionRunInfoBase):
     run: run_schema.RunBase
 
 
-class ErrorsWSubmission(ErrorsBase):
+class SubmissionRunInfoWSubmission(SubmissionRunInfoBase):
     submission: submission_schema.SubmissionBase
 
 
-class ErrorsSchema(ErrorsBase):
+class SubmissionRunInfoSchema(SubmissionRunInfoBase):
     run: run_schema.RunBase
     submission: submission_schema.SubmissionBase

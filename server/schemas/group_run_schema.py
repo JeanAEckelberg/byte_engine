@@ -1,6 +1,6 @@
 from __future__ import annotations
 from pydantic import BaseModel
-import run_schema
+import run_schema, group_teams_schema
 
 
 class GroupRunBase(BaseModel):
@@ -15,4 +15,5 @@ class GroupRunBase(BaseModel):
 
 
 class GroupRunSchema(GroupRunBase):
-    runs: list[run_schema.RunBase] = []
+    run: list[run_schema.RunBase]
+    group_teams: list[group_teams_schema.GroupTeamsBase]

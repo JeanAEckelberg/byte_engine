@@ -9,14 +9,11 @@ class Run(Base):
     run_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
     group_run_id: Mapped[int] = mapped_column(Integer(), ForeignKey("group_run.group_run_id"))
     run_time: Mapped[str] = mapped_column(DateTime(), nullable=False)
-    winner: Mapped[bool] = mapped_column(Boolean(), nullable=False)
-    player_1: Mapped[int] = mapped_column(Integer(), nullable=False)
-    player_2: Mapped[int] = mapped_column(Integer(), nullable=False)
     seed: Mapped[int] = mapped_column(Integer(), nullable=False)
 
     # results is a JSON file that's read in, so it needs to be a LargeBinary object.
     results: Mapped[str] = mapped_column(LargeBinary(), nullable=False)
 
-    submission_run_info: Mapped['SubmissionRunInfo'] = relationship(back_populates='run')
+    submission_run_info: Mapped[list['SubmissionRunInfo']] = relationship(back_populates='run')
     group_run: Mapped['GroupRun'] = relationship(back_populates='run')
     turn_table: Mapped[list['TurnTable']] = relationship(back_populates='run')

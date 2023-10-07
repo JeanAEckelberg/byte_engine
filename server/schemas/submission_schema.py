@@ -1,6 +1,6 @@
 from __future__ import annotations
 from pydantic import BaseModel
-import team_schema, errors_schema
+import team_schema, submission_run_info_schema
 
 
 class SubmissionBase(BaseModel):
@@ -13,9 +13,9 @@ class SubmissionBase(BaseModel):
 
 
 class SubmissionWTeam(SubmissionBase):
-    team_id_uuid: int
+    team_uuid: int
 
 
 class SubmissionSchema(SubmissionWTeam):
     team: team_schema.TeamBase
-    errors: list[errors_schema.ErrorsWRun]
+    submission_run_info: list[submission_run_info_schema.SubmissionRunInfoBase]

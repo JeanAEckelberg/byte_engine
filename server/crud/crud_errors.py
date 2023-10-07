@@ -5,10 +5,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
 from server.models.submission_run_info import SubmissionRunInfo
-from server.schemas.errors_schema import ErrorsBase, ErrorsSchema
+from server.schemas.submission_run_info_schema import SubmissionRunInfoBase, ErrorsSchema
 
 
-def create(db: Session, errors: ErrorsBase) -> SubmissionRunInfo:
+def create(db: Session, errors: SubmissionRunInfoBase) -> SubmissionRunInfo:
     db_errors: SubmissionRunInfo = SubmissionRunInfo(**errors.model_dump(exclude={'errors_id'}))
     db.add(db_errors)
     db.commit()
@@ -32,7 +32,7 @@ def read_all_W_filter(db: Session, **kwargs) -> [SubmissionRunInfo]:
             .all())
 
 
-def update(db: Session, id: int, errors: ErrorsBase) -> SubmissionRunInfo | None:
+def update(db: Session, id: int, errors: SubmissionRunInfoBase) -> SubmissionRunInfo | None:
     db_errors: SubmissionRunInfo | None = (db.query(SubmissionRunInfo)
                                            .filter(SubmissionRunInfo.error_id == id)
                                            .one_or_none())
@@ -47,7 +47,7 @@ def update(db: Session, id: int, errors: ErrorsBase) -> SubmissionRunInfo | None
     return db_errors
 
 
-def delete(db: Session, id: int, errors: ErrorsBase) -> None:
+def delete(db: Session, id: int, errors: SubmissionRunInfoBase) -> None:
     db_errors: SubmissionRunInfo | None = (db.query(SubmissionRunInfo)
                                            .filter(SubmissionRunInfo.error_id == id)
                                            .one_or_none())

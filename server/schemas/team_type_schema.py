@@ -12,4 +12,4 @@ class TeamTypeBase(BaseModel):
 
 
 class TeamTypeSchema(TeamTypeBase):
-    teams: list[team_schema.TeamBase] = []
+    team: list[team_schema.TeamBase]

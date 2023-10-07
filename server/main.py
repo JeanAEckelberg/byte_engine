@@ -13,7 +13,7 @@ from models.turn_table import TurnTable
 from models.university import University
 from schemas.university_schema import *
 from schemas.submission_schema import *
-from schemas.errors_schema import *
+from schemas.submission_run_info_schema import *
 
 Base.metadata.create_all(bind=engine)
 

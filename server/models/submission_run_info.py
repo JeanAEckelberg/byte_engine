@@ -17,5 +17,5 @@ class SubmissionRunInfo(Base):
     player_num: Mapped[int] = mapped_column(Integer(), nullable=False)
     points_awarded: Mapped[int] = mapped_column(Integer(), nullable=False)
 
-    submission: Mapped[list['Submission']] = relationship(back_populates='submission_run_info')
-    run: Mapped[list['Run']] = relationship(back_populates='submission_run_info')
+    submission: Mapped['Submission'] = relationship(back_populates='submission_run_info')
+    run: Mapped['Run'] = relationship(back_populates='submission_run_info')
