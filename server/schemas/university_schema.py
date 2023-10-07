@@ -1,6 +1,5 @@
 from __future__ import annotations
 from pydantic import BaseModel
-import team_schema
 
 
 class UniversityBase(BaseModel):
@@ -13,4 +12,4 @@ class UniversityBase(BaseModel):
 
 # University <-> Team: Many to One
 class UniversitySchema(UniversityBase):
-    teams: list[team_schema.TeamBase] = []
+    teams: list['TeamBase'] = []
