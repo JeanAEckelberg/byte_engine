@@ -129,4 +129,8 @@ def get_score_over_time(group_run: GroupRunBase, db: Session = Depends(get_db)):
 
 # get leaderboards - group_id, join team, submissions, run, university, pass-team_type
 @app.get('/leaderboard/', response_model=list[GroupRunSchema])
-def 
+def leaderboard(db: Session = Depends(get_db)):
+    return crud_group_run.read_all(db)
+
+
+# no delete >:(
