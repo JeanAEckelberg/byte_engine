@@ -5,5 +5,4 @@ class UniversityBase(BaseModel):
     uni_id: int
     uni_name: str
 
-    class Config:
-        from_attributes = True
+    model_config: dict = {'from_attributes': True}

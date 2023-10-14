@@ -11,13 +11,14 @@ from server.models.team_type import TeamType
 from server.models.submission import Submission
 from server.models.turn_table import TurnTable
 from server.models.university import University
+from server.models.group_teams import GroupTeams
 from server.models.submission import Submission
+
 from server.schemas.group_run.group_run_base import GroupRunBase
 from server.schemas.group_run.group_run_schema import GroupRunSchema
 from server.schemas.run.run_base import RunBase
 from server.schemas.run.run_schema import RunSchema
 from server.schemas.submission.submission_base import SubmissionBase
-
 from server.schemas.submission.submission_schema import SubmissionSchema
 from server.schemas.submission.submission_w_team import SubmissionWTeam
 from server.schemas.team.team_base import TeamBase
@@ -58,11 +59,12 @@ def post_team(team: TeamSchema, db: Session = Depends(get_db)):
     return crud_team.create(db, team)
 
 
-@app.get('/get_submission/', response_model=SubmissionSchema)
-def get_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
+@app.get('/get_submission/{submission_id}/{team_uuid}', response_model=SubmissionSchema)
+def get_submission(submission_id: int, team_uuid: int, db: Session = Depends(get_db)):
     # Retrieves a list of submissions where the submission id and uuids match
     submission_list: list[Submission] | None = crud_submission.read_all_W_filter(
-        db, submission_id=submission.submission_id, team_id_uuid=submission.team_id_uuid)
+        db, submission_id=submission_id, team_uuid=team_uuid)
+    print('get_submission print')
 
     if submission_list is None:
         raise HTTPException(status_code=404, detail="Submission not found!")
