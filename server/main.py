@@ -1,23 +1,24 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
-from models.base import Base
-from database import SessionLocal, engine
-from crud import crud_submission
-from models.run import Run
-from models.submission_run_info import SubmissionRunInfo
-from models.group_run import GroupRun
-from models.team import Team
-from models.team_type import TeamType
-from models.submission import Submission
-from models.turn_table import TurnTable
-from models.university import University
-from models.submission import Submission
+from server.models.base import Base
+from server.database import SessionLocal, engine
+from server.crud import crud_submission
+from server.models.run import Run
+from server.models.submission_run_info import SubmissionRunInfo
+from server.models.group_run import GroupRun
+from server.models.team import Team
+from server.models.team_type import TeamType
+from server.models.submission import Submission
+from server.models.turn_table import TurnTable
+from server.models.university import University
+from server.models.submission import Submission
 
 from server.schemas.submission.submission_schema import SubmissionSchema
 from server.schemas.submission.submission_w_team import SubmissionWTeam
 
 Base().metadata.create_all(bind=engine)
 
+# run in byte_engine folder: uvicorn server.main:app --reload
 app = FastAPI()
 
 
