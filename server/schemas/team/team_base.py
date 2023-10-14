@@ -6,5 +6,4 @@ class TeamBase(BaseModel):
     team_type_id: int
     team_name: str
 
-    class Config:
-        from_attributes = True
+    model_config: dict = {'from_attributes': True}
