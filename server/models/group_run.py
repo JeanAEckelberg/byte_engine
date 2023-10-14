@@ -16,4 +16,4 @@ class GroupRun(Base):
     is_finished: Mapped[bool] = mapped_column(Boolean(), default=False, nullable=False)
 
     runs: Mapped[list['Run']] = relationship(back_populates='group_run')
-    group_teams: Mapped[list['GroupRun']] = relationship(back_populates='group_run')
+    group_teams: Mapped[list['GroupTeams']] = relationship(back_populates='group_run')
