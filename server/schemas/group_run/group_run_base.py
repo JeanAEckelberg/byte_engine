@@ -9,5 +9,4 @@ class GroupRunBase(BaseModel):
     runs_per_client: int
     is_finished: bool
 
-    class Config:
-        from_attributes = True
+    model_config: dict = {'from_attributes': True}

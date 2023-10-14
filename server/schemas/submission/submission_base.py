@@ -7,5 +7,4 @@ class SubmissionBase(BaseModel):
     submission_time: datetime
     file_txt: str
 
-    class Config:
-        from_attributes = True
+    model_config: dict = {'from_attributes': True}

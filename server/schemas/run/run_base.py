@@ -8,5 +8,4 @@ class RunBase(BaseModel):
     run_time: datetime
     seed: int
 
-    class Config:
-        from_attributes = True
+    model_config: dict = {'from_attributes': True}
