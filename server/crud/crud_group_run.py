@@ -43,7 +43,7 @@ def update(db: Session, id: int, group_run: GroupRunBase) -> GroupRun | None:
     return db_group_run
 
 
-def delete(db: Session, id: int, group_run: GroupRunBase) -> None:
+def delete(db: Session, id: int) -> None:
     db_group_run: GroupRun | None = (db.query(GroupRun)
                                      .filter(GroupRun.group_run_id == id)
                                      .one_or_none())
