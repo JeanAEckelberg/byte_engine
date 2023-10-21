@@ -132,5 +132,6 @@ def get_score_over_time(group_run: GroupRunBase, db: Session = Depends(get_db)):
 def leaderboard(db: Session = Depends(get_db)):
     return crud_group_run.read_all(db)
 
+# main should not be able to delete (we do not want the public to be able to delete)
+# so we are not making a delete group runs endpoint
 
-# no delete >:(
