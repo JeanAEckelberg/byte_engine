@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from server.models.base import Base
 from server.database import SessionLocal, engine
-from server.crud import crud_submission
+from server.crud import crud_submission, crud_team_type, crud_university, crud_team, crud_group_run, crud_run
 from server.models.run import Run
 from server.models.submission_run_info import SubmissionRunInfo
 from server.models.group_run import GroupRun
@@ -13,10 +13,20 @@ from server.models.turn_table import TurnTable
 from server.models.university import University
 from server.models.group_teams import GroupTeams
 from server.models.submission import Submission
-from server.schemas.submission.submission_w_team import SubmissionWTeam
 
+from server.schemas.group_run.group_run_base import GroupRunBase
+from server.schemas.group_run.group_run_schema import GroupRunSchema
+from server.schemas.run.run_base import RunBase
+from server.schemas.run.run_schema import RunSchema
+from server.schemas.submission.submission_base import SubmissionBase
 from server.schemas.submission.submission_schema import SubmissionSchema
 from server.schemas.submission.submission_w_team import SubmissionWTeam
+from server.schemas.team.team_base import TeamBase
+from server.schemas.team.team_schema import TeamSchema
+from server.schemas.team_type.team_type_base import TeamTypeBase
+from server.schemas.team_type.team_type_schema import TeamTypeSchema
+from server.schemas.university.university_base import UniversityBase
+from server.schemas.university.university_schema import UniversitySchema
 
 Base().metadata.create_all(bind=engine)
 
@@ -39,6 +49,16 @@ def root():
     return {"message": "Hello World"}
 
 
+@app.post('/submission/', response_model=SubmissionBase)
+def post_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
+    return crud_submission.create(db, submission)
+
+
+@app.post('/team/', response_model=TeamBase)
+def post_team(team: TeamSchema, db: Session = Depends(get_db)):
+    return crud_team.create(db, team)
+
+
 @app.get('/get_submission/{submission_id}/{team_uuid}', response_model=SubmissionSchema)
 def get_submission(submission_id: int, team_uuid: int, db: Session = Depends(get_db)):
     # Retrieves a list of submissions where the submission id and uuids match
@@ -52,10 +72,65 @@ def get_submission(submission_id: int, team_uuid: int, db: Session = Depends(get
     return submission_list[0]  # returns a single SubmissionSchema to give the submission data to the user
 
 
+# get all runs in a selected group run that a team was a part of
+@app.get('/get_run/', response_model=RunSchema)
+def get_run(run: RunBase, db: Session = Depends(get_db)):
+    run_list: list[Run] | None = crud_run.read_all_W_filter(
+        db, run_id=run.run_id, team_uuid=run.team_uuid, group_run_id=run.group_run_id)
+
+    if run_list is None:
+        raise HTTPException(status_code=404, detail="Run not found D:")
+
+    return run_list[0]
+
+
+# get submissions
+# team_id = {vid}
 @app.get('/get_submissions/{vid}', response_model=list[SubmissionSchema])
 def get_submissions(vid: int, db: Session = Depends(get_db)):
     return crud_submission.read_all_by_team_id(db, vid)
 
 
-# @app.get('/unis/', response_model=list[UniversityBase])
-# def get_unis():
+# get team types
+@app.get('/team_types/', response_model=list[TeamTypeBase])
+def get_team_types(db: Session = Depends(get_db)):
+    return crud_team_type.read_all(db)
+
+
+# get universities
+@app.get('/universities/', response_model=list[UniversityBase])
+def get_universities(db: Session = Depends(get_db)):
+    return crud_university.read_all(db)
+
+
+# get group runs
+@app.get('/group_runs/', response_model=list[GroupRunBase])
+def get_group_runs(db: Session = Depends(get_db)):
+    return crud_group_run.read_all(db)
+
+
+# get runs
+@app.get('/run/', response_model=list[RunBase])
+def get_runs(db: Session = Depends(get_db)):
+    return crud_run.read_all(db)
+
+
+# get teams score over time, need team uuid
+@app.get('/score_over_time/', response_model=list[GroupRunBase])
+def get_score_over_time(group_run: GroupRunBase, db: Session = Depends(get_db)):
+    group_run_list: list[Run] | None = crud_group_run.read_all_W_filter(
+        db, group_run_id=group_run.group_run_id, team_uuid=group_run.team_uuid)
+
+    if group_run_list is None:
+        raise HTTPException(status_code=404, detail="not found")
+
+    return group_run_list[0]
+
+
+# get leaderboards - group_id, join team, submissions, run, university, pass-team_type
+@app.get('/leaderboard/', response_model=list[GroupRunSchema])
+def leaderboard(db: Session = Depends(get_db)):
+    return crud_group_run.read_all(db)
+
+
+# no delete >:(

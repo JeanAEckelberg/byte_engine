@@ -10,7 +10,7 @@ class GroupTeams(Base):
     __tablename__: str = 'group_teams'
     group_teams_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
     team_uuid: Mapped[int] = mapped_column(Integer(), ForeignKey('team.team_uuid'))
-    group_run_id: Mapped[int] = mapped_column(Integer(), ForeignKey('group_run.group_run_id'))
+    group_run_id: Mapped[int] = mapped_column(Integer(), ForeignKey('group_run.group_run_id', ondelete='CASCADE'))
 
     team: Mapped['Team'] = relationship(back_populates='group_teams')
     group_run: Mapped['GroupRun'] = relationship(back_populates='group_teams')
