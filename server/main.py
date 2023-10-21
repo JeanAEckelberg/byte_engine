@@ -49,16 +49,19 @@ def root():
     return {"message": "Hello World"}
 
 
+# post submission
 @app.post('/submission/', response_model=SubmissionBase)
 def post_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
     return crud_submission.create(db, submission)
 
 
+# post team
 @app.post('/team/', response_model=TeamBase)
 def post_team(team: TeamSchema, db: Session = Depends(get_db)):
     return crud_team.create(db, team)
 
 
+# gets the INDIVIDUAL submission data of a specific team
 @app.get('/get_submission/{submission_id}/{team_uuid}', response_model=SubmissionSchema)
 def get_submission(submission_id: int, team_uuid: int, db: Session = Depends(get_db)):
     # Retrieves a list of submissions where the submission id and uuids match
@@ -72,6 +75,13 @@ def get_submission(submission_id: int, team_uuid: int, db: Session = Depends(get
     return submission_list[0]  # returns a single SubmissionSchema to give the submission data to the user
 
 
+# gets MULTIPLE submission
+# team_id = {vid}
+@app.get('/get_submissions/{vid}', response_model=list[SubmissionSchema])
+def get_submissions(vid: int, db: Session = Depends(get_db)):
+    return crud_submission.read_all_by_team_id(db, vid)
+
+
 # get all runs in a selected group run that a team was a part of
 @app.get('/get_run/', response_model=RunSchema)
 def get_run(run: RunBase, db: Session = Depends(get_db)):
@@ -79,16 +89,9 @@ def get_run(run: RunBase, db: Session = Depends(get_db)):
         db, run_id=run.run_id, team_uuid=run.team_uuid, group_run_id=run.group_run_id)
 
     if run_list is None:
-        raise HTTPException(status_code=404, detail="Run not found D:")
+        raise HTTPException(status_code=404, detail="Run not found")
 
     return run_list[0]
-
-
-# get submissions
-# team_id = {vid}
-@app.get('/get_submissions/{vid}', response_model=list[SubmissionSchema])
-def get_submissions(vid: int, db: Session = Depends(get_db)):
-    return crud_submission.read_all_by_team_id(db, vid)
 
 
 # get team types
