@@ -51,7 +51,7 @@ def root():
 
 @app.post('/submission/', response_model=SubmissionBase)
 def post_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
-    return crud_submission.create(db, submission)
+    return crud_submission.create(submission, db)
 
 
 @app.post('/team/', response_model=TeamBase)

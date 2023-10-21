@@ -8,7 +8,7 @@ from server.models.submission import Submission
 from server.schemas.submission.submission_w_team import SubmissionWTeam
 
 
-def create(db: Session, submission: SubmissionWTeam) -> Submission:
+def create(submission: SubmissionWTeam, db: Session) -> Submission:
     db_submission: Submission = Submission(**submission.model_dump(exclude={'submission_id'}))
     db.add(db_submission)
     db.commit()
