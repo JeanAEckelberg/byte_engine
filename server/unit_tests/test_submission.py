@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from server.main import app
+import pytest
 
 client = TestClient(app=app)
 
@@ -11,12 +12,12 @@ client = TestClient(app=app)
 
 def test_post_submission():
     response = client.post('/submission/',
-                           json={"team_uuid": 1,
+                           json={"team_uuid": '1',
                                  "submission_id": 1,
                                  "submission_time": "2000-10-31T01:30:00-05:00",
                                  "file_txt": 'test'}
                            )
-    # assert response.status_code == 200
+    assert response.status_code == 200
     assert response.json() == {"submission_id": 1,
                                "submission_time": "2000-10-31T06:30:00Z",
                                "file_txt": "test"}
@@ -26,6 +27,7 @@ def test_post_submission():
 
 def test_get_submission():
     response = client.get('/get_submission/1/1/')
+    assert response.status_code == 200
     assert response.json() == {"submission_id": 1,
          "submission_time": "2000-10-31T06:30:00Z",
          "file_txt": "test",
@@ -44,6 +46,7 @@ def test_get_submission():
 
 def test_get_submissions():
     response = client.get('/get_submissions/1')
+    assert response.status_code == 200
     assert response.json() == [{"submission_id": 1,
         "submission_time": "2000-10-31T06:30:00Z",
         "file_txt": "test",
@@ -59,5 +62,9 @@ def test_get_submissions():
                                             "run_time": "2000-10-31T06:30:00Z",
                                             "seed": 1}}]},]
 
+# Test read nonexistent submission/s
 
 
+def test_get_nonexistent_submission():
+    with pytest.raises(IndexError):
+        client.get('/get_submission/2/2')

@@ -3,5 +3,5 @@ from server.schemas.team.team_schema_partial import TeamSchemaPartial
 
 
 class GroupTeamsWTeam(GroupTeamsBase):
-    team_uuid: int
+    team_uuid: str
     team: TeamSchemaPartial
