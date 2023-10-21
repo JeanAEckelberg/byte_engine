@@ -137,4 +137,3 @@ def leaderboard(db: Session = Depends(get_db)):
 
 # main should not be able to delete (we do not want the public to be able to delete)
 # so we are not making a delete group runs endpoint
-
