@@ -25,13 +25,6 @@ class ClientUtils:
         resp.raise_for_status()
         return json.loads(resp.content)
 
-    # COME BACK TO THIS
-    def register(self, reg_data):
-        resp = requests.post(self.IP + "register", reg_data,
-                             verify=self.path_to_public)
-        resp.raise_for_status()
-        return resp
-
     # post leaderboard
     def get_leaderboard(self, include_inelligible, group_id):
         data = {"include_inelligible": include_inelligible, "group_id": group_id}
@@ -51,7 +44,7 @@ class ClientUtils:
         self.to_table(jsn["data"])
 
     # post get score over time
-    def get_score_over_time(self, vid):
+    def get_score_over_time(self, vid, group_run_id, team_uuid):
         resp = requests.post(
             self.IP + "get_score_over_time", json={"vid": vid}, verify=self.path_to_public)
         resp.raise_for_status()
@@ -67,9 +60,9 @@ class ClientUtils:
         return json.loads(resp.content)
 
     # gets the runs from a INDIVIDUAL get_submission
-    def get_submission(self, vid, subid):
+    def get_submission(self, vid, subid, teamuuid):
         resp = requests.get(
-            self.IP + "get_submission", json={"vid": vid, "submissionid": subid}, verify=self.path_to_public)
+            self.IP + "get_submission", json={"vid": vid, "submissionid": subid, 'teamuuid': teamuuid}, verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
         self.to_table(jsn)
@@ -104,25 +97,16 @@ class ClientUtils:
         return json.loads(resp.content)
 
 # get get_run
-    def get_run(self, vid: int, runid):
-        resp = requests.get(self.IP + 'get_run', json={'vid': vid, 'runid': runid}, verify=self.path_to_public)
+    def get_run(self, teamuuid: str, vid: int, runid, group_run_id):
+        resp = requests.get(self.IP + 'get_run', json={'vid': vid, 'runid': runid, 'teamuuid': teamuuid, 'group_run_id': group_run_id}, verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
         self.to_table(jsn)
 
-    def get_code_from_submission(self, vid, subid):
-        resp = requests.post(
-            self.IP + "get_code_from_submission", json={"vid": vid, "subid": subid}, verify=self.path_to_public)
-        resp.raise_for_status()
-        if resp.content is None or resp.content.decode("utf-8") == "":
-            print("Bad Vid and subid combination (probably)")
-        else:
-            content = resp.content.decode("utf-8")
-            with open(f"./code_for_submission_{subid}.py", "w") as fl:
-                fl.write(content)
-            print(
-                f"Code for submission {subid} has been written {os.path.realpath(fl.name)}")
+# Building a comma-separated-values list table or ascii table based on passed in data below
+# The tables are used to build the leaderboard
 
+    # helper method to format the csv or ascii table
     def get_longest_cell_in_cols(self, json, json_atribs):
         col_longest_length = {}
         for key in json_atribs:
@@ -133,18 +117,21 @@ class ClientUtils:
                     col_longest_length[col] = len(str(row[col]))
         return col_longest_length
 
+    # creates a line that separates rows of information in the table
     def get_seperator_line(self, col_longest_length, padding):
         rtn = ""
         for key in col_longest_length:
             rtn += "+" + ("-" * (col_longest_length[key] + padding))
         return rtn + "+"
 
+    # prints table based on passed bool on instantiation
     def to_table(self, json):
         if self.use_csv:
             self.to_csv_table(json)
         else:
             self.to_ascii_table(json)
 
+    # prints the csv table
     def to_csv_table(self, json):
         try:
             padding = 4
@@ -170,6 +157,7 @@ class ClientUtils:
             print(
                 "Something went wrong. Maybe there isn't data for what you're looking for")
 
+    # prints the ascii table
     def to_ascii_table(self, json):
         try:
             padding = 4
