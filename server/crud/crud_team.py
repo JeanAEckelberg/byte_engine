@@ -4,8 +4,8 @@ from server.models.team import Team
 from server.schemas.team.team_schema import TeamBase
 
 
-def create(db: Session, team: TeamBase) -> Team:
-    db_team: Team = Team(**team.model_dump(exclude={'team_id'}))
+def create(team: TeamBase, db: Session) -> Team:
+    db_team: Team = Team(**team.model_dump())
     db.add(db_team)
     db.commit()
     db.refresh(db_team)

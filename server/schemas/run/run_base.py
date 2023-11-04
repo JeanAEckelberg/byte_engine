@@ -7,5 +7,6 @@ class RunBase(BaseModel):
     group_run_id: int
     run_time: datetime
     seed: int
+    results: bytes
 
     model_config: dict = {'from_attributes': True}
