@@ -2,6 +2,7 @@ import requests
 import json
 import urllib3
 import os
+from datetime import datetime, timezone, tzinfo
 
 
 class ClientUtils:
@@ -11,6 +12,14 @@ class ClientUtils:
         self.PORT = 8000
         self.path_to_public = False
         self.use_csv = csv_bool
+
+    # convert utc to local time
+    def convert_utc_to_local(self, utc_str: str = '2000-10-31T06:30:00Z') -> datetime:
+        a: datetime = datetime.strptime(utc_str, '%Y-%m-%dT%H:%M:%SZ')
+        tz: tzinfo = datetime.now().astimezone().tzinfo
+        a = a.replace(tzinfo=timezone.utc)
+
+        return a.astimezone(tz)
 
     # get team types
     def team_types(self):
@@ -43,7 +52,7 @@ class ClientUtils:
             f"""This group run ran with the launcher version {group_info['launcher_version']} on {group_info['start_run']}. Each client was run {group_info['runs_per_client']} times.""")
         self.to_table(jsn["data"])
 
-    # post get score over time
+    # post get score over time - fix later
     def get_score_over_time(self, vid, group_run_id, team_uuid):
         resp = requests.post(
             self.IP + "get_score_over_time", json={"vid": vid}, verify=self.path_to_public)
@@ -65,43 +74,51 @@ class ClientUtils:
             self.IP + "get_submission", json={"vid": vid, "submissionid": subid, 'teamuuid': teamuuid}, verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
+        jsn['submission_time'] = self.convert_utc_to_local(utc_str=jsn['submission_time']).strftime("%m/%d/%Y, %H:%M:%S")
         self.to_table(jsn)
 
     # MULTIPLE get_submissions
     def get_submissions(self, vid):
         resp = requests.post(
-            self.IP + "get_submissions", json={"vid": vid}, verify=self.path_to_public)
+            self.IP + f"get_submissions/{vid}", verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
+        jsn['submission_time'] = self.convert_utc_to_local(utc_str=jsn['submission_time']).strftime("%m/%d/%Y, %H:%M:%S")
         self.to_table(jsn)
 
     # get group_runs
     def get_group_runs(self, vid):
         resp = requests.get(
-            self.IP + "group_runs", json={"vid": vid}, verify=self.path_to_public)
+            self.IP + f"group_runs/{vid}", verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
+        jsn['start_run'] = self.convert_utc_to_local(utc_str=jsn['start_run']).strftime("%m/%d/%Y, %H:%M:%S")
         self.to_table(jsn)
 
-# post team
+    # post team
     def team(self, vid):
         resp = requests.post(
             self.IP + "team", json={"vid": vid}, verify=self.path_to_public)
         resp.raise_for_status()
         return json.loads(resp.content)
 
-# get run
+    # get run
     def run(self, vid: int):
-        resp = requests.get(self.IP + 'run', json={'vid': vid}, verify=self.path_to_public)
+        resp = requests.get(self.IP + f'run/{vid}', verify=self.path_to_public)
         resp.raise_for_status()
         return json.loads(resp.content)
 
-# get get_run
+    # get get_run
     def get_run(self, teamuuid: str, vid: int, runid, group_run_id):
-        resp = requests.get(self.IP + 'get_run', json={'vid': vid, 'runid': runid, 'teamuuid': teamuuid, 'group_run_id': group_run_id}, verify=self.path_to_public)
+        resp = requests.get(self.IP + f'get_run', json={'vid': vid, 'runid': runid, 'teamuuid': teamuuid, 'group_run_id': group_run_id}, verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
+        jsn['run_time'] = self.convert_utc_to_local(utc_str=jsn['run_time']).strftime("%m/%d/%Y, %H:%M:%S")
         self.to_table(jsn)
+
+
+
+
 
 # Building a comma-separated-values list table or ascii table based on passed in data below
 # The tables are used to build the leaderboard

@@ -56,9 +56,6 @@ class Client:
         except HTTPError as e:
             print(f"Error: {json.loads(e.response._content)['error']}")
 
-    def subparse_handler(self, args):
-        if args.subparse.lower() == 'stats' or args.subparse.lower() == 's':
-
     def register(self):
         # Check if vID already exists and cancel out
         if os.path.isfile('vID'):

@@ -2,7 +2,8 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from server.models.base import Base
 from server.database import SessionLocal, engine
-from server.crud import crud_submission, crud_team_type, crud_university, crud_team, crud_group_run, crud_run
+from server.crud import crud_submission, crud_team_type, crud_university, crud_team, crud_group_run, crud_run, \
+    crud_group_teams
 from server.models.run import Run
 from server.models.submission_run_info import SubmissionRunInfo
 from server.models.group_run import GroupRun
@@ -82,18 +83,6 @@ def get_submissions(vid: int, db: Session = Depends(get_db)):
     return crud_submission.read_all_by_team_id(db, vid)
 
 
-# get all runs in a selected group run that a team was a part of
-@app.get('/get_run/', response_model=RunSchema)
-def get_run(run: RunBase, db: Session = Depends(get_db)):
-    run_list: list[Run] | None = crud_run.read_all_W_filter(
-        db, run_id=run.run_id, team_uuid=run.team_uuid, group_run_id=run.group_run_id)
-
-    if run_list is None:
-        raise HTTPException(status_code=404, detail="Run not found")
-
-    return run_list[0]
-
-
 # get team types
 @app.get('/team_types/', response_model=list[TeamTypeBase])
 def get_team_types(db: Session = Depends(get_db)):
@@ -106,16 +95,11 @@ def get_universities(db: Session = Depends(get_db)):
     return crud_university.read_all(db)
 
 
-# get group runs
-@app.get('/group_runs/', response_model=list[GroupRunBase])
-def get_group_runs(db: Session = Depends(get_db)):
-    return crud_group_run.read_all(db)
-
-
-# get runs
-@app.get('/run/', response_model=list[RunBase])
-def get_runs(db: Session = Depends(get_db)):
-    return crud_run.read_all(db)
+# get group runs based off team uuid
+@app.get('/group_runs/{team_uuid}', response_model=list[GroupRunBase])
+def get_group_runs(team_uuid: str, db: Session = Depends(get_db)):
+    group_team: GroupTeams
+    return [group_team.group_run for group_team in crud_group_teams.read_all_W_filter(db, team_uuid=team_uuid)]
 
 
 # get teams score over time, need team uuid
