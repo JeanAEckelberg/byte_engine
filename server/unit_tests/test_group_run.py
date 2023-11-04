@@ -11,7 +11,7 @@ client = TestClient(app=app)
 # Test get method
 
 def test_get_group_runs():
-    response = client.get('/group_runs/')
+    response = client.get('/group_runs/1')
 
     assert response.status_code == 200
     assert response.json() == [{"group_run_id": 1,
