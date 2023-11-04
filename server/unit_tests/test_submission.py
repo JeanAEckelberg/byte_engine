@@ -41,7 +41,8 @@ def test_get_submission():
                                    "run": {"run_id": 1,
                                            "group_run_id": 1,
                                            "run_time": "2000-10-31T06:30:00Z",
-                                           "seed": 1}}]}
+                                           "seed": 1,
+                                           "results": "test"}}]}
 
 
 def test_get_submissions():
@@ -60,7 +61,8 @@ def test_get_submissions():
                                     "run": {"run_id": 1,
                                             "group_run_id": 1,
                                             "run_time": "2000-10-31T06:30:00Z",
-                                            "seed": 1}}]},]
+                                            "seed": 1,
+                                            "results": "test"}}]},]
 
 # Test read nonexistent submission/s
 
