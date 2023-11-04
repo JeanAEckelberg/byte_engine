@@ -1,14 +1,15 @@
-from sqlalchemy import LargeBinary, Boolean, ForeignKey, Integer, DateTime
+from sqlalchemy import LargeBinary, Boolean, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+from .timestamp import TimeStamp
 
 
 class Run(Base):
     __tablename__: str = 'run'
     run_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
     group_run_id: Mapped[int] = mapped_column(Integer(), ForeignKey("group_run.group_run_id", ondelete='CASCADE'))
-    run_time: Mapped[str] = mapped_column(DateTime(), nullable=False)
+    run_time: Mapped[str] = mapped_column(TimeStamp(), nullable=False)
     seed: Mapped[int] = mapped_column(Integer(), nullable=False)
 
     # results is a JSON file that's read in, so it needs to be a LargeBinary object.

@@ -2,7 +2,8 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from server.models.base import Base
 from server.database import SessionLocal, engine
-from server.crud import crud_submission, crud_team_type, crud_university, crud_team, crud_group_run, crud_run
+from server.crud import crud_submission, crud_team_type, crud_university, crud_team, crud_group_run, crud_run, \
+    crud_group_teams
 from server.models.run import Run
 from server.models.submission_run_info import SubmissionRunInfo
 from server.models.group_run import GroupRun
@@ -22,7 +23,7 @@ from server.schemas.submission.submission_base import SubmissionBase
 from server.schemas.submission.submission_schema import SubmissionSchema
 from server.schemas.submission.submission_w_team import SubmissionWTeam
 from server.schemas.team.team_base import TeamBase
-from server.schemas.team.team_schema import TeamSchema
+from server.schemas.team.team_id_schema import TeamIdSchema
 from server.schemas.team_type.team_type_base import TeamTypeBase
 from server.schemas.team_type.team_type_schema import TeamTypeSchema
 from server.schemas.university.university_base import UniversityBase
@@ -51,16 +52,16 @@ def root():
 
 @app.post('/submission/', response_model=SubmissionBase)
 def post_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
-    return crud_submission.create(db, submission)
+    return crud_submission.create(submission, db)
 
 
-@app.post('/team/', response_model=TeamBase)
-def post_team(team: TeamSchema, db: Session = Depends(get_db)):
-    return crud_team.create(db, team)
+@app.post('/team/', response_model=TeamIdSchema)
+def post_team(team: TeamBase, db: Session = Depends(get_db)):
+    return crud_team.create(team, db)
 
 
 @app.get('/get_submission/{submission_id}/{team_uuid}', response_model=SubmissionSchema)
-def get_submission(submission_id: int, team_uuid: int, db: Session = Depends(get_db)):
+def get_submission(submission_id: int, team_uuid: str, db: Session = Depends(get_db)):
     # Retrieves a list of submissions where the submission id and uuids match
     submission_list: list[Submission] | None = crud_submission.read_all_W_filter(
         db, submission_id=submission_id, team_uuid=team_uuid)
@@ -73,10 +74,10 @@ def get_submission(submission_id: int, team_uuid: int, db: Session = Depends(get
 
 
 # get all runs in a selected group run that a team was a part of
-@app.get('/get_run/', response_model=RunSchema)
-def get_run(run: RunBase, db: Session = Depends(get_db)):
-    run_list: list[Run] | None = crud_run.read_all_W_filter(
-        db, run_id=run.run_id, team_uuid=run.team_uuid, group_run_id=run.group_run_id)
+@app.get('/get_run/{group_run_id}/{team_uuid}', response_model=RunSchema)
+def get_run(group_run_id: int, team_uuid: str, db: Session = Depends(get_db)):
+    run_list: list[Run] | None = crud_group_teams.read_all_W_filter(
+        db, team_uuid=team_uuid)
 
     if run_list is None:
         raise HTTPException(status_code=404, detail="Run not found D:")
@@ -87,7 +88,7 @@ def get_run(run: RunBase, db: Session = Depends(get_db)):
 # get submissions
 # team_id = {vid}
 @app.get('/get_submissions/{vid}', response_model=list[SubmissionSchema])
-def get_submissions(vid: int, db: Session = Depends(get_db)):
+def get_submissions(vid: str, db: Session = Depends(get_db)):
     return crud_submission.read_all_by_team_id(db, vid)
 
 
@@ -116,10 +117,10 @@ def get_runs(db: Session = Depends(get_db)):
 
 
 # get teams score over time, need team uuid
-@app.get('/score_over_time/', response_model=list[GroupRunBase])
-def get_score_over_time(group_run: GroupRunBase, db: Session = Depends(get_db)):
+@app.get('/score_over_time/{group_run_id}/{team_uuid}', response_model=list[GroupRunBase])
+def get_score_over_time(group_run_id: int, team_uuid: str, db: Session = Depends(get_db)):
     group_run_list: list[Run] | None = crud_group_run.read_all_W_filter(
-        db, group_run_id=group_run.group_run_id, team_uuid=group_run.team_uuid)
+        db, group_run_id=group_run_id, team_uuid=team_uuid)
 
     if group_run_list is None:
         raise HTTPException(status_code=404, detail="not found")
