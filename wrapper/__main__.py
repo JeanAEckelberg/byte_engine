@@ -61,7 +61,13 @@ if __name__ == '__main__':
                              default=False, action='store_true')
     leaderboard.add_argument('-over_time', help='See how you have scored over time', default=False,
                              action='store_true')
-    leaderboard.add_argument()
+    leaderboard.add_argument('-group_run_id',
+                             help='pass the group_run_id you want to get run ids for. -1 is the default and most '
+                                  'recent submission',
+                             type=int, default=-1)
+
+    # Stats subgroup
+    stats = client_sub_group.add_parser('stats', aliases=['s'], help='View stats for your team')
 
     # Parse Command Line
     par_args = par.parse_args()
