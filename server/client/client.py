@@ -21,8 +21,8 @@ class Client:
     # Determines what action the client wants to do
 
     def handle_client(self, args):
-        options: dict = {args.register: self.register(), args.submit: self.submit(),
-                         args.subparse: self.subparse_handler(args)}
+        # options: dict = {args.register: self.register(), args.submit: self.submit(),
+        #                  args.subparse: self.subparse_handler(args)}
         try:
             if args.register:
                 self.register()
