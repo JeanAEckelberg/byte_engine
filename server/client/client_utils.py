@@ -35,8 +35,8 @@ class ClientUtils:
         return json.loads(resp.content)
 
     # post leaderboard
-    def get_leaderboard(self, include_inelligible, group_id):
-        data = {"include_inelligible": include_inelligible, "group_id": group_id}
+    def get_leaderboard(self, include_inelligible, group_run_id):
+        data = {"include_inelligible": include_inelligible, "group_run_id": group_run_id}
         resp = requests.post(self.IP + "leaderboard",
                              json=data, verify=self.path_to_public)
         resp.raise_for_status()
@@ -51,6 +51,13 @@ class ClientUtils:
         print(
             f"""This group run ran with the launcher version {group_info['launcher_version']} on {group_info['start_run']}. Each client was run {group_info['runs_per_client']} times.""")
         self.to_table(jsn["data"])
+
+    # def to_leaderboard_record(self, group_runs: list[dict]):
+    #
+    #     to_return: dict = {
+    #         "Team Name": group_runs
+    #     }
+
 
     # post get score over time - fix later
     def get_score_over_time(self, vid, group_run_id, team_uuid):
@@ -71,10 +78,12 @@ class ClientUtils:
     # gets the runs from a INDIVIDUAL get_submission
     def get_submission(self, vid, subid, teamuuid):
         resp = requests.get(
-            self.IP + "get_submission", json={"vid": vid, "submissionid": subid, 'teamuuid': teamuuid}, verify=self.path_to_public)
+            self.IP + "get_submission", json={"vid": vid, "submissionid": subid, 'teamuuid': teamuuid},
+            verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
-        jsn['submission_time'] = self.convert_utc_to_local(utc_str=jsn['submission_time']).strftime("%m/%d/%Y, %H:%M:%S")
+        jsn['submission_time'] = self.convert_utc_to_local(utc_str=jsn['submission_time']).strftime(
+            "%m/%d/%Y, %H:%M:%S")
         self.to_table(jsn)
 
     # MULTIPLE get_submissions
@@ -83,7 +92,8 @@ class ClientUtils:
             self.IP + f"get_submissions/{vid}", verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
-        jsn['submission_time'] = self.convert_utc_to_local(utc_str=jsn['submission_time']).strftime("%m/%d/%Y, %H:%M:%S")
+        jsn['submission_time'] = self.convert_utc_to_local(utc_str=jsn['submission_time']).strftime(
+            "%m/%d/%Y, %H:%M:%S")
         self.to_table(jsn)
 
     # get group_runs
@@ -110,18 +120,16 @@ class ClientUtils:
 
     # get get_run
     def get_run(self, teamuuid: str, vid: int, runid, group_run_id):
-        resp = requests.get(self.IP + f'get_run', json={'vid': vid, 'runid': runid, 'teamuuid': teamuuid, 'group_run_id': group_run_id}, verify=self.path_to_public)
+        resp = requests.get(self.IP + f'get_run',
+                            json={'vid': vid, 'runid': runid, 'teamuuid': teamuuid, 'group_run_id': group_run_id},
+                            verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
         jsn['run_time'] = self.convert_utc_to_local(utc_str=jsn['run_time']).strftime("%m/%d/%Y, %H:%M:%S")
         self.to_table(jsn)
 
-
-
-
-
-# Building a comma-separated-values list table or ascii table based on passed in data below
-# The tables are used to build the leaderboard
+    # Building a comma-separated-values list table or ascii table based on passed in data below
+    # The tables are used to build the leaderboard
 
     # helper method to format the csv or ascii table
     def get_longest_cell_in_cols(self, json, json_atribs):

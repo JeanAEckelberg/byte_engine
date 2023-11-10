@@ -1,5 +1,6 @@
 import sys
 
+from version import version
 from game.engine import Engine
 from game.utils.generate_game import generate
 import game.config
@@ -29,13 +30,38 @@ if __name__ == '__main__':
     run_subpar.add_argument('-quiet', '-q', action='store_true', default=False,
                             dest='q_bool', help='Runs your AI... quietly :)')
 
-
     # Visualizer Subparser and optionals
     vis_subpar = spar.add_parser('visualize', aliases=['v'],
                                  help='Runs the visualizer! "v -h" shows more options')
 
+    vis_subpar.add_argument('-log', action='store', type=str, nargs='?',
+                            const=-1, default="../logs/", dest="logpath", help="Specify a log path")
+
+    vis_subpar.add_argument('-server', action='store_true', default=False,
+                            dest='skip', help='Skips visualizer pause and quits on end')
+
     all_subpar = spar.add_parser('gen,run,vis', aliases=['grv'],
                                  help='Generate, Run, Visualize! "grv -h" shows more options')
+
+    # Version Subparser
+    update_subpar = spar.add_parser('version', help='Prints the current version of the launcher')
+
+    # Client Parser
+    client_parser = spar.add_parser('client', aliases=['c'], help='Run the client for the Byte-le Royale server')
+
+    client_parser.add_argument('-csv',
+                               help='Use csv output instead of the ascii table output (if applicable)',
+                               default=False, action='store_true')
+
+    # subparser group
+    client_sub_group = client_parser.add_subparsers(title='client_subparsers', dest='subparse')
+    leaderboard = client_sub_group.add_parser('leaderboard', aliases=['l'],
+                                              help='Commands relating to the leaderboard')
+    leaderboard.add_argument('-include_alumni', help='Include alumni in the leaderboard',
+                             default=False, action='store_true')
+    leaderboard.add_argument('-over_time', help='See how you have scored over time', default=False,
+                             action='store_true')
+    leaderboard.add_argument()
 
     # Parse Command Line
     par_args = par.parse_args()
