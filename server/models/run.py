@@ -8,7 +8,7 @@ from .timestamp import TimeStamp
 class Run(Base):
     __tablename__: str = 'run'
     run_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
-    group_run_id: Mapped[int] = mapped_column(Integer(), ForeignKey("group_run.group_run_id", ondelete='CASCADE'))
+    tournament_id: Mapped[int] = mapped_column(Integer(), ForeignKey("tournament.tournament_id", ondelete='CASCADE'))
     run_time: Mapped[str] = mapped_column(TimeStamp(), nullable=False)
     seed: Mapped[int] = mapped_column(Integer(), nullable=False)
 

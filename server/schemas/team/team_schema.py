@@ -1,4 +1,3 @@
-from server.schemas.group_teams.group_teams_base import GroupTeamsBase
 from server.schemas.submission.submission_base import SubmissionBase
 from server.schemas.team.team_base import TeamBase
 from server.schemas.team_type.team_type_schema import TeamTypeBase

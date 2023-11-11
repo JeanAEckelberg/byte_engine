@@ -30,8 +30,8 @@ def read_all_W_filter(db: Session, **kwargs) -> [Run]:
 
 def update(db: Session, id: int, run: RunBase) -> Run | None:
     db_run: Run | None = (db.query(Run)
-                                .filter(Run.run_id == id)
-                                .one_or_none())
+                          .filter(Run.run_id == id)
+                          .one_or_none())
     if db_run is None:
         return
 
@@ -45,8 +45,8 @@ def update(db: Session, id: int, run: RunBase) -> Run | None:
 
 def delete(db: Session, id: int, run: RunBase) -> None:
     db_run: Run | None = (db.query(Run)
-                                .filter(Run.run_id == id)
-                                .one_or_none())
+                          .filter(Run.run_id == id)
+                          .one_or_none())
     if db_run is None:
         return
 

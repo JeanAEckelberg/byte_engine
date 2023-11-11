@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 
-from server.models.group_run import GroupRun
-from server.schemas.group_run.group_run_schema import GroupRunBase
+from server.models.tournament import Tournament
+from server.schemas.tournament.tournament_base import TournamentBase
+from server.schemas.tournament.tournament_schema import TournamentSchema
 
 
 def create(db: Session, group_run: GroupRunBase) -> GroupRun:
