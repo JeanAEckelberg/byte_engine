@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from server.models.turn import Turn
 from server.schemas.turn.turn_schema import TurnBase
@@ -18,18 +18,30 @@ def create_all(db: Session, turns: [TurnBase]) -> None:
     db.commit()
 
 
-def read(db: Session, id: int) -> Turn | None:
+def read(db: Session, id: int, eager: bool = False) -> Turn | None:
     return (db.query(Turn)
+            .filter(Turn.turn_id == id)
+            .first() if not eager
+            else db.query(Turn)
+            .options(joinedload(Turn.run))
             .filter(Turn.turn_id == id)
             .first())
 
 
-def read_all(db: Session) -> [Turn]:
-    return db.query(Turn).all()
-
-
-def read_all_W_filter(db: Session, **kwargs) -> [Turn]:
+def read_all(db: Session, eager: bool = False) -> [Turn]:
     return (db.query(Turn)
+            .all() if not eager
+            else db.query(Turn)
+            .options(joinedload(Turn.run))
+            .all())
+
+
+def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Turn]:
+    return (db.query(Turn)
+            .filter_by(**kwargs)
+            .all() if not eager
+            else db.query(Turn)
+            .options(joinedload(Turn.run))
             .filter_by(**kwargs)
             .all())
 

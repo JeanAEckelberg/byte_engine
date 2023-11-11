@@ -113,33 +113,13 @@ def get_runs(db: Session = Depends(get_db)):
 # get tournaments
 @app.get('/tournaments/', response_model=list[TournamentSchema])
 def get_tournaments(db: Session = Depends(get_db)):
-    return crud_tournament.read_all(db)
+    return crud_tournament.read_all(db, eager=True)
 
 
 # get tournament by id
 @app.get('/tournament', response_model=TournamentSchema)
 def get_tournament(tournament_id: int, db: Session = Depends(get_db)):
-    return crud_tournament.read(db, tournament_id)
-
-
-# get teams score over time, need team uuid
-# @app.get('/score_over_time/', response_model=list[TournamentBase])
-# def get_score_over_time(tournament_id: int, team_uuid: str, db: Session = Depends(get_db)):
-#     group_run_list: list[Run] | None = crud_tournament.read_all_W_filter(
-#         db, tournament_id=tournament_id, team_uuid=team_uuid)
-#
-#     if group_run_list is None:
-#         raise HTTPException(status_code=404, detail="not found")
-#
-#     return group_run_list[0]
-
-
-# get leaderboards - group_id, join team, submissions, run, university, pass-team_type
-
-
-@app.get('/leaderboard/', response_model=list[TournamentSchema])
-def leaderboard(db: Session = Depends(get_db)):
-    return crud_tournament.read_all(db)
+    return crud_tournament.read(db, tournament_id, eager=True)
 
 # main should not be able to delete (we do not want the public to be able to delete)
 # so we are not making a delete group runs endpoint

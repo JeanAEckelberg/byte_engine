@@ -1,5 +1,9 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
+from server.models.run import Run
+from server.models.submission import Submission
+from server.models.submission_run_info import SubmissionRunInfo
+from server.models.team import Team
 from server.models.tournament import Tournament
 from server.schemas.tournament.tournament_base import TournamentBase
 from server.schemas.tournament.tournament_schema import TournamentSchema
@@ -13,18 +17,45 @@ def create(db: Session, tournament: TournamentBase) -> Tournament:
     return db_tournament
 
 
-def read(db: Session, id: int) -> Tournament | None:
+def read(db: Session, id: int, eager: bool = False) -> Tournament | None:
     return (db.query(Tournament)
+            .filter(Tournament.tournament_id == id)
+            .first() if not eager
+            else db.query(Tournament)
+            .options(joinedload(Tournament.runs)
+                     .joinedload(Run.submission_run_infos)
+                     .joinedload(SubmissionRunInfo.submission)
+                     .joinedload(Submission.team),
+                     joinedload(Tournament.runs)
+                     .joinedload(Run.turns))
             .filter(Tournament.tournament_id == id)
             .first())
 
 
-def read_all(db: Session) -> [Tournament]:
-    return db.query(Tournament).all()
-
-
-def read_all_W_filter(db: Session, **kwargs) -> [Tournament]:
+def read_all(db: Session, eager: bool = False) -> [Tournament]:
     return (db.query(Tournament)
+            .all() if not eager
+            else db.query(Tournament)
+            .options(joinedload(Tournament.runs)
+                     .joinedload(Run.submission_run_infos)
+                     .joinedload(SubmissionRunInfo.submission)
+                     .joinedload(Submission.team),
+                     joinedload(Tournament.runs)
+                     .joinedload(Run.turns))
+            .all())
+
+
+def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Tournament]:
+    return (db.query(Tournament)
+            .filter_by(**kwargs)
+            .all() if not eager
+            else db.query(Tournament)
+            .options(joinedload(Tournament.runs)
+                     .joinedload(Run.submission_run_infos)
+                     .joinedload(SubmissionRunInfo.submission)
+                     .joinedload(Submission.team),
+                     joinedload(Tournament.runs)
+                     .joinedload(Run.turns))
             .filter_by(**kwargs)
             .all())
 
