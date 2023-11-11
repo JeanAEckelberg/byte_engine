@@ -19,9 +19,9 @@ from threading import Thread
 
 class ByteVisualiser:
 
-    def __init__(self, end_time: int = -1, skip_start: bool = False, playback_speed: float = 1,
+    def __init__(self, end_time: int = -1, skip_start: bool = False, playback_speed: float = 1.0,
                  fullscreen: bool = False,
-                 save_video: bool = False, loop: int = 1, turn_start: int = 0, turn_end: int = -1):
+                 save_video: bool = False, loop_count: int = 1, turn_start: int = 0, turn_end: int = -1):
         pygame.init()
         self.config: Config = Config()
         self.turn_logs: dict[str:dict] = {}
@@ -35,7 +35,7 @@ class ByteVisualiser:
 
         self.clock: pygame.time.Clock = pygame.time.Clock()
 
-        self.tick: int = turn_start
+        self.tick: int = turn_start * self.config.NUMBER_OF_FRAMES_PER_TURN
         self.turn_end: int = turn_end
         self.bytesprite_factories: dict[int: Callable[[pygame.Surface], ByteSprite]] = {}
         self.bytesprite_map: [[[ByteSprite]]] = list()
@@ -52,11 +52,11 @@ class ByteVisualiser:
                                                        self.default_frame_rate, self.scaled)
         self.end_time: int = end_time
         self.skip_start: bool = skip_start
-        self.loop: int = loop
+        self.loop_count: int = loop_count
 
     @property
     def config(self) -> Config:
-        return self.config
+        return self.__config
 
     @config.setter
     def config(self, config: Config) -> None:
@@ -277,15 +277,15 @@ class ByteVisualiser:
         self.__skip_start: bool = skip_start
 
     @property
-    def loop(self) -> int:
-        return self.__loop
+    def loop_count(self) -> int:
+        return self.__loop_count
 
-    @loop.setter
-    def loop(self, loop: int) -> None:
-        if loop is None or not isinstance(loop, int):
+    @loop_count.setter
+    def loop_count(self, loop_count: int) -> None:
+        if loop_count is None or not isinstance(loop_count, int):
             raise ValueError(
-                f'{self.__class__.__name__}.loop must be an int. It is a(n) {type(loop)} with the value of {loop}')
-        self.__loop: int = loop
+                f'{self.__class__.__name__}.loop_count must be an int. It is a(n) {type(loop_count)} with the value of {loop_count}')
+        self.__loop_count: int = loop_count
 
     def load(self) -> None:
         self.turn_logs: dict = logs_to_dict()
@@ -301,11 +301,13 @@ class ByteVisualiser:
 
         if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0:
             # NEXT TURN
-            if self.turn_logs.get(f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN + 1:04d}') is None:
+            turn: int = self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN+1
+            if self.turn_logs.get(f'turn_{turn:04d}') is None or \
+                    (self.turn_end != -1 and turn == self.turn_end):
                 return False
-            self.recalc_animation(self.turn_logs[f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN + 1:04d}'])
+            self.recalc_animation(self.turn_logs[f'turn_{turn:04d}'])
             self.adapter.recalc_animation(
-                self.turn_logs[f'turn_{self.tick // self.config.NUMBER_OF_FRAMES_PER_TURN + 1:04d}'])
+                self.turn_logs[f'turn_{turn:04d}'])
 
         else:
             # NEXT ANIMATION FRAME
@@ -352,11 +354,11 @@ class ByteVisualiser:
             if PlaybackButtons.PAUSE_BUTTON in button_pressed:
                 self.paused = not self.paused
             if PlaybackButtons.NORMAL_SPEED_BUTTON in button_pressed:
-                self.playback_speed = 1
+                self.playback_speed = 1.0
             if PlaybackButtons.FAST_SPEED_BUTTON in button_pressed:
-                self.playback_speed = 2
+                self.playback_speed = 2.0
             if PlaybackButtons.FASTEST_SPEED_BUTTON in button_pressed:
-                self.playback_speed = 4
+                self.playback_speed = 4.0
 
     # Method to deal with saving game to mp4 (called in render if save button pressed)
     def save_video(self) -> None:
@@ -452,22 +454,24 @@ class ByteVisualiser:
         self.clock.tick(self.default_frame_rate * self.playback_speed)
 
     def loop(self) -> None:
-        thread: Thread = Thread(target=self.load)
-        thread.start()
+        for _ in range(self.loop_count):
+            thread: Thread = Thread(target=self.load)
+            thread.start()
 
-        # Start Menu loop
-        in_phase: bool = True
-        self.__start_menu_loop(in_phase)
+            # Start Menu loop
+            in_phase: bool = True
+            if not self.skip_start:
+                self.__start_menu_loop(in_phase)
 
-        thread.join()
+            thread.join()
 
-        # Playback Menu loop
-        in_phase = True
-        self.__play_back_menu_loop(in_phase)
+            # Playback Menu loop
+            in_phase = True
+            self.__play_back_menu_loop(in_phase)
 
-        # Results
-        in_phase = True
-        self.__results_loop(in_phase)
+            # Results
+            in_phase = True
+            self.__results_loop(in_phase)
 
         if self.recording:
             self.writer.release()
@@ -521,6 +525,7 @@ class ByteVisualiser:
     # Results loop method ran in loop method
     def __results_loop(self, in_phase: bool) -> None:
         self.adapter.results_load(self.turn_logs['results'])
+        ticks: int = 0
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
@@ -539,9 +544,11 @@ class ByteVisualiser:
             if self.recording:
                 self.save_video()
 
-            if not in_phase:
+            if not in_phase or (self.end_time != -1 and ticks >= self.end_time * math.floor(
+                    self.default_frame_rate * self.playback_speed)):
                 break
             self.clock.tick(math.floor(self.default_frame_rate * self.playback_speed))
+            ticks += 1
         self.writer.release()
 
 
