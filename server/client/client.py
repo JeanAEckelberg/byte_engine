@@ -21,38 +21,63 @@ class Client:
     # Determines what action the client wants to do
 
     def handle_client(self, args):
-        # options: dict = {args.register: self.register(), args.submit: self.submit(),
-        #                  args.subparse: self.subparse_handler(args)}
         try:
+            # If the subparse is None, don't attempt to do the rest of the code
+            if args.subparse is None:
+                print("The server command needs more information. Try 'python launcher.pyz s -h' for help")
+                return
+
+            # If the subparse doesn't contain an expected value, don't do anything
+            if not args.subparse.lower() == 'stats' and not args.subparse.lower() == 's':
+                return
+
+            if args.subparse.lower() == 'leaderboard' or args.subparse.lower() == "l":
+                return
+
+            # The rest of the if statements will attempt to fulfill the desired command
             if args.register:
                 self.register()
-            elif args.submit:
+                return
+
+            if args.submit:
                 self.submit()
-            elif args.subparse is not None:
-                if args.subparse.lower() == 'stats' or args.subparse.lower() == 's':
-                    if args.runs_for_group_run != -1:
-                        self.utils.get_team_runs_for_group_run(self.vid, args.runs_for_group_run)
-                    elif args.runs_for_submission != -1:
-                        self.utils.get_runs_for_submission(self.vid, args.runs_for_submission)
-                    elif args.get_submissions:
-                        self.utils.get_submissions(self.vid)
-                    elif args.get_group_runs:
-                        self.utils.get_group_runs(self.vid)
-                    elif args.get_code_for_submission != -1:
-                        self.utils.get_code_from_submission(self.vid, args.get_code_for_submission)
-                    elif args.get_errors_for_submission != -1:
-                        self.utils.get_errors_for_submission(self.vid, args.get_errors_for_submission)
-                    else:
-                        self.get_submission_stats()
-                elif args.subparse.lower() == 'get_seed' or args.subparse.lower() == 'gs':
-                    self.utils.get_seed_for_run(self.vid, args.run_id)
-                elif args.subparse.lower() == 'leaderboard' or args.subparse.lower() == "l":
-                    if args.over_time:
-                        self.utils.get_team_score_over_time(self.vid)
-                    else:
-                        self.utils.get_leaderboard(args.include_alumni, args.group_id)
+                return
+
+            # need guard clause of the -1 in the client utils. Tell Julia
+            self.utils.get_team_runs_for_group_run(self.vid, args.runs_for_group_run)
+
+            if args.runs_for_submission != -1:
+                self.utils.get_runs_for_submission(self.vid, args.runs_for_submission)
+                return
+
+            if args.get_submissions:
+                self.utils.get_submissions(self.vid)
+                return
+
+            if args.get_group_runs:
+                self.utils.get_group_runs(self.vid)
+                return
+
+            if args.get_code_for_submission != -1:
+                self.utils.get_code_from_submission(self.vid, args.get_code_for_submission)
+                return
+
+            if args.subparse.lower() == 'get_seed' or args.subparse.lower() == 'gs':
+                self.utils.get_seed_for_run(self.vid, args.run_id)
+                return
+
+            if args.get_errors_for_submission != -1:
+                self.utils.get_errors_for_submission(self.vid, args.get_errors_for_submission)
+                return
             else:
-                print("The server command needs more information. Try 'python launcher.pyz s -h' for help")
+                self.get_submission_stats()
+
+            if args.over_time:
+                self.utils.get_team_score_over_time(self.vid)
+                return
+            else:
+                self.utils.get_leaderboard(args.include_alumni, args.group_id)
+
         except HTTPError as e:
             print(f"Error: {json.loads(e.response._content)['error']}")
 
@@ -112,8 +137,7 @@ class Client:
             f.write(v_id.decode('UTF-8'))
 
         print("Registration successful.")
-        print(
-            "You have been given an ID file in your Byte-le folder. Don't move or lose it!")
+        print("You have been given an ID file in your Byte-le folder. Don't move or lose it!")
         print("You can give a copy to your teammates so they can submit and view stats.")
 
     def submit(self):

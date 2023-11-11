@@ -22,7 +22,7 @@ class ClientUtils:
         return a.astimezone(tz)
 
     # get team types
-    def team_types(self):
+    def get_team_types(self):
         resp = requests.get(self.IP + "team_types",
                             verify=self.path_to_public)
         resp.raise_for_status()
@@ -57,7 +57,6 @@ class ClientUtils:
     #     to_return: dict = {
     #         "Team Name": group_runs
     #     }
-
 
     # post get score over time - fix later
     def get_score_over_time(self, vid, group_run_id, team_uuid):
@@ -206,3 +205,35 @@ class ClientUtils:
             print(e)
             print(
                 "Something went wrong. Maybe there isn't data for what you're looking for")
+
+    # finds uni_id and uni_name for building the leaderboard by calling get_unis() method
+    def get_leaderboard_uni_info(self) -> dict:
+        unis_info: list[dict] = self.get_unis()
+        return {uni['uni_id']: uni['uni_name'] for uni in unis_info}
+
+    # finds the type_type_id, team_name, and eligible
+    def get_leaderboard_team_type_info(self) -> dict:
+        team_types: list[dict] = self.get_team_types()
+        return {team_type['team_type_id']: {'name': team_type['team_type_name'], 'eligible': team_type['eligible']}
+                for team_type in team_types}
+
+    # collects all data needed for building the leaderboard
+    def get_leaderboard_info(self, uni_info: dict, team_info) -> dict:
+        tournaments: list[dict] = self.tournaments()
+        result: dict = {}
+
+        for tournament in tournaments:
+            if not tournament['is_finished']:
+                continue
+            for run in tournament['runs']:
+                for submission_run_info in run:
+                    team_name: str = submission_run_info['team']['team_name']
+
+                    # makes a dict of {'Example Team Name': {all info needed to build leaderboard}}
+                    result[team_name] = {'Team Name': submission_run_info['team']['team_name'],
+                                         'University': uni_info['uni_name'],
+                                         'Points Awarded': submission_run_info['points_awarded'],
+                                         'Team Type': team_info['team_type_name'],
+                                         'Eligible': team_info['eligible']}
+
+        return result
