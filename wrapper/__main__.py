@@ -34,6 +34,7 @@ if __name__ == '__main__':
     vis_subpar = spar.add_parser('visualize', aliases=['v'],
                                  help='Runs the visualizer! "v -h" shows more options')
 
+    # might not be needed
     vis_subpar.add_argument('-log', action='store', type=str, nargs='?',
                             const=-1, default="../logs/", dest="logpath", help="Specify a log path")
 
@@ -44,10 +45,10 @@ if __name__ == '__main__':
                                  help='Generate, Run, Visualize! "grv -h" shows more options')
 
     # Version Subparser
-    update_subpar = spar.add_parser('version', help='Prints the current version of the launcher')
+    update_subpar = spar.add_parser('version', aliases=['ver'], help='Prints the current version of the launcher')
 
     # Client Parser
-    client_parser = spar.add_parser('client', aliases=['c'], help='Run the client for the Byte-le Royale server')
+    client_parser = spar.add_parser('client', aliases=['s', 'c'], help='Run the client for the Byte-le Royale server')
 
     client_parser.add_argument('-csv',
                                help='Use csv output instead of the ascii table output (if applicable)',
@@ -68,6 +69,28 @@ if __name__ == '__main__':
 
     # Stats subgroup
     stats = client_sub_group.add_parser('stats', aliases=['s'], help='View stats for your team')
+    stats.add_argument('-current_run',
+                       help='Get the status for the current group run (default if no flag given)',
+                       default=False, action='store_true')
+    stats.add_argument('-runs_for_group_run',
+                       help='Pass the group_run id you want to get run ids for', type=int, default=-1)
+    stats.add_argument('-runs_for_submission', help='Pass the submission_id you want to get run ids for',
+                       type=int, default=-1)
+    stats.add_argument('-get_submissions', help='Get all submission ids for your team', default=False,
+                       action='store_true')
+
+    # returns all ids of the group runs? need to double-check
+    stats.add_argument('-get_group_runs', help='Get the group runs your team has been in', default=False,
+                       action='store_true')
+    stats.add_argument('-get_code_for_submission', help='Get the code file for a given submission',
+                       type=int, default=-1)
+    stats.add_argument('-get_errors_for_submission', help='Get the errors for a given submission',
+                       type=int, default=-1)
+
+    client_parser.add_argument('-register', help='Create a new team and return a vID', default=False,
+                               action='store_true')
+    client_parser.add_argument('-submit', help='Submit a client for grading', default=False,
+                               action='store_true')
 
     # Parse Command Line
     par_args = par.parse_args()
@@ -77,10 +100,7 @@ if __name__ == '__main__':
 
     # Generate game options
     if action in ['generate', 'g']:
-        if par_args.seed:
-            generate(par_args.seed)
-        else:
-            generate()
+        generate()  # a random seed is already generated in the method by default
     
     # Run game options
     elif action in ['run', 'r']:
@@ -99,6 +119,7 @@ if __name__ == '__main__':
         engine = Engine(quiet)
         engine.loop()
 
+    # Run the visualizer
     elif action in ['visualize', 'v']:
         visualiser = ByteVisualiser()
         visualiser.loop()
@@ -109,6 +130,9 @@ if __name__ == '__main__':
         engine.loop()
         visualiser = ByteVisualiser()
         visualiser.loop()
+
+    elif action in ['version', 'ver']:
+        print(version, end="")
 
     # Print help if no arguments are passed
     if len(sys.argv) == 1:
