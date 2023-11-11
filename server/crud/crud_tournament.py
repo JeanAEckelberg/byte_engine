@@ -5,51 +5,51 @@ from server.schemas.tournament.tournament_base import TournamentBase
 from server.schemas.tournament.tournament_schema import TournamentSchema
 
 
-def create(db: Session, group_run: GroupRunBase) -> GroupRun:
-    db_group_run: GroupRun = GroupRun(**group_run.model_dump(exclude={'group_run_id'}))
-    db.add(db_group_run)
+def create(db: Session, tournament: TournamentBase) -> Tournament:
+    db_tournament: Tournament = Tournament(**tournament.model_dump(exclude={'tournament_id'}))
+    db.add(db_tournament)
     db.commit()
-    db.refresh(db_group_run)
-    return db_group_run
+    db.refresh(db_tournament)
+    return db_tournament
 
 
-def read(db: Session, id: int) -> GroupRun | None:
-    return (db.query(GroupRun)
-            .filter(GroupRun.group_run_id == id)
+def read(db: Session, id: int) -> Tournament | None:
+    return (db.query(Tournament)
+            .filter(Tournament.tournament_id == id)
             .first())
 
 
-def read_all(db: Session) -> [GroupRun]:
-    return db.query(GroupRun).all()
+def read_all(db: Session) -> [Tournament]:
+    return db.query(Tournament).all()
 
 
-def read_all_W_filter(db: Session, **kwargs) -> [GroupRun]:
-    return (db.query(GroupRun)
+def read_all_W_filter(db: Session, **kwargs) -> [Tournament]:
+    return (db.query(Tournament)
             .filter_by(**kwargs)
             .all())
 
 
-def update(db: Session, id: int, group_run: GroupRunBase) -> GroupRun | None:
-    db_group_run: GroupRun | None = (db.query(GroupRun)
-                                     .filter(GroupRun.group_run_id == id)
+def update(db: Session, id: int, tournament: TournamentBase) -> Tournament | None:
+    db_tournament: Tournament | None = (db.query(Tournament)
+                                     .filter(Tournament.tournament_id == id)
                                      .one_or_none())
-    if db_group_run is None:
+    if db_tournament is None:
         return
 
-    for key, value in group_run.model_dump().items():
-        setattr(db_group_run, key, value) if value is not None else None
+    for key, value in tournament.model_dump().items():
+        setattr(db_tournament, key, value) if value is not None else None
 
     db.commit()
-    db.refresh(db_group_run)
-    return db_group_run
+    db.refresh(db_tournament)
+    return db_tournament
 
 
 def delete(db: Session, id: int) -> None:
-    db_group_run: GroupRun | None = (db.query(GroupRun)
-                                     .filter(GroupRun.group_run_id == id)
+    db_tournament: Tournament | None = (db.query(Tournament)
+                                     .filter(Tournament.tournament_id == id)
                                      .one_or_none())
-    if db_group_run is None:
+    if db_tournament is None:
         return
 
-    db.delete(db_group_run)
+    db.delete(db_tournament)
     db.commit()

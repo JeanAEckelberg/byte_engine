@@ -4,7 +4,7 @@ from datetime import datetime
 
 class RunBase(BaseModel):
     run_id: int
-    group_run_id: int
+    tournament_id: int
     run_time: datetime
     seed: int
     results: bytes

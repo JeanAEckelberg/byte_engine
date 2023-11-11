@@ -7,6 +7,6 @@ from server.schemas.turn.turn_schema import TurnBase
 
 
 class RunSchema(RunBase):
-    group_run: GroupRunBase
+    tournament: TournamentBase
     submission_run_infos: list[SubmissionRunInfoWSubmission]
-    turn_tables: list[TurnTableBase]
+    turns: list[TurnBase]

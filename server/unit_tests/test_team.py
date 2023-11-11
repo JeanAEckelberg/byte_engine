@@ -9,7 +9,7 @@ client = TestClient(app=app)
 # Test post method
 
 
-def test_team_post():
+def test_post_team():
     response = client.post('/team/',
                            json={"uni_id": 1,
                                  "team_type_id": 1,

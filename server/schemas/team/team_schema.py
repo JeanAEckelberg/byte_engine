@@ -9,4 +9,3 @@ class TeamSchema(TeamBase):
     university: UniversityBase
     team_type: TeamTypeBase
     submissions: list[SubmissionBase]
-    group_teams: list[GroupTeamsBase]

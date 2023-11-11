@@ -16,5 +16,5 @@ class Run(Base):
     results: Mapped[str] = mapped_column(LargeBinary(), nullable=False)
 
     submission_run_infos: Mapped[list['SubmissionRunInfo']] = relationship(back_populates='run')
-    group_run: Mapped['GroupRun'] = relationship(back_populates='runs')
-    turn_tables: Mapped[list['TurnTable']] = relationship(back_populates='run')
+    tournament: Mapped['Tournament'] = relationship(back_populates='runs')
+    turns: Mapped[list['Turn']] = relationship(back_populates='run')
