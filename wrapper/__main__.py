@@ -44,6 +44,9 @@ if __name__ == '__main__':
     all_subpar = spar.add_parser('gen,run,vis', aliases=['grv'],
                                  help='Generate, Run, Visualize! "grv -h" shows more options')
 
+    gr_subpar = spar.add_parser('gen,run', aliases=['gr'], help='Generates and runs the game without '
+                                                                'visualization. Can be helpful for testing!')
+
     # Version Subparser
     update_subpar = spar.add_parser('version', aliases=['ver'], help='Prints the current version of the launcher')
 
@@ -123,6 +126,11 @@ if __name__ == '__main__':
     elif action in ['visualize', 'v']:
         visualiser = ByteVisualiser()
         visualiser.loop()
+
+    elif action in ['gen,run', 'gr']:
+        generate()
+        engine = Engine(False)
+        engine.loop()
 
     elif action in ['gen,run,vis', 'grv']:
         generate()
