@@ -2,21 +2,19 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from server.models.base import Base
 from server.database import SessionLocal, engine
-from server.crud import crud_submission, crud_team_type, crud_university, crud_team, crud_group_run, crud_run, \
-    crud_group_teams
+from server.crud import crud_submission, crud_team_type, crud_university, crud_team, crud_tournament, crud_run
 from server.models.run import Run
 from server.models.submission_run_info import SubmissionRunInfo
-from server.models.group_run import GroupRun
 from server.models.team import Team
 from server.models.team_type import TeamType
 from server.models.submission import Submission
-from server.models.turn_table import TurnTable
+from server.models.turn import Turn
 from server.models.university import University
-from server.models.group_teams import GroupTeams
+from server.models.tournament import Tournament
 from server.models.submission import Submission
 
-from server.schemas.group_run.group_run_base import GroupRunBase
-from server.schemas.group_run.group_run_schema import GroupRunSchema
+from server.schemas.tournament.tournament_base import TournamentBase
+from server.schemas.tournament.tournament_schema import TournamentSchema
 from server.schemas.run.run_base import RunBase
 from server.schemas.run.run_schema import RunSchema
 from server.schemas.submission.submission_base import SubmissionBase
@@ -62,12 +60,11 @@ def post_team(team: TeamBase, db: Session = Depends(get_db)):
 
 
 # gets the INDIVIDUAL submission data of a specific team
-@app.get('/get_submission/{submission_id}/{team_uuid}', response_model=SubmissionSchema)
+@app.get('/submission', response_model=SubmissionSchema)
 def get_submission(submission_id: int, team_uuid: str, db: Session = Depends(get_db)):
     # Retrieves a list of submissions where the submission id and uuids match
     submission_list: list[Submission] | None = crud_submission.read_all_W_filter(
         db, submission_id=submission_id, team_uuid=team_uuid)
-    print('get_submission print')
 
     if submission_list is None:
         raise HTTPException(status_code=404, detail="Submission not found!")
@@ -75,11 +72,29 @@ def get_submission(submission_id: int, team_uuid: str, db: Session = Depends(get
     return submission_list[0]  # returns a single SubmissionSchema to give the submission data to the user
 
 
-# gets MULTIPLE submission
-# team_id = {vid}
-@app.get('/get_submissions/{vid}', response_model=list[SubmissionSchema])
-def get_submissions(vid: str, db: Session = Depends(get_db)):
-    return crud_submission.read_all_by_team_id(db, vid)
+# get all runs in a selected group run that a team was a part of
+@app.get('/runs', response_model=list[RunSchema])
+def get_runs(tournament_id: int, team_uuid: str | None = None, db: Session = Depends(get_db)):
+    run_list: list[Run] | None = crud_run.read_all_W_filter(
+        db, tournament_id=tournament_id)
+
+    # getting a run list where the team_uuid exists in the submission_run_info
+    if team_uuid is not None:
+        run_list = [run for run in run_list if team_uuid in [submission_run.submission.team.team_uuid if
+                                                             submission_run.submission is not None else None for
+                                                             submission_run in run.submission_run_infos]]
+
+    if run_list is None:
+        raise HTTPException(status_code=404, detail="Run not found D:")
+
+    return run_list
+
+
+# gets MULTIPLE submissions
+# get submissions
+@app.get('/submissions', response_model=list[SubmissionSchema])
+def get_submissions(team_uuid: str, db: Session = Depends(get_db)):
+    return crud_submission.read_all_by_team_id(db, team_uuid)
 
 
 # get team types
@@ -94,29 +109,22 @@ def get_universities(db: Session = Depends(get_db)):
     return crud_university.read_all(db)
 
 
-# get group runs based off team uuid
-@app.get('/group_runs/{team_uuid}', response_model=list[GroupRunBase])
-def get_group_runs(team_uuid: str, db: Session = Depends(get_db)):
-    group_team: GroupTeams
-    return [group_team.group_run for group_team in crud_group_teams.read_all_W_filter(db, team_uuid=team_uuid)]
+# get runs
+@app.get('/runs/', response_model=list[RunBase])
+def get_runs(db: Session = Depends(get_db)):
+    return crud_run.read_all(db)
 
 
-# get teams score over time, need team uuid
-@app.get('/score_over_time/{group_run_id}/{team_uuid}', response_model=list[GroupRunBase])
-def get_score_over_time(group_run_id: int, team_uuid: str, db: Session = Depends(get_db)):
-    group_run_list: list[Run] | None = crud_group_run.read_all_W_filter(
-        db, group_run_id=group_run_id, team_uuid=team_uuid)
-
-    if group_run_list is None:
-        raise HTTPException(status_code=404, detail="not found")
-
-    return group_run_list[0]
+# get tournaments
+@app.get('/tournaments/', response_model=list[TournamentSchema])
+def get_tournaments(db: Session = Depends(get_db)):
+    return crud_tournament.read_all(db, eager=True)
 
 
-# get leaderboards - group_id, join team, submissions, run, university, pass-team_type
-@app.get('/leaderboard/', response_model=list[GroupRunSchema])
-def leaderboard(db: Session = Depends(get_db)):
-    return crud_group_run.read_all(db)
+# get tournament by id
+@app.get('/tournament', response_model=TournamentSchema)
+def get_tournament(tournament_id: int, db: Session = Depends(get_db)):
+    return crud_tournament.read(db, tournament_id, eager=True)
 
 # main should not be able to delete (we do not want the public to be able to delete)
 # so we are not making a delete group runs endpoint

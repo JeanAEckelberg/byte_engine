@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from server.models.team_type import TeamType
 from server.schemas.team_type.team_type_schema import TeamTypeBase
@@ -12,18 +12,30 @@ def create(db: Session, team_type: TeamTypeBase) -> TeamType:
     return db_team_type
 
 
-def read(db: Session, id: int) -> TeamType | None:
+def read(db: Session, id: int, eager: bool = False) -> TeamType | None:
     return (db.query(TeamType)
+            .filter(TeamType.team_type_id == id)
+            .first() if not eager
+            else db.query(TeamType)
+            .options(joinedload(TeamType.teams))
             .filter(TeamType.team_type_id == id)
             .first())
 
 
-def read_all(db: Session) -> [TeamType]:
-    return db.query(TeamType).all()
-
-
-def read_all_W_filter(db: Session, **kwargs) -> [TeamType]:
+def read_all(db: Session, eager: bool = False) -> [TeamType]:
     return (db.query(TeamType)
+            .all() if not eager
+            else db.query(TeamType)
+            .options(joinedload(TeamType.teams))
+            .all())
+
+
+def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [TeamType]:
+    return (db.query(TeamType)
+            .filter_by(**kwargs)
+            .all() if not eager
+            else db.query(TeamType)
+            .options(joinedload(TeamType.teams))
             .filter_by(**kwargs)
             .all())
 

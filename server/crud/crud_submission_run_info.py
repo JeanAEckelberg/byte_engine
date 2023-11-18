@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from server.models.submission_run_info import SubmissionRunInfo
 from server.schemas.submission_run_info.submission_run_info_schema import SubmissionRunInfoBase
@@ -13,18 +13,33 @@ def create(db: Session, submission_run_info: SubmissionRunInfoBase) -> Submissio
     return db_submission_run_info
 
 
-def read(db: Session, id: int) -> SubmissionRunInfo | None:
+def read(db: Session, id: int, eager: bool = False) -> SubmissionRunInfo | None:
     return (db.query(SubmissionRunInfo)
+            .filter(SubmissionRunInfo.submission_run_info_id == id)
+            .first() if not eager
+            else db.query(SubmissionRunInfo)
+            .options(joinedload(SubmissionRunInfo.submission),
+                     joinedload(SubmissionRunInfo.run))
             .filter(SubmissionRunInfo.submission_run_info_id == id)
             .first())
 
 
-def read_all(db: Session) -> [SubmissionRunInfo]:
-    return db.query(SubmissionRunInfo).all()
-
-
-def read_all_W_filter(db: Session, **kwargs) -> [SubmissionRunInfo]:
+def read_all(db: Session, eager: bool = False) -> [SubmissionRunInfo]:
     return (db.query(SubmissionRunInfo)
+            .all() if not eager
+            else db.query(SubmissionRunInfo)
+            .options(joinedload(SubmissionRunInfo.submission),
+                     joinedload(SubmissionRunInfo.run))
+            .all())
+
+
+def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [SubmissionRunInfo]:
+    return (db.query(SubmissionRunInfo)
+            .filter_by(**kwargs)
+            .all() if not eager
+            else db.query(SubmissionRunInfo)
+            .options(joinedload(SubmissionRunInfo.submission),
+                     joinedload(SubmissionRunInfo.run))
             .filter_by(**kwargs)
             .all())
 

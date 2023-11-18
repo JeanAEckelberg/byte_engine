@@ -1,7 +1,7 @@
 import uuid
 from typing import Type
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_
 
 from server.models.submission import Submission
@@ -16,20 +16,35 @@ def create(submission: SubmissionWTeam, db: Session) -> Submission:
     return db_submission
 
 
-def read(db: Session, id: int) -> Submission | None:
+def read(db: Session, id: int, eager: bool = False) -> Submission | None:
     return (db.query(Submission)
+            .filter(Submission.submission_id == id)
+            .first() if not eager
+            else db.query(Submission)
+            .options(joinedload(Submission.submission_run_infos),
+                     joinedload(Submission.team))
             .filter(Submission.submission_id == id)
             .first())
 
 
-def read_all_by_team_id(db: Session, team_uuid: uuid) -> list[Type[Submission]]:
+def read_all_by_team_id(db: Session, team_uuid: uuid, eager: bool = False) -> list[Type[Submission]]:
     return (db.query(Submission)
+            .filter(Submission.team_uuid == team_uuid)
+            .all() if not eager
+            else db.query(Submission)
+            .options(joinedload(Submission.submission_run_infos),
+                     joinedload(Submission.team))
             .filter(Submission.team_uuid == team_uuid)
             .all())
 
 
-def read_all_W_filter(db: Session, **kwargs) -> [Submission]:
+def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Submission]:
     return (db.query(Submission)
+            .filter_by(**kwargs)
+            .all() if not eager
+            else db.query(Submission)
+            .options(joinedload(Submission.submission_run_infos),
+                     joinedload(Submission.team))
             .filter_by(**kwargs)
             .all())
 

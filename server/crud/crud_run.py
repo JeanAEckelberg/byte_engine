@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from server.models.run import Run
 from server.schemas.run.run_schema import RunBase
@@ -12,26 +12,40 @@ def create(db: Session, run: RunBase) -> Run:
     return db_run
 
 
-def read(db: Session, id: int) -> Run | None:
+def read(db: Session, id: int, eager: bool = False) -> Run | None:
     return (db.query(Run)
+            .filter(Run.run_id == id)
+            .first() if not eager
+            else db.query(Run)
+            .options(joinedload(Run.turns),
+                     joinedload(Run.submission_run_infos),
+                     joinedload(Run.tournament))
             .filter(Run.run_id == id)
             .first())
 
 
-def read_all(db: Session) -> [Run]:
-    return db.query(Run).all()
+def read_all(db: Session, eager: bool = False) -> [Run]:
+    return db.query(Run).all() if not eager \
+        else db.query(Run).options(joinedload(Run.turns),
+                                   joinedload(Run.submission_run_infos),
+                                   joinedload(Run.tournament)).all()
 
 
-def read_all_W_filter(db: Session, **kwargs) -> [Run]:
+def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Run]:
     return (db.query(Run)
             .filter_by(**kwargs)
-            .all())
+            .all() if not eager else
+            db.query(Run)
+            .options(joinedload(Run.turns),
+                     joinedload(Run.submission_run_infos),
+                     joinedload(Run.tournament))
+            .filter_by(**kwargs).all())
 
 
 def update(db: Session, id: int, run: RunBase) -> Run | None:
     db_run: Run | None = (db.query(Run)
-                                .filter(Run.run_id == id)
-                                .one_or_none())
+                          .filter(Run.run_id == id)
+                          .one_or_none())
     if db_run is None:
         return
 
@@ -45,8 +59,8 @@ def update(db: Session, id: int, run: RunBase) -> Run | None:
 
 def delete(db: Session, id: int, run: RunBase) -> None:
     db_run: Run | None = (db.query(Run)
-                                .filter(Run.run_id == id)
-                                .one_or_none())
+                          .filter(Run.run_id == id)
+                          .one_or_none())
     if db_run is None:
         return
 

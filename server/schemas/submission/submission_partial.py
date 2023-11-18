@@ -1,6 +1,6 @@
 from server.schemas.submission.submission_base import SubmissionBase
-from server.schemas.submission_run_info.submission_run_info_w_run import SubmissionRunInfoWRun
+from server.schemas.team.team_base import TeamBase
 
 
 class SubmissionSchemaPartial(SubmissionBase):
-    submission_run_infos: list[SubmissionRunInfoWRun]
+    team: TeamBase

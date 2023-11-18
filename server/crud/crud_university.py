@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from server.models.university import University
 from server.schemas.university.university_schema import UniversityBase
@@ -12,18 +12,30 @@ def create(db: Session, university: UniversityBase) -> University:
     return db_university
 
 
-def read(db: Session, id: int) -> University | None:
+def read(db: Session, id: int, eager: bool = False) -> University | None:
     return (db.query(University)
+            .filter(University.uni_id == id)
+            .first() if not eager
+            else db.query(University)
+            .options(joinedload(University.teams))
             .filter(University.uni_id == id)
             .first())
 
 
-def read_all(db: Session) -> [University]:
-    return db.query(University).all()
-
-
-def read_all_W_filter(db: Session, **kwargs) -> [University]:
+def read_all(db: Session, eager: bool = False) -> [University]:
     return (db.query(University)
+            .all() if not eager
+            else db.query(University)
+            .options(joinedload(University.teams))
+            .all())
+
+
+def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [University]:
+    return (db.query(University)
+            .filter_by(**kwargs)
+            .all() if not eager
+            else db.query(University)
+            .options(joinedload(University.teams))
             .filter_by(**kwargs)
             .all())
 

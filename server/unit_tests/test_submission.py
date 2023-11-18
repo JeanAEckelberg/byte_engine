@@ -27,7 +27,7 @@ def test_post_submission():
 # Test get methods
 
 def test_get_submission():
-    response = client.get('/get_submission/1/1/')
+    response = client.get('/submission?submission_id=1&team_uuid=1')
     assert response.status_code == 200
     assert response.json() == {"submission_id": 1,
                                "submission_time": "2000-10-31T06:30:00Z",
@@ -42,30 +42,59 @@ def test_get_submission():
                                                          "player_num": 1,
                                                          "points_awarded": 100,
                                                          "run": {"run_id": 1,
-                                                                 "group_run_id": 1,
+                                                                 "tournament_id": 1,
                                                                  "run_time": "2000-10-31T06:30:00Z",
                                                                  "seed": 1,
                                                                  "results": "test"}}]}
 
 
 def test_get_submissions():
-    response = client.get('/get_submissions/1')
+    response = client.get('/submissions?team_uuid=1')
     assert response.status_code == 200
-    assert response.json() == [{"submission_id": 1, "submission_time": "2000-10-31T06:30:00Z", "file_txt": "test",
-                                "team": {"uni_id": 1, "team_type_id": 1, "team_name": "Noobs"},
-                                "submission_run_infos": [
-                                    {"submission_run_info_id": 1, "run_id": 1, "submission_id": 1, "error_txt": "error",
-                                     "player_num": 1, "points_awarded": 100,
-                                     "run": {"run_id": 1, "group_run_id": 1, "run_time": "2000-10-31T06:30:00Z",
-                                             "seed": 1, "results": "test"}}]},
-                               {"submission_id": 2, "submission_time": "2000-10-31T06:30:00Z", "file_txt": "test",
-                                "team": {"uni_id": 1, "team_type_id": 1, "team_name": "Noobs"},
-                                "submission_run_infos": []}]
+    assert response.json() == [
+        {
+            "submission_id": 1,
+            "submission_time": "2000-10-31T06:30:00Z",
+            "file_txt": "test",
+            "team": {
+                "uni_id": 1,
+                "team_type_id": 1,
+                "team_name": "Noobs"
+            },
+            "submission_run_infos": [
+                {
+                    "submission_run_info_id": 1,
+                    "run_id": 1,
+                    "submission_id": 1,
+                    "error_txt": "error",
+                    "player_num": 1,
+                    "points_awarded": 100,
+                    "run": {
+                        "run_id": 1,
+                        "tournament_id": 1,
+                        "run_time": "2000-10-31T06:30:00Z",
+                        "seed": 1,
+                        "results": "test"
+                    }
+                }
+            ]
+        },
+        {
+            "submission_id": 2,
+            "submission_time": "2000-10-31T06:30:00Z",
+            "file_txt": "test",
+            "team": {
+                "uni_id": 1,
+                "team_type_id": 1,
+                "team_name": "Noobs"
+            },
+            "submission_run_infos": []
+        }
+    ]
 
 
 # Test read nonexistent submission/s
 
-
 def test_get_nonexistent_submission():
     with pytest.raises(IndexError):
-        client.get('/get_submission/3/2')
+        client.get('/submission?submission_id=2&team_uuid=2')
