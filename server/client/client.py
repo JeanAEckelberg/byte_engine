@@ -22,6 +22,15 @@ class Client:
 
     def handle_client(self, args):
         try:
+            # The rest of the if statements will attempt to fulfill the desired command
+            if args.register:
+                self.register()
+                return
+
+            if args.submit:
+                self.submit()
+                return
+
             # If the subparse is None, don't attempt to do the rest of the code
             if args.subparse is None:
                 print("The server command needs more information. Try 'python launcher.pyz s -h' for help")
@@ -32,15 +41,6 @@ class Client:
                 return
 
             if args.subparse.lower() == 'leaderboard' or args.subparse.lower() == "l":
-                return
-
-            # The rest of the if statements will attempt to fulfill the desired command
-            if args.register:
-                self.register()
-                return
-
-            if args.submit:
-                self.submit()
                 return
 
             # need guard clause of the -1 in the client utils.
@@ -54,27 +54,29 @@ class Client:
                 self.utils.get_submissions(self.vid)
                 return
 
-            if args.get_tournaments:
-                self.utils.get_tournaments()
-                return
+            # Shouldn't be needed; clients don't need access to entire tournament entries
+            # if args.get_tournaments:
+            #     self.utils.get_tournaments()
+            #     return
 
             if args.get_code_for_submission != -1:
                 self.utils.get_code_from_submission(args.get_code_for_submission, self.vid)
                 return
 
-            if args.subparse.lower() == 'get_seed' or args.subparse.lower() == 'gs':
-                self.utils.get_seed_for_run(args.run_id, self.vid)
-                return
-
-            if args.get_errors_for_submission != -1:
-                self.utils.get_errors_for_submission(args.get_errors_for_submission, self.vid)
-                return
-
-            if args.over_time:
-                self.utils.get_team_score_over_time(self.vid)
-                return
-            else:
-                self.utils.get_leaderboard(args.include_alumni, args.group_id)
+            # ask group if we need to keep the following three method calls or not
+            # if args.subparse.lower() == 'get_seed' or args.subparse.lower() == 'gs':
+            #     self.utils.get_seed_for_run(args.run_id, self.vid)
+            #     return
+            #
+            # if args.get_errors_for_submission != -1:
+            #     self.utils.get_errors_for_submission(args.get_errors_for_submission, self.vid)
+            #     return
+            #
+            # if args.over_time:
+            #     self.utils.get_team_score_over_time(self.vid)
+            #     return
+            # else:
+            self.utils.get_leaderboard(args.include_alumni)
 
         except HTTPError as e:
             print(f"Error: {json.loads(e.response._content)['error']}")

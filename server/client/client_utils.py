@@ -1,14 +1,16 @@
-import requests
 import json
-import urllib3
 import os
 from datetime import datetime, timezone, tzinfo
+
+import requests
+import urllib3
+from requests import Response
 
 
 class ClientUtils:
     def __init__(self, csv_bool: bool) -> None:
         urllib3.disable_warnings()
-        self.IP = 'http://134.129.91.211:8000/api/'
+        self.IP = 'http://127.0.0.1:8000/'
         self.PORT = 8000
         self.path_to_public = False
         self.use_csv: bool = csv_bool
@@ -30,7 +32,7 @@ class ClientUtils:
         return json.loads(resp.content)
 
     # get unis
-    def get_unis(self) -> dict:
+    def get_unis(self) -> list[dict]:
         resp = requests.get(self.IP + 'universities/', verify=self.path_to_public)
         resp.raise_for_status()
         return json.loads(resp.content)
@@ -52,15 +54,18 @@ class ClientUtils:
         resp.raise_for_status()
         return json.loads(resp.content)
 
-    # gets the runs from a INDIVIDUAL get_submission
-    def get_submission(self, subid: int, vid: str) -> None:
+    # gets the runs from an INDIVIDUAL get_submission
+    def get_submission(self, subid: int, vid: str, prints_table: bool = True) -> dict:
         resp = requests.get(
             self.IP + f'submission?submission_id={subid}&team_uuid={vid}', verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
         jsn['submission_time'] = self.convert_utc_to_local(utc_str=jsn['submission_time']).strftime(
             '%m/%d/%Y, %H:%M:%S')
-        self.print_table(jsn)
+
+        if prints_table:
+            self.print_table(jsn)
+        return jsn
 
     # MULTIPLE get_submissions
     def get_submissions(self, vid: str) -> None:
@@ -73,12 +78,12 @@ class ClientUtils:
         self.print_table(jsn)
 
     # post team
-    def register(self, uni_id: int, team_type_id: int, team_name: str) -> dict:
+    def register(self, uni_id: int, team_type_id: int, team_name: str) -> Response:
         data = {'uni_id': uni_id, 'team_type_id': team_type_id, 'team_name': team_name}
         resp = requests.post(
             self.IP + 'team', json=data, verify=self.path_to_public)
         resp.raise_for_status()
-        return json.loads(resp.content)
+        return resp
 
     # get all runs
     def get_runs(self) -> dict:
@@ -95,8 +100,17 @@ class ClientUtils:
         jsn['run_time'] = self.convert_utc_to_local(utc_str=jsn['run_time']).strftime('%m/%d/%Y, %H:%M:%S')
         self.print_table(jsn)
 
+    # gets the code file from the specified submission using the submission id
     def get_code_from_submission(self, submission_id, vid):
-        self.get_submission(submission_id, vid)
+        submission_json: dict = self.get_submission(submission_id, vid, False)
+        if submission_json['file_txt'].decode("utf-8") == "":
+            print("Bad Vid and subid combination (probably)")
+        else:
+            content = submission_json['file_txt'].decode("utf-8")
+            with open(f"./code_for_submission_{submission_id}.py", "w") as fl:
+                fl.write(content)
+            print(
+                f"Code for submission {submission_id} has been written {os.path.realpath(fl.name)}")
 
     # Building a comma-separated-values list table or ascii table based on passed in data below
     # The tables are used to build the leaderboard
@@ -200,6 +214,15 @@ class ClientUtils:
     #     }
 
     # finds uni_id and uni_name for building the leaderboard by calling get_unis() method
+
+    def get_leaderboard(self, include_ineligible: bool):
+        # collect info needed to build leaderboard
+        uni_info: dict = self.get_leaderboard_uni_info()
+        team_info: dict = self.get_leaderboard_team_type_info()
+
+        # put info together to build leaderboard
+        self.print_leaderboard_info(uni_info, team_info, include_ineligible)
+
     def get_leaderboard_uni_info(self) -> dict:
         unis_info: list[dict] = self.get_unis()
         return {uni['uni_id']: uni['uni_name'] for uni in unis_info}
@@ -211,9 +234,9 @@ class ClientUtils:
                 for team_type in team_types}
 
     # collects all data needed for building the leaderboard
-    def get_leaderboard_info(self, uni_info: dict, team_info: dict) -> dict:
+    def print_leaderboard_info(self, uni_info: dict, team_info: dict, include_ineligible: bool) -> None:
         tournaments: list[dict] = self.get_tournaments()
-        result: dict = {}
+        result: list = []
         list_result: list = []
 
         for index, tournament in enumerate(tournaments):
@@ -232,17 +255,19 @@ class ClientUtils:
 
         for run in tournaments[tournament_id]['runs']:
             for submission_run_info in run:
-                team_name: str = submission_run_info['team']['team_name']
+                team_name: str = submission_run_info['submission']['team']['team_name']
+
+                if not include_ineligible and not team_info[team_name]['eligible']:
+                    continue
 
                 # makes a dict of {'Example Team Name': {all info needed to build leaderboard}}
-                result[team_name] = {'Team Name': submission_run_info['team']['team_name'],
-                                     'University': uni_info['uni_name'],
-                                     'Points Awarded': submission_run_info['points_awarded'],
-                                     'Team Type': team_info['team_type_name'],
-                                     'Eligible': team_info['eligible']}
-        filter()
+                result.append({'Team Name': team_name,
+                               'University': uni_info[submission_run_info['submission']['team']['uni_id']]['uni_name'],
+                               'Points Awarded': submission_run_info['points_awarded'],
+                               'Team Type': team_info[team_name]['team_type_name'],
+                               'Eligible': team_info[team_name]['eligible']})
 
-        return result
+        self.print_table(result)
 
     def __validate_to_int(self, prompt: str, cancel: str = '-1') -> int | None:
         while True:

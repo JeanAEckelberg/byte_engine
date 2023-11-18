@@ -1,5 +1,6 @@
 import sys
 
+from server.client.client import Client
 from version import version
 from game.engine import Engine
 from game.utils.generate_game import generate
@@ -29,6 +30,9 @@ if __name__ == '__main__':
     
     run_subpar.add_argument('-quiet', '-q', action='store_true', default=False,
                             dest='q_bool', help='Runs your AI... quietly :)')
+
+    run_subpar.add_argument('-fn', '-fn', action='store_true', default=False,
+                            dest='fn_bool', help='Replaces team names with file names; for server usage')
 
     # Visualizer Subparser and optionals
     vis_subpar = spar.add_parser('visualize', aliases=['v'],
@@ -119,7 +123,7 @@ if __name__ == '__main__':
         if par_args.q_bool:
             quiet = True
 
-        engine = Engine(quiet)
+        engine = Engine(quiet, par_args.fn_bool)
         engine.loop()
 
     # Run the visualizer
@@ -141,6 +145,10 @@ if __name__ == '__main__':
 
     elif action in ['version', 'ver']:
         print(version, end="")
+
+    # Boot up the scrimmage server client
+    elif action in ['client', 'c', 'scrimmage', 's']:
+        cl = Client(par_args)
 
     # Print help if no arguments are passed
     if len(sys.argv) == 1:
