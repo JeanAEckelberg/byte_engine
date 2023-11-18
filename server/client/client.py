@@ -131,9 +131,10 @@ class Client:
             print('Something broke.')
             return
 
+        jsn: dict = json.loads(response.content)
         # Put uuid into file for verification (vID)
         with open('vID', 'w+') as f:
-            f.write(v_id.decode('UTF-8'))
+            f.write(jsn['team_uuid'])
 
         print("Registration successful.")
         print("You have been given an ID file in your Byte-le folder. Don't move or lose it!")
