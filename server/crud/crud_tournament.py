@@ -34,6 +34,7 @@ def read(db: Session, id: int, eager: bool = False) -> Tournament | None:
 
 def read_all(db: Session, eager: bool = False) -> [Tournament]:
     return (db.query(Tournament)
+            .order_by(Tournament.start_run.desc())
             .all() if not eager
             else db.query(Tournament)
             .options(joinedload(Tournament.runs)
@@ -42,6 +43,7 @@ def read_all(db: Session, eager: bool = False) -> [Tournament]:
                      .joinedload(Submission.team),
                      joinedload(Tournament.runs)
                      .joinedload(Run.turns))
+            .order_by(Tournament.start_run.desc())
             .all())
 
 

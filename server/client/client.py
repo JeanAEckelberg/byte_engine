@@ -43,34 +43,32 @@ class Client:
                 self.submit()
                 return
 
-            # need guard clause of the -1 in the client utils. Tell Julia
-            self.utils.get_team_runs_for_group_run(self.vid, args.runs_for_group_run)
+            # need guard clause of the -1 in the client utils.
+            self.utils.get_team_runs_for_tournament(args.runs_for_tournament, self.vid)
 
             if args.runs_for_submission != -1:
-                self.utils.get_runs_for_submission(self.vid, args.runs_for_submission)
+                self.utils.get_runs_for_submission(args.runs_for_submission, self.vid)
                 return
 
             if args.get_submissions:
                 self.utils.get_submissions(self.vid)
                 return
 
-            if args.get_group_runs:
-                self.utils.get_group_runs(self.vid)
+            if args.get_tournaments:
+                self.utils.get_tournaments()
                 return
 
             if args.get_code_for_submission != -1:
-                self.utils.get_code_from_submission(self.vid, args.get_code_for_submission)
+                self.utils.get_code_from_submission(args.get_code_for_submission, self.vid)
                 return
 
             if args.subparse.lower() == 'get_seed' or args.subparse.lower() == 'gs':
-                self.utils.get_seed_for_run(self.vid, args.run_id)
+                self.utils.get_seed_for_run(args.run_id, self.vid)
                 return
 
             if args.get_errors_for_submission != -1:
-                self.utils.get_errors_for_submission(self.vid, args.get_errors_for_submission)
+                self.utils.get_errors_for_submission(args.get_errors_for_submission, self.vid)
                 return
-            else:
-                self.get_submission_stats()
 
             if args.over_time:
                 self.utils.get_team_score_over_time(self.vid)
@@ -87,17 +85,17 @@ class Client:
             print('You have already registered.')
             return
 
-        # Ask for teamname
-        teamname = input("Enter your teamname: ")
+        # Ask for team name
+        team_name = input("Enter your team name: ")
 
-        if teamname == '':
-            print("Teamname can't be empty.")
+        if team_name == '':
+            print("Team name can't be empty.")
             return
 
         unis = self.utils.get_unis()
 
         print("Select a university (id)")
-        self.utils.to_table(unis)
+        self.utils.print_table(unis)
 
         uni_id = int(input())
 
@@ -108,19 +106,18 @@ class Client:
         team_types = self.utils.get_team_types()
 
         print("Select a team type (id)")
-        self.utils.to_table(team_types)
+        self.utils.print_table(team_types)
 
-        team_type = int(input())
+        team_type_id = int(input())
 
-        if team_type not in map(lambda x: x['team_type_id'], team_types):
+        if team_type_id not in map(lambda x: x['team_type_id'], team_types):
             print("Not a valid team type")
             return
 
-        response = self.utils.register(
-            {"type": team_type, "uni": uni_id, "name": teamname})
+        response = self.utils.register(uni_id, team_type_id, team_name)
 
         if not response.ok:
-            print('Teamname contains illegal characters or is already taken.')
+            print('Team name contains illegal characters or is already taken.')
             return
 
         # Receive uuid
@@ -171,16 +168,10 @@ class Client:
         # Send client file
         print('Submitting file.')
         with open(CLIENT_DIRECTORY + file) as fl:
-            fil = "".join(fl.readlines())
+            fil = bytes("".join(fl.readlines()), 'utf-8')
             self.utils.submit_file(fil, self.vid)
 
         print('File sent successfully.')
-
-    def get_submission_stats(self):
-        res = self.utils.get_submission_stats(self.vid)
-        print("Current Submission stats for submission {0} in group run {1}".format(res["sub_id"], res["run_group_id"]))
-        print(f"Your submission has been run {len(res['data'])} out of {res['runs_per_client']} times")
-        self.utils.to_table(res["data"])
 
     def verify(self):
         # Check vID for uuid
