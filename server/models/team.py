@@ -17,6 +17,5 @@ class Team(Base):
     submissions: Mapped[list['Submission']] = relationship(back_populates='team')
     university: Mapped['University'] = relationship(back_populates='teams')
     team_type: Mapped['TeamType'] = relationship(back_populates='teams')
-    group_teams: Mapped[list['GroupTeams']] = relationship(back_populates='team')
 
 

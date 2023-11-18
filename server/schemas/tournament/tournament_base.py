@@ -2,8 +2,8 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
-class GroupRunBase(BaseModel):
-    group_run_id: int
+class TournamentBase(BaseModel):
+    tournament_id: int
     start_run: datetime
     launcher_version: str
     runs_per_client: int

@@ -6,5 +6,7 @@ class SubmissionRunInfoBase(BaseModel):
     run_id: int
     submission_id: int
     error_txt: str
+    player_num: int
+    points_awarded: int
 
     model_config: dict = {'from_attributes': True}
