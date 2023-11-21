@@ -20,14 +20,14 @@ if __name__ == '__main__':
 
     gen_subpar.add_argument('-seed', '-s', action='store', type=int, nargs='?', dest='seed',
                             help='Allows you to pass a seed into the generate function.')
-    
+
     # Run Subparser and optionals
     run_subpar = spar.add_parser('run', aliases=['r'],
                                  help='Runs your bot against the last generated map! "r -h" shows more options')
 
-    run_subpar.add_argument('-debug', '-d', action='store', type=int, nargs='?', const=-1, 
+    run_subpar.add_argument('-debug', '-d', action='store', type=int, nargs='?', const=-1,
                             default=None, dest='debug', help='Allows for debugging when running your code')
-    
+
     run_subpar.add_argument('-quiet', '-q', action='store_true', default=False,
                             dest='q_bool', help='Runs your AI... quietly :)')
 
@@ -101,14 +101,15 @@ if __name__ == '__main__':
 
     # Parse Command Line
     par_args = par.parse_args()
-    
+
     # Main Action variable
     action = par_args.command
 
     # Generate game options
     if action in ['generate', 'g']:
-        generate()  # a random seed is already generated in the method by default
-    
+        generate(par_args.seed) if par_args.seed \
+            else generate()  # a random seed is already generated in the method by default
+
     # Run game options
     elif action in ['run', 'r']:
         # Additional args
@@ -119,7 +120,7 @@ if __name__ == '__main__':
                 game.config.Debug.level = par_args.debug
             else:
                 print('Valid debug input not found, using default value')
-        
+
         if par_args.q_bool:
             quiet = True
 
