@@ -18,14 +18,14 @@ class ClientUtils:
 
     # convert utc to local time
     def convert_utc_to_local(self, utc_str: str = '2000-10-31T06:30:00Z') -> datetime:
-        a: datetime = datetime.strptime(utc_str, '%Y-%m-%dT%H:%M:%SZ')
+        a: datetime = datetime.strptime(utc_str, '%Y-%m-%dT%H:%M:%S.%fZ')
         tz: tzinfo = datetime.now().astimezone().tzinfo
         a = a.replace(tzinfo=timezone.utc)
 
         return a.astimezone(tz)
 
     # get team types
-    def get_team_types(self) -> dict:
+    def get_team_types(self) -> list[dict]:
         resp = requests.get(self.IP + 'team_types/',
                             verify=self.path_to_public)
         resp.raise_for_status()
@@ -43,14 +43,16 @@ class ClientUtils:
             self.IP + 'get_score_over_time', json={'vid': vid}, verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
-        print('The following is your team\'s performance in each group run')
+        print('The following is your team\'s performance in each tournament')
         self.print_table(jsn)
 
     # post submission
     def submit_file(self, fil: bytes, vid: str) -> dict:
-        data = {'submission_id': 0, 'submission_time': datetime.now(), 'file_txt': fil, 'team_uuid': vid}
+        data = {'submission_id': 0, 'submission_time': datetime.utcnow().isoformat(), 'file_txt': fil.decode("utf-8"),
+                'team_uuid': vid}
+        print(data)
         resp = requests.post(
-            self.IP + 'submission', json=data, verify=self.path_to_public)
+            self.IP + 'submission/', json=data, verify=self.path_to_public)
         resp.raise_for_status()
         return json.loads(resp.content)
 
@@ -63,19 +65,24 @@ class ClientUtils:
         jsn['submission_time'] = self.convert_utc_to_local(utc_str=jsn['submission_time']).strftime(
             '%m/%d/%Y, %H:%M:%S')
 
+        to_table: dict = {'ID': jsn['submission_id'],
+                          'Submission Time': jsn['submission_time']}
         if prints_table:
-            self.print_table(jsn)
+            self.print_table(to_table)
         return jsn
 
     # MULTIPLE get_submissions
     def get_submissions(self, vid: str) -> None:
         resp = requests.get(
-            self.IP + f'submissions/{vid}', verify=self.path_to_public)
+            self.IP + f'submissions?team_uuid={vid}', verify=self.path_to_public)
         resp.raise_for_status()
         jsn = json.loads(resp.content)
-        jsn['submission_time'] = self.convert_utc_to_local(utc_str=jsn['submission_time']).strftime(
-            '%m/%d/%Y, %H:%M:%S')
-        self.print_table(jsn)
+        to_table: list = sorted([{'ID': x['submission_id'],
+                                  'Submission Time': self.convert_utc_to_local(utc_str=x['submission_time']).strftime(
+                                      '%m/%d/%Y, %H:%M:%S'),
+                                  } for x in jsn], key=lambda x: x['Submission Time'], reverse=True)
+
+        self.print_table(to_table)
 
     # post team
     def register(self, uni_id: int, team_type_id: int, team_name: str) -> Response:
@@ -103,10 +110,10 @@ class ClientUtils:
     # gets the code file from the specified submission using the submission id
     def get_code_from_submission(self, submission_id, vid):
         submission_json: dict = self.get_submission(submission_id, vid, False)
-        if submission_json['file_txt'].decode("utf-8") == "":
+        if submission_json['file_txt'] == "":
             print("Bad Vid and subid combination (probably)")
         else:
-            content = submission_json['file_txt'].decode("utf-8")
+            content = submission_json['file_txt']
             with open(f"./code_for_submission_{submission_id}.py", "w") as fl:
                 fl.write(content)
             print(
@@ -192,20 +199,17 @@ class ClientUtils:
                 "Something went wrong. Maybe there isn't data for what you're looking for")
 
     # get tournaments for leaderboard
-    def get_tournaments(self, include_inelligible, tournament_id):
+    def get_tournaments(self):
         resp = requests.get(self.IP + 'tournaments/', verify=self.path_to_public)
         resp.raise_for_status()
         return json.loads(resp.content)
-        # convert to leaderboard here DO SOON
-        # if not include_inelligible:
-        #     print(
-        #         f"The following is the leaderboard for eligible contestants for group run {group_info['group_run_id']}.")
-        # else:
-        #     print(
-        #         f"The following is the leaderboard for all contestants for group run {group_info['group_run_id']}.")
-        # print(
-        #     f"""This group run ran with the launcher version {group_info['launcher_version']} on {group_info['start_run']}. Each client was run {group_info['runs_per_client']} times.""")
-        # self.to_table(jsn["data"])
+
+        # get tournaments for leaderboard
+
+    def get_tournament(self, tournament_id: int):
+        resp = requests.get(self.IP + f'tournament?tournament_id={tournament_id}', verify=self.path_to_public)
+        resp.raise_for_status()
+        return json.loads(resp.content)
 
     # def to_leaderboard_record(self, group_runs: list[dict]):
     #
@@ -215,13 +219,13 @@ class ClientUtils:
 
     # finds uni_id and uni_name for building the leaderboard by calling get_unis() method
 
-    def get_leaderboard(self, include_ineligible: bool):
+    def get_leaderboard(self, include_ineligible: bool, leaderboard_id: int = -1):
         # collect info needed to build leaderboard
         uni_info: dict = self.get_leaderboard_uni_info()
         team_info: dict = self.get_leaderboard_team_type_info()
 
         # put info together to build leaderboard
-        self.print_leaderboard_info(uni_info, team_info, include_ineligible)
+        self.print_leaderboard_info(uni_info, team_info, include_ineligible, leaderboard_id)
 
     def get_leaderboard_uni_info(self) -> dict:
         unis_info: list[dict] = self.get_unis()
@@ -234,9 +238,32 @@ class ClientUtils:
                 for team_type in team_types}
 
     # collects all data needed for building the leaderboard
-    def print_leaderboard_info(self, uni_info: dict, team_info: dict, include_ineligible: bool) -> None:
-        tournaments: list[dict] = self.get_tournaments()
+    def print_leaderboard_info(self, uni_info: dict, team_info: dict, include_ineligible: bool,
+                               leaderboard_id: int = -1) -> None:
+        tournaments: list[dict] = self.get_tournaments() if leaderboard_id == -1 \
+            else [self.get_tournament(leaderboard_id)]
+
+        tournament_id = 0 if leaderboard_id != -1 else self.__print_leaderboard_info_helper(tournaments)
+
         result: list = []
+        for run in tournaments[tournament_id]['runs']:
+            for submission_run_info in run:
+                team_name: str = submission_run_info['submission']['team']['team_name']
+
+                if not include_ineligible and not team_info[team_name]['eligible']:
+                    continue
+
+                # makes a dict of {'Example Team Name': {all info needed to build leaderboard}}
+                result.append({'Team Name': team_name,
+                               'University': uni_info[submission_run_info['submission']['team']['uni_id']]['uni_name'],
+                               'Points Awarded': submission_run_info['points_awarded'],
+                               'Team Type': team_info[team_name]['team_type_name'],
+                               'Eligible': team_info[team_name]['eligible']})
+
+        self.print_table(result)
+
+    # Helper method to print the print_leaderboard_method
+    def __print_leaderboard_info_helper(self, tournaments: list[dict]) -> int:
         list_result: list = []
 
         for index, tournament in enumerate(tournaments):
@@ -253,21 +280,7 @@ class ClientUtils:
 
         tournament_id: int = self.__validate_to_int('Specify the index of the tournament you would like to view > ')
 
-        for run in tournaments[tournament_id]['runs']:
-            for submission_run_info in run:
-                team_name: str = submission_run_info['submission']['team']['team_name']
-
-                if not include_ineligible and not team_info[team_name]['eligible']:
-                    continue
-
-                # makes a dict of {'Example Team Name': {all info needed to build leaderboard}}
-                result.append({'Team Name': team_name,
-                               'University': uni_info[submission_run_info['submission']['team']['uni_id']]['uni_name'],
-                               'Points Awarded': submission_run_info['points_awarded'],
-                               'Team Type': team_info[team_name]['team_type_name'],
-                               'Eligible': team_info[team_name]['eligible']})
-
-        self.print_table(result)
+        return tournament_id
 
     def __validate_to_int(self, prompt: str, cancel: str = '-1') -> int | None:
         while True:

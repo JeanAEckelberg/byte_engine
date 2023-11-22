@@ -44,11 +44,11 @@ class Client:
                 return
 
             # need guard clause of the -1 in the client utils.
-            self.utils.get_team_runs_for_tournament(args.runs_for_tournament, self.vid)
-
-            if args.runs_for_submission != -1:
-                self.utils.get_runs_for_submission(args.runs_for_submission, self.vid)
-                return
+            # self.utils.get_team_runs_for_tournament(args.runs_for_tournament, self.vid)
+            #
+            # if args.runs_for_submission != -1:
+            #     self.utils.get_runs_for_submission(args.runs_for_submission, self.vid)
+            #     return
 
             if args.get_submissions:
                 self.utils.get_submissions(self.vid)

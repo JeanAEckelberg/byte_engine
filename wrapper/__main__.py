@@ -29,7 +29,7 @@ if __name__ == '__main__':
                             default=None, dest='debug', help='Allows for debugging when running your code')
 
     run_subpar.add_argument('-quiet', '-q', action='store_true', default=False,
-                            dest='q_bool', help='Runs your AI... quietly :)')
+                            dest='q_bool', help='Runs your AI... quietly :) (the runs per second won\'t be displayed)')
 
     run_subpar.add_argument('-fn', '-fn', action='store_true', default=False,
                             dest='fn_bool', help='Replaces team names with file names; for server usage')
@@ -52,43 +52,47 @@ if __name__ == '__main__':
                                                                 'visualization. Can be helpful for testing!')
 
     # Version Subparser
-    update_subpar = spar.add_parser('version', aliases=['ver'], help='Prints the current version of the launcher')
+    update_subpar = spar.add_parser('version', aliases=['ver'], help='Prints the current version of the '
+                                                                     'launcher')
 
     # Client Parser
-    client_parser = spar.add_parser('client', aliases=['s', 'c'], help='Run the client for the Byte-le Royale server')
+    client_parser = spar.add_parser('client', aliases=['s', 'c'], help='Run the client for the Byte-le Royale '
+                                                                       'server')
 
     client_parser.add_argument('-csv',
                                help='Use csv output instead of the ascii table output (if applicable)',
                                default=False, action='store_true')
 
     # subparser group
+
+    # ALL OF THESE LEADERBOARD_SUBPAR NEED TO BE TESTED
     client_sub_group = client_parser.add_subparsers(title='client_subparsers', dest='subparse')
-    leaderboard = client_sub_group.add_parser('leaderboard', aliases=['l'],
-                                              help='Commands relating to the leaderboard')
-    leaderboard.add_argument('-include_alumni', help='Include alumni in the leaderboard',
-                             default=False, action='store_true')
-    leaderboard.add_argument('-over_time', help='See how you have scored over time', default=False,
-                             action='store_true')
-    leaderboard.add_argument('-group_run_id',
-                             help='pass the group_run_id you want to get run ids for. -1 is the default and most '
-                                  'recent submission',
-                             type=int, default=-1)
+    leaderboard_subpar = client_sub_group.add_parser('leaderboard', aliases=['l'],
+                                                     help='Commands relating to the leaderboard')
+    leaderboard_subpar.add_argument('-include_alumni', help='Include alumni in the leaderboard',
+                                    default=False, action='store_true')
+
+    # Score over time needs to be implemented
+    leaderboard_subpar.add_argument('-over_time', help='See how you have scored over time', default=False,
+                                    action='store_true')
+
+    leaderboard_subpar.add_argument('-leaderboard_id',
+                                    help='pass the leaderboard_id you want to get. -1 is the default and most '
+                                         'recent submission',
+                                    type=int, default=-1)
 
     # Stats subgroup
+
+    # ALL OF THESE NEED TO BE TESTED
     stats = client_sub_group.add_parser('stats', aliases=['s'], help='View stats for your team')
     stats.add_argument('-current_run',
                        help='Get the status for the current group run (default if no flag given)',
                        default=False, action='store_true')
-    stats.add_argument('-runs_for_group_run',
-                       help='Pass the group_run id you want to get run ids for', type=int, default=-1)
     stats.add_argument('-runs_for_submission', help='Pass the submission_id you want to get run ids for',
                        type=int, default=-1)
     stats.add_argument('-get_submissions', help='Get all submission ids for your team', default=False,
                        action='store_true')
 
-    # returns all ids of the group runs? need to double-check
-    stats.add_argument('-get_group_runs', help='Get the group runs your team has been in', default=False,
-                       action='store_true')
     stats.add_argument('-get_code_for_submission', help='Get the code file for a given submission',
                        type=int, default=-1)
     stats.add_argument('-get_errors_for_submission', help='Get the errors for a given submission',
@@ -107,8 +111,8 @@ if __name__ == '__main__':
 
     # Generate game options
     if action in ['generate', 'g']:
-        generate(par_args.seed) if par_args.seed \
-            else generate()  # a random seed is already generated in the method by default
+        # a random seed is already generated in the method by default
+        generate(par_args.seed) if par_args.seed else generate()
 
     # Run game options
     elif action in ['run', 'r']:
@@ -147,8 +151,8 @@ if __name__ == '__main__':
     elif action in ['version', 'ver']:
         print(version, end="")
 
-    # Boot up the scrimmage server client
-    elif action in ['client', 'c', 'scrimmage', 's']:
+    # Boot up the server client
+    elif action in ['client', 'c']:
         cl = Client(par_args)
 
     # Print help if no arguments are passed
