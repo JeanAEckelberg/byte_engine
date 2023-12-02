@@ -245,7 +245,7 @@ class ClientUtils:
 
         tournament_id = 0 if leaderboard_id != -1 else self.__print_leaderboard_info_helper(tournaments)
 
-        result: list = []
+        results: dict = {}
         for run in tournaments[tournament_id]['runs']:
             for submission_run_info in run:
                 team_name: str = submission_run_info['submission']['team']['team_name']
@@ -254,12 +254,17 @@ class ClientUtils:
                     continue
 
                 # makes a dict of {'Example Team Name': {all info needed to build leaderboard}}
-                result.append({'Team Name': team_name,
-                               'University': uni_info[submission_run_info['submission']['team']['uni_id']]['uni_name'],
-                               'Points Awarded': submission_run_info['points_awarded'],
-                               'Team Type': team_info[team_name]['team_type_name'],
-                               'Eligible': team_info[team_name]['eligible']})
-
+                if results.get(team_name) is None:
+                    results[team_name] = {'Team Name': team_name,
+                                          'University': uni_info[submission_run_info['submission']['team']['uni_id']][
+                                              'uni_name'],
+                                          'Points Awarded': submission_run_info['points_awarded'],
+                                          'Team Type': team_info[team_name]['team_type_name'],
+                                          'Eligible': team_info[team_name]['eligible']}
+                else:
+                    results[team_name]['Points Awarded'] += submission_run_info['points_awarded']
+        result = list(results.values())
+        result.sort(key=lambda row: row['Points Awarded'], reverse=True)
         self.print_table(result)
 
     # Helper method to print the print_leaderboard_method
