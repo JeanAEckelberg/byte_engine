@@ -21,8 +21,10 @@ class ByteVisualiser:
 
     def __init__(self, end_time: int = -1, skip_start: bool = False, playback_speed: float = 1.0,
                  fullscreen: bool = False,
-                 save_video: bool = False, loop_count: int = 1, turn_start: int = 0, turn_end: int = -1):
+                 save_video: bool = False, loop_count: int = 1, turn_start: int = 0, turn_end: int = -1,
+                 log_dir: str | None = None):
         pygame.init()
+        self.logs = log_dir
         self.config: Config = Config()
         self.turn_logs: dict[str:dict] = {}
         self.size: Vector = self.config.SCREEN_SIZE
@@ -288,7 +290,7 @@ class ByteVisualiser:
         self.__loop_count: int = loop_count
 
     def load(self) -> None:
-        self.turn_logs: dict = logs_to_dict()
+        self.turn_logs: dict = logs_to_dict(self.logs)
         self.bytesprite_factories = self.adapter.populate_bytesprite_factories()
 
     def prerender(self) -> None:

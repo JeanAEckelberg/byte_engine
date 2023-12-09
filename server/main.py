@@ -7,7 +7,6 @@ from server.models.run import Run
 from server.models.submission_run_info import SubmissionRunInfo
 from server.models.team import Team
 from server.models.team_type import TeamType
-from server.models.submission import Submission
 from server.models.turn import Turn
 from server.models.university import University
 from server.models.tournament import Tournament

@@ -40,10 +40,24 @@ if __name__ == '__main__':
 
     # might not be needed
     vis_subpar.add_argument('-log', action='store', type=str, nargs='?',
-                            const=-1, default="../logs/", dest="logpath", help="Specify a log path")
+                            const=-1, default=None, dest="logpath", help="Specify a log path")
 
     vis_subpar.add_argument('-server', action='store_true', default=False,
                             dest='skip', help='Skips visualizer pause and quits on end')
+
+    # get user input for parameters for using the ByteVisualizer
+    vis_subpar.add_argument('-end_time', action='store', default=-1, type=int, nargs='?', dest='end_time',
+                            help='Sets the time for how long the visualizer will pause on the results screen')
+
+    vis_subpar.add_argument('-skip_start', action='store_true', default=False, type=bool, nargs='?',
+                            dest='skip_start',
+                            help='Skips the first screen of the visualizer to make viewing the game faster')
+
+    vis_subpar.add_argument('-playback_speed', action='store', default=1.0, type=float, nargs='?',
+                            dest='playback_speed', help='Adjusts the playback speed of the visualizer')
+
+    vis_subpar.add_argument('-fullscreen', action='store_true', default=False, type=bool, nargs='?',
+                            dest='fullscreen', help='Determines whether to display the visualizer in fullscreen or not')
 
     all_subpar = spar.add_parser('gen,run,vis', aliases=['grv'],
                                  help='Generate, Run, Visualize! "grv -h" shows more options')
@@ -67,14 +81,12 @@ if __name__ == '__main__':
 
     # ALL OF THESE LEADERBOARD_SUBPAR NEED TO BE TESTED
     client_sub_group = client_parser.add_subparsers(title='client_subparsers', dest='subparse')
+
     leaderboard_subpar = client_sub_group.add_parser('leaderboard', aliases=['l'],
                                                      help='Commands relating to the leaderboard')
+
     leaderboard_subpar.add_argument('-include_alumni', help='Include alumni in the leaderboard',
                                     default=False, action='store_true')
-
-    # Score over time needs to be implemented
-    leaderboard_subpar.add_argument('-over_time', help='See how you have scored over time', default=False,
-                                    action='store_true')
 
     leaderboard_subpar.add_argument('-leaderboard_id',
                                     help='pass the leaderboard_id you want to get. -1 is the default and most '
@@ -133,7 +145,9 @@ if __name__ == '__main__':
 
     # Run the visualizer
     elif action in ['visualize', 'v']:
-        visualiser = ByteVisualiser()
+        visualiser = ByteVisualiser(end_time=par_args.end_time, skip_start=par_args.skip_start,
+                                    playback_speed=par_args.playback_speed, fullscreen=par_args.fullscreen,
+                                    log_dir=par_args.logpath)
         visualiser.loop()
 
     elif action in ['gen,run', 'gr']:
@@ -145,7 +159,9 @@ if __name__ == '__main__':
         generate()
         engine = Engine(False)
         engine.loop()
-        visualiser = ByteVisualiser()
+        visualiser = ByteVisualiser(end_time=par_args.end_time, skip_start=par_args.skip_start,
+                                    playback_speed=par_args.playback_speed, fullscreen=par_args.fullscreen,
+                                    log_dir=par_args.logpath)
         visualiser.loop()
 
     elif action in ['version', 'ver']:

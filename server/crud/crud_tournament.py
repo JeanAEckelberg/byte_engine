@@ -90,5 +90,11 @@ def delete(db: Session, id: int) -> None:
 
 def get_latest_tournament(db: Session) -> Tournament | None:
     return (db.query(Tournament)
+            .options(joinedload(Tournament.runs)
+                     .joinedload(Run.submission_run_infos)
+                     .joinedload(SubmissionRunInfo.submission)
+                     .joinedload(Submission.team),
+                     joinedload(Tournament.runs)
+                     .joinedload(Run.turns))
             .order_by(Tournament.tournament_id.desc())
-            .one_or_none())
+            .first())

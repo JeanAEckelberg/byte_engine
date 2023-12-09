@@ -2,7 +2,7 @@
 
 class Config:
     __NUMBER_OF_GAMES_AGAINST_SAME_TEAM: int = 1
-    __SLEEP_TIME_SECONDS_BETWEEN_RUNS: int = 450
+    __SLEEP_TIME_SECONDS_BETWEEN_RUNS: int = 30
     __END_DATETIME: str = "2030-01-01 00:00"  # Adjust this for every competition!!!!!
     __SLEEP_TIME_SECONDS_BETWEEN_VIS: int = 30
 

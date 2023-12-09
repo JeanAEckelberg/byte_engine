@@ -1,3 +1,5 @@
+# IMPORTANT NOTE: DO **NOT** REMOVE IMPORTS THAT APPEAR UNUSED. They are still needed for the SQLAlchemy DB connection
+
 import datetime
 import sys
 import time
@@ -12,15 +14,24 @@ from server.database import SessionLocal
 from server.models.run import Run
 from server.models.tournament import Tournament
 from server.models.turn import Turn
+from server.models.submission_run_info import SubmissionRunInfo
+from server.models.team import Team
+from server.models.team_type import TeamType
+from server.models.university import University
+from server.models.submission import Submission
 from server.server_config import Config
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+class DB:
+    def __init__(self):
+        self.db = SessionLocal()
+
+    def __enter__(self):
+        self.db.begin()
+        return self.db
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.db.close()
 
 
 class visualizer_runner:
@@ -29,7 +40,14 @@ class visualizer_runner:
         # Current tournament id of logs
         self.tournament_id: int = 0
 
-        self.logs_path: str = 'server/vis_temp'
+        self.logs_path: str = os.path.join('server', 'vis_temp')
+
+        (schedule.every(Config().SLEEP_TIME_SECONDS_BETWEEN_VIS).seconds
+         .until(Config().END_DATETIME)
+         .do(self.internal_runner))
+
+        # (schedule.every().day.at(str(Config().END_DATETIME.split()[-1]))
+        #  .do(self.delete_vis_temp))
 
         try:
             while 1:
@@ -39,7 +57,6 @@ class visualizer_runner:
             print(f'Ending visualizer due to {e}')
 
     # Get new logs from the latest tournament
-    @schedule.repeat(schedule.every(Config().SLEEP_TIME_SECONDS_BETWEEN_VIS).seconds.until(Config().END_DATETIME))
     def internal_runner(self) -> None:
         tournament: Tournament | None = self.get_latest_tournament()
         if self.tournament_id != tournament.tournament_id:
@@ -49,7 +66,6 @@ class visualizer_runner:
         self.visualizer_loop()
 
     # Delete visual logs path at end of competition
-    @schedule.repeat(schedule.every().day.at(Config().END_DATETIME))
     def delete_vis_temp(self) -> None:
         if not os.path.exists(self.logs_path):
             os.mkdir(self.logs_path)
@@ -62,34 +78,36 @@ class visualizer_runner:
 
         print("Getting latest log files")
         run: Run
-        logs: list[list[Turn]] = [run.turns for run in tournament.runs if len(run.turns) > 0]
+        logs: dict[Run, list[Turn]] = {run: run.turns for run in tournament.runs if len(run.turns) > 0}
 
         log: list[Turn]
-        for log in logs:
+        for run, log in logs.items():
             # Take logs and copy into directory
-            id_dir = f'{self.logs_path}/{log[0].run_id}'
+            id_dir = os.path.join(self.logs_path, str(log[0].run_id))
             os.mkdir(id_dir)
-            logs_dir = id_dir + "/logs"
+            logs_dir = os.path.join(id_dir, 'logs')
             os.mkdir(logs_dir)
             for turn in log:
-                with open(f"{logs_dir}/{f'turn_{turn.turn_number:04d}.json'}", "w") as fl:
-                    fl.write(turn.turn_data)
+                with open(os.path.join(logs_dir, f'turn_{turn.turn_number:04d}.json'), "w") as fl:
+                    fl.write(str(turn.turn_data, 'utf-8'))
+            with open(os.path.join(logs_dir, 'results.json'), 'x') as fl:
+                fl.write(str(run.results, 'utf-8'))
 
-            shutil.copy('launcher.pyz', id_dir)
-            shutil.copy('server/runners/vis_runner.sh', id_dir)
-            shutil.copy('server/runners/vis_runner.bat', id_dir)
-            shutil.copytree('Visualiser', id_dir + '/Visualiser')
+            shutil.copy(os.path.join(os.getcwd(), 'launcher.pyz'), id_dir)
+            shutil.copy(os.path.join(os.getcwd(), 'server', 'runners', 'vis_runner.sh'), id_dir)
+            shutil.copy(os.path.join(os.getcwd(), 'server', 'runners', 'vis_runner.bat'), id_dir)
+            shutil.copytree(os.path.join(os.getcwd(), 'visualizer'), os.path.join(id_dir, 'visualizer'))
 
     def get_latest_tournament(self) -> Tournament | None:
         print("Getting Latest Tournament")
-        with get_db() as db:
+        with DB() as db:
             return crud_tournament.get_latest_tournament(db) if not None else None
 
     def visualizer_loop(self) -> None:
         try:
             f = open(os.devnull, 'w')
             for id in os.listdir(self.logs_path):
-                idpath = f"{self.logs_path}/{id}"
+                idpath = os.path.join(self.logs_path, str(id))
 
                 p = subprocess.Popen('bash vis_runner.sh', stdout=f, cwd=idpath, shell=True) \
                     if sys.platform != 'win32' \
