@@ -1,4 +1,5 @@
 import datetime
+import sys
 import time
 import json
 import os
@@ -76,6 +77,7 @@ class visualizer_runner:
 
             shutil.copy('launcher.pyz', id_dir)
             shutil.copy('server/runners/vis_runner.sh', id_dir)
+            shutil.copy('server/runners/vis_runner.bat', id_dir)
             shutil.copytree('Visualiser', id_dir + '/Visualiser')
 
     def get_latest_tournament(self) -> Tournament | None:
@@ -84,17 +86,19 @@ class visualizer_runner:
             return crud_tournament.get_latest_tournament(db) if not None else None
 
     def visualizer_loop(self) -> None:
-        for team_dir in os.listdir(self.logs_path):
-            try:
-                f = open(os.devnull, 'w')
-                path = f"{self.logs_path}/{team_dir}"
-                for id in os.listdir(path):
-                    idpath = f"{path}/{id}"
-                    p = subprocess.Popen('bash vis_runner.sh', stdout=f, cwd=idpath, shell=True)
-                    stdout, stderr = p.communicate()
+        try:
+            f = open(os.devnull, 'w')
+            for id in os.listdir(self.logs_path):
+                idpath = f"{self.logs_path}/{id}"
 
-            except PermissionError:
-                print("Whoops")
+                p = subprocess.Popen('bash vis_runner.sh', stdout=f, cwd=idpath, shell=True) \
+                    if sys.platform != 'win32' \
+                    else subprocess.Popen('vis_runner.bat', stdout=f, cwd=idpath, shell=True)
+
+                stdout, stderr = p.communicate()
+
+        except PermissionError:
+            print("Whoops")
 
 
 if __name__ == "__main__":
