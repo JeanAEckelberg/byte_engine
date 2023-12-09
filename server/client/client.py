@@ -9,7 +9,6 @@ CLIENT_KEYWORD = "client"
 
 class Client:
     def __init__(self, args):
-
         # If vID exists, read it
         if os.path.isfile('vID'):
             with open('vID') as f:
@@ -37,49 +36,30 @@ class Client:
                 return
 
             # If the subparse doesn't contain an expected value, don't do anything
-            if not args.subparse.lower() == 'stats' and not args.subparse.lower() == 's':
+            if args.subparse.lower() == 'stats' or args.subparse.lower() == 's':
+                if args.runs_for_submission != -1:
+                    self.utils.get_runs_for_submission(args.runs_for_submission, self.vid)
+                    return
+                if args.get_submissions:
+                    self.utils.get_submissions(self.vid)
+                    return
+                if args.get_code_for_submission != -1:
+                    self.utils.get_code_from_submission(args.get_code_for_submission, self.vid)
+                    return
+                # This is connected to the '-get_details_for_submission' command. The difference in naming is to
+                # separate the frontend user experience from the backend work
+                if args.get_submission_run_info != -1:
+                    print('Made it to get submission run information method')
+                    self.utils.get_submission_run_info(args.get_submission_run_info, self.vid)
+                    return
                 return
 
             if args.subparse.lower() == 'leaderboard' or args.subparse.lower() == "l":
+                self.utils.get_leaderboard(args.include_alumni, args.leaderboard_id)
                 return
-
-            # need guard clause of the -1 in the client utils.
-            # self.utils.get_team_runs_for_tournament(args.runs_for_tournament, self.vid)
-            #
-            # if args.runs_for_submission != -1:
-            #     self.utils.get_runs_for_submission(args.runs_for_submission, self.vid)
-            #     return
-
-            if args.get_submissions:
-                self.utils.get_submissions(self.vid)
-                return
-
-            # Shouldn't be needed; clients don't need access to entire tournament entries
-            # if args.get_tournaments:
-            #     self.utils.get_tournaments()
-            #     return
-
-            if args.get_code_for_submission != -1:
-                self.utils.get_code_from_submission(args.get_code_for_submission, self.vid)
-                return
-
-            # ask group if we need to keep the following three method calls or not
-            # if args.subparse.lower() == 'get_seed' or args.subparse.lower() == 'gs':
-            #     self.utils.get_seed_for_run(args.run_id, self.vid)
-            #     return
-            #
-            # if args.get_errors_for_submission != -1:
-            #     self.utils.get_errors_for_submission(args.get_errors_for_submission, self.vid)
-            #     return
-            #
-            # if args.over_time:
-            #     self.utils.get_team_score_over_time(self.vid)
-            #     return
-            # else:
-            self.utils.get_leaderboard(args.include_alumni)
 
         except HTTPError as e:
-            print(f"Error: {json.loads(e.response._content)['error']}")
+            print(f"Error: {json.loads(e.response._content)}")
 
     def register(self):
         # Check if vID already exists and cancel out

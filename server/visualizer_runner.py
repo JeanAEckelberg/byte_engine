@@ -46,8 +46,8 @@ class visualizer_runner:
          .until(Config().END_DATETIME)
          .do(self.internal_runner))
 
-        # (schedule.every().day.at(str(Config().END_DATETIME.split()[-1]))
-        #  .do(self.delete_vis_temp))
+        (schedule.every().day.at(str(Config().END_DATETIME.split()[-1]))
+         .do(self.delete_vis_temp))
 
         try:
             while 1:
@@ -90,8 +90,9 @@ class visualizer_runner:
             for turn in log:
                 with open(os.path.join(logs_dir, f'turn_{turn.turn_number:04d}.json'), "w") as fl:
                     fl.write(str(turn.turn_data, 'utf-8'))
+            print(run.results)
             with open(os.path.join(logs_dir, 'results.json'), 'x') as fl:
-                fl.write(str(run.results, 'utf-8'))
+                json.dump(json.loads(run.results.decode('utf-8')), fl)
 
             shutil.copy(os.path.join(os.getcwd(), 'launcher.pyz'), id_dir)
             shutil.copy(os.path.join(os.getcwd(), 'server', 'runners', 'vis_runner.sh'), id_dir)

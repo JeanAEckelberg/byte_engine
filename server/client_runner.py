@@ -261,7 +261,7 @@ class ClientRunner:
                                                tournament_id=tournament_id,
                                                run_time=datetime.now(),
                                                seed=seed_id,
-                                               results=bytes(str(results), "utf-8"))).run_id
+                                               results=json.dumps(results).encode("utf-8"))).run_id
 
     def insert_submission_run_info(self, submission_id: int, run_id: int, error: str | None, player_num: int,
                                    points_awarded: int) -> None:

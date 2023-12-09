@@ -49,14 +49,13 @@ if __name__ == '__main__':
     vis_subpar.add_argument('-end_time', action='store', default=-1, type=int, nargs='?', dest='end_time',
                             help='Sets the time for how long the visualizer will pause on the results screen')
 
-    vis_subpar.add_argument('-skip_start', action='store_true', default=False, type=bool, nargs='?',
-                            dest='skip_start',
+    vis_subpar.add_argument('-skip_start', action='store_true', default=False, dest='skip_start',
                             help='Skips the first screen of the visualizer to make viewing the game faster')
 
     vis_subpar.add_argument('-playback_speed', action='store', default=1.0, type=float, nargs='?',
                             dest='playback_speed', help='Adjusts the playback speed of the visualizer')
 
-    vis_subpar.add_argument('-fullscreen', action='store_true', default=False, type=bool, nargs='?',
+    vis_subpar.add_argument('-fullscreen', action='store_true', default=False,
                             dest='fullscreen', help='Determines whether to display the visualizer in fullscreen or not')
 
     all_subpar = spar.add_parser('gen,run,vis', aliases=['grv'],
@@ -78,8 +77,6 @@ if __name__ == '__main__':
                                default=False, action='store_true')
 
     # subparser group
-
-    # ALL OF THESE LEADERBOARD_SUBPAR NEED TO BE TESTED
     client_sub_group = client_parser.add_subparsers(title='client_subparsers', dest='subparse')
 
     leaderboard_subpar = client_sub_group.add_parser('leaderboard', aliases=['l'],
@@ -88,32 +85,33 @@ if __name__ == '__main__':
     leaderboard_subpar.add_argument('-include_alumni', help='Include alumni in the leaderboard',
                                     default=False, action='store_true')
 
-    leaderboard_subpar.add_argument('-leaderboard_id',
+    leaderboard_subpar.add_argument('-leaderboard_id', action='store', type=int, dest='leaderboard_id',
                                     help='pass the leaderboard_id you want to get. -1 is the default and most '
-                                         'recent submission',
-                                    type=int, default=-1)
+                                         'recent submission', default=-1)
 
     # Stats subgroup
 
     # ALL OF THESE NEED TO BE TESTED
     stats = client_sub_group.add_parser('stats', aliases=['s'], help='View stats for your team')
-    stats.add_argument('-current_run',
-                       help='Get the status for the current group run (default if no flag given)',
-                       default=False, action='store_true')
-    stats.add_argument('-runs_for_submission', help='Pass the submission_id you want to get run ids for',
-                       type=int, default=-1)
-    stats.add_argument('-get_submissions', help='Get all submission ids for your team', default=False,
-                       action='store_true')
 
-    stats.add_argument('-get_code_for_submission', help='Get the code file for a given submission',
-                       type=int, default=-1)
-    stats.add_argument('-get_errors_for_submission', help='Get the errors for a given submission',
-                       type=int, default=-1)
+    stats.add_argument('-runs_for_submission', action='store', type=int,
+                       default=-1, dest='runs_for_submission',
+                        help='Pass the submission_id you want to get run ids for')
 
-    client_parser.add_argument('-register', help='Create a new team and return a vID', default=False,
-                               action='store_true')
-    client_parser.add_argument('-submit', help='Submit a client for grading', default=False,
-                               action='store_true')
+    stats.add_argument('-get_submissions', action='store_true', default=False,
+                       dest='get_submissions', help='Get all submission ids for your team')
+
+    stats.add_argument('-get_code_for_submission', action='store', type=int, default=-1,
+                       dest='get_code_for_submission', help='Get the code file for a given submission')
+
+    stats.add_argument('-get_details_for_submission', action='store', type=int, default=-1,
+                       dest='get_submission_run_info', help='Get the details for a given submission')
+
+    client_parser.add_argument('-register', action='store_true', default=False, dest='register',
+                        help='Create a new team and return a vID')
+
+    client_parser.add_argument('-submit', action='store_true', default=False,
+                               dest='submit', help='Submit a client for grading')
 
     # Parse Command Line
     par_args = par.parse_args()
@@ -145,6 +143,7 @@ if __name__ == '__main__':
 
     # Run the visualizer
     elif action in ['visualize', 'v']:
+        print(par_args)
         visualiser = ByteVisualiser(end_time=par_args.end_time, skip_start=par_args.skip_start,
                                     playback_speed=par_args.playback_speed, fullscreen=par_args.fullscreen,
                                     log_dir=par_args.logpath)
@@ -159,9 +158,7 @@ if __name__ == '__main__':
         generate()
         engine = Engine(False)
         engine.loop()
-        visualiser = ByteVisualiser(end_time=par_args.end_time, skip_start=par_args.skip_start,
-                                    playback_speed=par_args.playback_speed, fullscreen=par_args.fullscreen,
-                                    log_dir=par_args.logpath)
+        visualiser = ByteVisualiser()
         visualiser.loop()
 
     elif action in ['version', 'ver']:

@@ -50,7 +50,6 @@ class ClientUtils:
     def submit_file(self, fil: bytes, vid: str) -> dict:
         data = {'submission_id': 0, 'submission_time': datetime.utcnow().isoformat(), 'file_txt': fil.decode("utf-8"),
                 'team_uuid': vid}
-        print(data)
         resp = requests.post(
             self.IP + 'submission/', json=data, verify=self.path_to_public)
         resp.raise_for_status()
@@ -70,6 +69,18 @@ class ClientUtils:
         if prints_table:
             self.print_table(to_table)
         return jsn
+
+    def get_submission_run_info(self, subid: int, vid: str) -> None:
+        resp = requests.get(
+            self.IP + f'submission?submission_id={subid}&team_uuid={vid}', verify=self.path_to_public)
+        resp.raise_for_status()
+        jsn = json.loads(resp.content)
+        jsn = jsn['submission_run_infos']
+        for sri in jsn:
+            del sri['run']
+
+        print('about to print submission run information')
+        self.print_table(jsn)
 
     # MULTIPLE get_submissions
     def get_submissions(self, vid: str) -> None:
@@ -107,6 +118,17 @@ class ClientUtils:
         jsn['run_time'] = self.convert_utc_to_local(utc_str=jsn['run_time']).strftime('%m/%d/%Y, %H:%M:%S')
         self.print_table(jsn)
 
+    def get_runs_for_submission(self, submission_id: int, team_uuid: str) -> None:
+        resp = requests.get(self.IP + f'submission?submission_id={submission_id}&team_uuid={team_uuid}',
+                            verify=self.path_to_public)
+        resp.raise_for_status()
+        jsn = json.loads(resp.content)
+        jsn = [submission_run_info['run'] for submission_run_info in jsn['submission_run_infos']]
+        for run in jsn:
+            run['run_time'] = self.convert_utc_to_local(utc_str=run['run_time']).strftime('%m/%d/%Y, %H:%M:%S')
+            del run['results']
+        self.print_table(jsn)
+
     # gets the code file from the specified submission using the submission id
     def get_code_from_submission(self, submission_id, vid):
         submission_json: dict = self.get_submission(submission_id, vid, False)
@@ -142,6 +164,7 @@ class ClientUtils:
 
     # prints table based on passed bool on instantiation
     def print_table(self, json):
+        print()  # used for formatting
         if self.use_csv:
             self.print_csv_table(json)
         else:
@@ -240,6 +263,7 @@ class ClientUtils:
     # collects all data needed for building the leaderboard
     def print_leaderboard_info(self, uni_info: dict, team_info: dict, include_ineligible: bool,
                                leaderboard_id: int = -1) -> None:
+
         tournaments: list[dict] = self.get_tournaments() if leaderboard_id == -1 \
             else [self.get_tournament(leaderboard_id)]
 
@@ -247,20 +271,24 @@ class ClientUtils:
 
         results: dict = {}
         for run in tournaments[tournament_id]['runs']:
-            for submission_run_info in run:
+            for submission_run_info in run['submission_run_infos']:
                 team_name: str = submission_run_info['submission']['team']['team_name']
 
-                if not include_ineligible and not team_info[team_name]['eligible']:
+                if not include_ineligible and not team_info[submission_run_info['submission']['team']['team_type_id']][
+                    'eligible']:
                     continue
 
                 # makes a dict of {'Example Team Name': {all info needed to build leaderboard}}
                 if results.get(team_name) is None:
                     results[team_name] = {'Team Name': team_name,
-                                          'University': uni_info[submission_run_info['submission']['team']['uni_id']][
-                                              'uni_name'],
+                                          'University': uni_info[submission_run_info['submission']['team']['uni_id']],
                                           'Points Awarded': submission_run_info['points_awarded'],
-                                          'Team Type': team_info[team_name]['team_type_name'],
-                                          'Eligible': team_info[team_name]['eligible']}
+                                          'Team Type':
+                                              team_info[submission_run_info['submission']['team']['team_type_id']][
+                                                  'name'],
+                                          'Eligible':
+                                              team_info[submission_run_info['submission']['team']['team_type_id']][
+                                                  'eligible']}
                 else:
                     results[team_name]['Points Awarded'] += submission_run_info['points_awarded']
         result = list(results.values())
@@ -283,7 +311,9 @@ class ClientUtils:
 
         self.print_table(list_result)
 
+        print()  # just used for formatting
         tournament_id: int = self.__validate_to_int('Specify the index of the tournament you would like to view > ')
+        print()  # just used for formatting
 
         return tournament_id
 
