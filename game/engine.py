@@ -89,8 +89,7 @@ class Engine:
 
                 if opening:
                     player.functional = False
-                    player.error = PermissionError(
-                        f'Player is using "open" which is forbidden.')
+                    player.error = 'Player is using "open" which is forbidden.'
 
                 # Attempt creation of the client object
                 obj: UserClient | None = None
@@ -113,20 +112,17 @@ class Engine:
 
                     if thr.is_alive():
                         player.functional = False
-                        player.error = TimeoutError(
-                            'Client failed to provide a team name in time.')
+                        player.error = 'Client failed to provide a team name in time.'
 
                     if thr.error is not None:
                         player.functional = False
-                        player.error = thr.error
+                        player.error = str(thr.error)
                 finally:
                     # Note: I keep the above thread for both naming conventions to check for client errors
                     try:
                         if self.use_filenames:
-                            player.team_name = filename
-                            thr.retrieve_value()
-                        else:
-                            player.team_name = thr.retrieve_value()
+                            player.file_name = filename
+                        player.team_name = thr.retrieve_value()
                     except Exception as e:
                         player.functional = False
                         player.error = f"{str(e)}\n{traceback.print_exc()}"
