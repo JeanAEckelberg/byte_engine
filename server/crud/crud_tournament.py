@@ -64,8 +64,8 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Tournament
 
 def update(db: Session, id: int, tournament: TournamentBase) -> Tournament | None:
     db_tournament: Tournament | None = (db.query(Tournament)
-                                     .filter(Tournament.tournament_id == id)
-                                     .one_or_none())
+                                        .filter(Tournament.tournament_id == id)
+                                        .one_or_none())
     if db_tournament is None:
         return
 
@@ -79,10 +79,16 @@ def update(db: Session, id: int, tournament: TournamentBase) -> Tournament | Non
 
 def delete(db: Session, id: int) -> None:
     db_tournament: Tournament | None = (db.query(Tournament)
-                                     .filter(Tournament.tournament_id == id)
-                                     .one_or_none())
+                                        .filter(Tournament.tournament_id == id)
+                                        .one_or_none())
     if db_tournament is None:
         return
 
     db.delete(db_tournament)
     db.commit()
+
+
+def get_latest_tournament(db: Session) -> Tournament | None:
+    return (db.query(Tournament)
+            .order_by(Tournament.tournament_id.desc())
+            .one_or_none())

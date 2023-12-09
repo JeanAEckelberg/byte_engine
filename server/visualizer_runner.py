@@ -4,85 +4,86 @@ import json
 import os
 import shutil
 import subprocess
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import schedule
+
+from server.crud import crud_tournament
+from server.database import SessionLocal
+from server.models.run import Run
+from server.models.tournament import Tournament
+from server.models.turn import Turn
+from server.server_config import Config
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 class visualizer_runner:
     def __init__(self):
 
-        db_conn = {}
-        with open('./server/conn_info.json') as fl:
-            db_conn = json.load(fl)
+        # Current tournament id of logs
+        self.tournament_id: int = 0
 
-        self.conn = psycopg2.connect(
-            host="localhost",
-            database=db_conn["database"],
-            user=db_conn["user"],
-            password=db_conn["password"]
-        )
+        self.logs_path: str = 'server/vis_temp'
 
-        # Current group run ID of logs
-        self.group_id = 0
-
-        self.logs_path = 'server/vis_temp'
-
-        today930pm = datetime.datetime.now().replace(hour=21, minute=30, second=0, microsecond=0)
         try:
-            while datetime.datetime.now() < today930pm or True:
-                group_id = self.get_latest_group()
-                if self.group_id != group_id:
-                    print("getting new logs")
-                    self.get_latest_log_files(group_id)
-                    self.group_id = group_id
-                self.visualizer_loop()
-                time.sleep(30)
+            while 1:
+                schedule.run_pending()
+                time.sleep(1)
         except (KeyboardInterrupt, Exception) as e:
-            print("Ending visualizer due to {0}".format(e))
-        finally:
-            self.delete_vis_temp()
+            print(f'Ending visualizer due to {e}')
 
-    def get_latest_log_files(self, group_id):
-        self.delete_vis_temp()
+    # Get new logs from the latest tournament
+    @schedule.repeat(schedule.every(Config().SLEEP_TIME_SECONDS_BETWEEN_VIS).seconds.until(Config().END_DATETIME))
+    def internal_runner(self) -> None:
+        tournament: Tournament | None = self.get_latest_tournament()
+        if self.tournament_id != tournament.tournament_id:
+            print("Getting new logs")
+            self.get_latest_log_files(tournament)
+            self.tournament_id = tournament.tournament_id
+        self.visualizer_loop()
 
-        print("getting latest log files")
-        cur = self.conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("SELECT (get_logs_for_group_run(%s)).*", (group_id,))
-        logs = cur.fetchall()
-
-        for log in logs:
-            # Take logs and copy into directory
-            team_dir = f'{self.logs_path}/{log["team_name"]}'
-            if not os.path.isdir(team_dir):
-                os.mkdir(team_dir)
-            id_dir = f'{team_dir}/{log["run_id"]}'
-            os.mkdir(id_dir)
-            logs_dir = id_dir + "/logs"
-            os.mkdir(logs_dir)
-            files = json.loads(log['log_text'])
-            for index, key in enumerate(files):
-                with open(f"{logs_dir}/{key}", "w") as fl:
-                    fl.write(files[key])
-
-            shutil.copy('launcher.pyz', id_dir)
-            shutil.copy('server/runners/vis_runner.sh', id_dir)
-            shutil.copytree('Visualiser', id_dir + '/Visualiser')
-
-    def get_latest_group(self):
-        print("Getting Latest Group Run")
-        cur = self.conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("SELECT get_latest_group_id()")
-        id = cur.fetchone()['get_latest_group_id']
-        return id
-
-    def delete_vis_temp(self):
+    # Delete visual logs path at end of competition
+    @schedule.repeat(schedule.every().day.at(Config().END_DATETIME))
+    def delete_vis_temp(self) -> None:
         if not os.path.exists(self.logs_path):
             os.mkdir(self.logs_path)
         else:
             shutil.rmtree(self.logs_path)
             os.mkdir(self.logs_path)
 
-    def visualizer_loop(self):
+    def get_latest_log_files(self, tournament: Tournament) -> None:
+        self.delete_vis_temp()
+
+        print("Getting latest log files")
+        run: Run
+        logs: list[list[Turn]] = [run.turns for run in tournament.runs if len(run.turns) > 0]
+
+        log: list[Turn]
+        for log in logs:
+            # Take logs and copy into directory
+            id_dir = f'{self.logs_path}/{log[0].run_id}'
+            os.mkdir(id_dir)
+            logs_dir = id_dir + "/logs"
+            os.mkdir(logs_dir)
+            for turn in log:
+                with open(f"{logs_dir}/{f'turn_{turn.turn_number:04d}.json'}", "w") as fl:
+                    fl.write(turn.turn_data)
+
+            shutil.copy('launcher.pyz', id_dir)
+            shutil.copy('server/runners/vis_runner.sh', id_dir)
+            shutil.copytree('Visualiser', id_dir + '/Visualiser')
+
+    def get_latest_tournament(self) -> Tournament | None:
+        print("Getting Latest Tournament")
+        with get_db() as db:
+            return crud_tournament.get_latest_tournament(db) if not None else None
+
+    def visualizer_loop(self) -> None:
         for team_dir in os.listdir(self.logs_path):
             try:
                 f = open(os.devnull, 'w')
