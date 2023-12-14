@@ -334,7 +334,7 @@ class ByteVisualiser:
             # Save button
             if PlaybackButtons.SAVE_BUTTON in button_pressed:
                 self.recording = True
-                self.playback_speed = 10
+                self.playback_speed = 10.0
                 self.tick = 0
             if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0 and self.paused:
                 self.tick = max(self.tick - self.config.NUMBER_OF_FRAMES_PER_TURN, 0)
