@@ -22,14 +22,16 @@ from queue import Queue
 import schedule
 
 from server import runner_utils
-from server.crud import crud_tournament, crud_submission, crud_run, crud_submission_run_info, crud_turn
+from server.crud import crud_tournament, crud_submission, crud_run, crud_submission_run_info, crud_turn, crud_university, crud_team_type
 from server.database import SessionLocal
 from server.models.submission import Submission
 from server.models.tournament import Tournament
 from server.schemas.run.run_base import RunBase
 from server.schemas.submission_run_info.submission_run_info_base import SubmissionRunInfoBase
+from server.schemas.team_type.team_type_base import TeamTypeBase
 from server.schemas.tournament.tournament_base import TournamentBase
 from server.schemas.turn.turn_base import TurnBase
+from server.schemas.university.university_base import UniversityBase
 from server.server_config import Config
 
 # Config for loggers
@@ -85,6 +87,7 @@ class ClientRunner:
          .day
          .at(self.config.END_DATETIME.split()[-1])
          .do(self.close_server))
+        self.buffUpData()
         try:
             while 1:
                 schedule.run_pending()
@@ -343,6 +346,66 @@ class ClientRunner:
         with DB() as db:
             self.tournament = crud_tournament.update(db, self.tournament.tournament_id,
                                                      TournamentBase(**self.tournament.__dict__))
+
+    def buffUpData(self) -> None:
+        with DB() as db:
+            try:
+                crud_university.create(db, UniversityBase(
+                    uni_id=1,
+                    uni_name='NDSU'
+                ))
+                print('NDSU Added')
+            except(Exception):
+                print('NDSU Already Exists')
+
+            try:
+                crud_university.create(db, UniversityBase(
+                    uni_id=2,
+                    uni_name='MSUM'
+                ))
+                print('MSUM Added')
+            except(Exception):
+                print('MSUM Already Exists')
+
+            try:
+                crud_university.create(db, UniversityBase(
+                    uni_id=3,
+                    uni_name='UND'
+                ))
+                print('UND Added')
+            except(Exception):
+                print('UND Already Exists')
+
+            try:
+                crud_university.create(db, UniversityBase(
+                    uni_id=4,
+                    uni_name='GSU'
+                ))
+                print('GSU Added')
+            except(Exception):
+                print('GunnarStateUniversity Already Exists')
+
+            try:
+                crud_team_type.create(db, TeamTypeBase(
+                    team_type_id=1,
+                    team_type_name='NotEligible',
+                    eligible=False
+                ))
+                print('NonEligible Added')
+            except(Exception):
+                print('NonEligible Already Exists')
+
+            try:
+                crud_team_type.create(db, TeamTypeBase(
+                    team_type_id=2,
+                    team_type_name='Eligible',
+                    eligible=True
+                ))
+                print('Eligible Added')
+            except(Exception):
+                print('Eligible Already Exists')
+
+
 
 
 if __name__ == "__main__":
