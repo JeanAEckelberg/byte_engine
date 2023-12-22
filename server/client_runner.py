@@ -87,7 +87,9 @@ class ClientRunner:
          .day
          .at(self.config.END_DATETIME.split()[-1])
          .do(self.close_server))
+
         self.buffUpData()
+
         try:
             while 1:
                 schedule.run_pending()
@@ -306,7 +308,7 @@ class ClientRunner:
             crud_turn.create_all(db, logs)
 
     def close_server(self) -> None:
-        if self.tournament.tournament_id != -1 and not self.tournament.is_finished:
+        if self.tournament != -1 and not self.tournament.is_finished:
             self.delete_tournament_cascade(self.tournament.tournament_id)
         else:
             logging.warning("Not deleting any tournaments")

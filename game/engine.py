@@ -205,7 +205,7 @@ class Engine:
             # We only want to wait a maximum of MAX_SECONDS_PER_TURN once all of the clients have started.
             # However, we can't simultaneously join threads without more threads or multiprocessing.
             # Solution: join one thread at a time, keep track of total running time between each join, and reduce the
-            # join time so it is always less than MAX_SECONDS_PER_TURN.
+            # join time, so it is always less than MAX_SECONDS_PER_TURN.
             # Get time elapsed in microseconds
             time_elapsed = datetime.now().microsecond - start_time.microsecond
             # Convert to seconds

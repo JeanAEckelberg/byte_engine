@@ -95,7 +95,6 @@ class visualizer_runner:
             for turn in log:
                 with open(os.path.join(logs_dir, f'turn_{turn.turn_number:04d}.json'), "w") as fl:
                     fl.write(str(turn.turn_data, 'utf-8'))
-            print(run.results)
             with open(os.path.join(logs_dir, 'results.json'), 'x') as fl:
                 json.dump(json.loads(run.results.decode('utf-8')), fl)
 
