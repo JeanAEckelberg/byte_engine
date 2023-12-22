@@ -1,10 +1,8 @@
-from datetime import datetime
 import itertools
 import json
 import logging
 import os
 import platform
-import random
 import shutil
 import subprocess
 import sys
@@ -18,6 +16,7 @@ from server.models.turn import Turn
 from server.models.university import University
 from server.models.tournament import Tournament
 from server.models.submission import Submission
+from datetime import datetime
 from queue import Queue
 
 import schedule
@@ -25,12 +24,11 @@ import schedule
 from server import runner_utils
 from server.crud import crud_tournament, crud_submission, crud_run, crud_submission_run_info, crud_turn
 from server.database import SessionLocal
-from server.schemas.run.run_base import RunBase
-from server.models.run import Run
-from server.schemas.submission_run_info.submission_run_info_base import SubmissionRunInfoBase
 from server.models.submission import Submission
-from server.schemas.tournament.tournament_base import TournamentBase
 from server.models.tournament import Tournament
+from server.schemas.run.run_base import RunBase
+from server.schemas.submission_run_info.submission_run_info_base import SubmissionRunInfoBase
+from server.schemas.tournament.tournament_base import TournamentBase
 from server.schemas.turn.turn_base import TurnBase
 from server.server_config import Config
 
@@ -94,6 +92,7 @@ class ClientRunner:
 
         except (KeyboardInterrupt, Exception) as e:
             logging.warning("Ending runner due to {0}".format(e))
+
         finally:
             self.close_server()
 
@@ -140,11 +139,8 @@ class ClientRunner:
             f'Sleeping for {self.config.SLEEP_TIME_SECONDS_BETWEEN_RUNS} seconds')
         self.tournament = -1
 
-    # WILL NEED TO BE MODIFIED: INTERNAL RUNNER
     def internal_runner(self, submission_tuple, index) -> None:
-        winner = -1
         max_score: int = -1
-        errors = {}
         results = dict()
         try:
             # Run game
@@ -189,8 +185,6 @@ class ClientRunner:
                 self.insert_submission_run_info(player_sub_ids[i], run_id, result["error"], i,
                                                 result["avatar"]["score"])
 
-            # CURRENT IMPLEMENTATION OF BEST RUN FOR CLIENT MUST BE MODIFIED FOR NEW SYSTEM
-            # FIGURE IT OUT
             # Update information in best run dict
             for submission in submission_tuple:
                 if max_score > self.best_run_for_client.get(submission.submission_id, {'score': -2})["score"]:

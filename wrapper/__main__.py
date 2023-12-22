@@ -113,7 +113,7 @@ if __name__ == '__main__':
     client_parser.add_argument('-submit', action='store_true', default=False,
                                dest='submit', help='Submit a client for grading')
 
-    # Parse Command Line
+    # Parse Command .,mnb vc
     par_args = par.parse_args()
 
     # Main Action variable
