@@ -59,6 +59,11 @@ class visualizer_runner:
     # Get new logs from the latest tournament
     def internal_runner(self) -> None:
         tournament: Tournament | None = self.get_latest_tournament()
+
+        if tournament is None:
+            print('No tournament is in the database.')
+            return
+
         if self.tournament_id != tournament.tournament_id:
             print("Getting new logs")
             self.get_latest_log_files(tournament)

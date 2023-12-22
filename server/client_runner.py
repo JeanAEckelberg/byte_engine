@@ -138,6 +138,7 @@ class ClientRunner:
         logging.warning(
             f'Sleeping for {self.config.SLEEP_TIME_SECONDS_BETWEEN_RUNS} seconds')
         self.tournament = -1
+        print('Job completed\n')
 
     def internal_runner(self, submission_tuple, index) -> None:
         max_score: int = -1
@@ -160,7 +161,7 @@ class ClientRunner:
 
             # Determine what seed this run needs based on it's serial index
             seed_index = index // self.number_of_unique_games
-            logging.warning(f'running run {index} for game ({submission_tuple[0].submission_id}, '
+            logging.info(f'running run {index} for game ({submission_tuple[0].submission_id}, '
                             f'{submission_tuple[1].submission_id}) using seed index {seed_index}')
 
             # Copy the seed into the run folder
