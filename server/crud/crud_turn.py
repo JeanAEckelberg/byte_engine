@@ -4,6 +4,7 @@ from server.models.turn import Turn
 from server.schemas.turn.turn_schema import TurnBase
 
 
+# create method for turn
 def create(db: Session, turn: TurnBase) -> Turn:
     db_turn: Turn = Turn(**turn.model_dump(exclude={'turn_id'}))
     db.add(db_turn)
@@ -12,12 +13,14 @@ def create(db: Session, turn: TurnBase) -> Turn:
     return db_turn
 
 
+# create method that adds the entire list of Turn
 def create_all(db: Session, turns: [TurnBase]) -> None:
     inserts: list[Turn] = [Turn(**turn.model_dump(exclude={'turn_id'})) for turn in turns]
     db.add_all(inserts)
     db.commit()
 
 
+# read the most recent turn
 def read(db: Session, id: int, eager: bool = False) -> Turn | None:
     return (db.query(Turn)
             .filter(Turn.turn_id == id)
@@ -28,6 +31,7 @@ def read(db: Session, id: int, eager: bool = False) -> Turn | None:
             .first())
 
 
+# read all turns
 def read_all(db: Session, eager: bool = False) -> [Turn]:
     return (db.query(Turn)
             .all() if not eager
@@ -36,6 +40,7 @@ def read_all(db: Session, eager: bool = False) -> [Turn]:
             .all())
 
 
+# read a specified turn
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Turn]:
     return (db.query(Turn)
             .filter_by(**kwargs)
@@ -46,6 +51,7 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Turn]:
             .all())
 
 
+# update a turn
 def update(db: Session, id: int, turn: TurnBase) -> Turn | None:
     db_turn: Turn | None = (db.query(Turn)
                             .filter(Turn.turn_id == id)
@@ -61,6 +67,7 @@ def update(db: Session, id: int, turn: TurnBase) -> Turn | None:
     return db_turn
 
 
+# delete a turn
 def delete(db: Session, id: int, turn_table: TurnBase) -> None:
     db_turn: Turn | None = (db.query(Turn)
                             .filter(Turn.turn_id == id)

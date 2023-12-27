@@ -287,9 +287,11 @@ class ByteVisualiser:
                 f'{self.__class__.__name__}.loop_count must be an int. It is a(n) {type(loop_count)} with the value of {loop_count}')
         self.__loop_count: int = loop_count
 
+
     def load(self) -> None:
         self.turn_logs: dict = logs_to_dict()
         self.bytesprite_factories = self.adapter.populate_bytesprite_factories()
+
 
     def prerender(self) -> None:
         self.screen.fill(self.config.BACKGROUND_COLOR)

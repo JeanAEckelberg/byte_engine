@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 
+# All items in Team and their data type
 class TeamBase(BaseModel):
     uni_id: int
     team_type_id: int

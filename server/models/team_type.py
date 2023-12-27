@@ -4,6 +4,14 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 from .base import Base
 
 
+"""
+'Team Type' Model Class
+team_type_id: primary key
+team_type_name: myst be unique
+eligible
+
+relates to teams
+"""
 class TeamType(Base):
     __tablename__: str = 'team_type'
     team_type_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)

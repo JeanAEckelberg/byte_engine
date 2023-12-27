@@ -6,6 +6,7 @@ class TimeStamp(sa.types.TypeDecorator):
     impl = sa.types.DateTime
     LOCAL_TIMEZONE = datetime.utcnow().astimezone().tzinfo
 
+# if datetime is none, returns datetime. if timezone is none, returns local timezone.
     def process_bind_param(self, value: datetime, dialect):
         if value is None:
             return datetime.utcnow()
@@ -14,6 +15,7 @@ class TimeStamp(sa.types.TypeDecorator):
 
         return value.astimezone(timezone.utc)
 
+# changes timezone to utc timezone
     def process_result_value(self, value: datetime, dialect):
         if value is None:
             return value

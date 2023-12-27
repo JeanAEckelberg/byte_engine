@@ -7,6 +7,16 @@ from .base import Base
 from .timestamp import TimeStamp
 
 
+"""
+'Tournament' Model Class
+tournament_id: primary key
+start_run
+launcher_version
+runs_per_client
+is_finished
+
+relates to runs
+"""
 class Tournament(Base):
     # Date times are stored in UTC in ISO format
     __tablename__: str = 'tournament'

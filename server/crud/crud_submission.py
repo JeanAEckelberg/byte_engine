@@ -8,6 +8,7 @@ from server.models.submission import Submission
 from server.schemas.submission.submission_w_team import SubmissionWTeam
 
 
+# create method for submission
 def create(submission: SubmissionWTeam, db: Session) -> Submission:
     db_submission: Submission = Submission(**submission.model_dump(exclude={'submission_id'}))
     db.add(db_submission)
@@ -16,6 +17,7 @@ def create(submission: SubmissionWTeam, db: Session) -> Submission:
     return db_submission
 
 
+# read most recent submission
 def read(db: Session, id: int, eager: bool = False) -> Submission | None:
     return (db.query(Submission)
             .filter(Submission.submission_id == id)
@@ -27,6 +29,7 @@ def read(db: Session, id: int, eager: bool = False) -> Submission | None:
             .first())
 
 
+# read submission based off team id
 def read_all_by_team_id(db: Session, team_uuid: uuid, eager: bool = False) -> list[Type[Submission]]:
     return (db.query(Submission)
             .filter(Submission.team_uuid == team_uuid)
@@ -38,6 +41,7 @@ def read_all_by_team_id(db: Session, team_uuid: uuid, eager: bool = False) -> li
             .all())
 
 
+# read a specified submission
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Submission]:
     return (db.query(Submission)
             .filter_by(**kwargs)
@@ -49,6 +53,7 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Submission
             .all())
 
 
+# update a submission
 def update(db: Session, id: int, submission: SubmissionWTeam) -> Submission | None:
     db_submission: Submission | None = (db.query(Submission)
                                         .filter(and_(Submission.submission_id == id,
@@ -65,6 +70,7 @@ def update(db: Session, id: int, submission: SubmissionWTeam) -> Submission | No
     return db_submission
 
 
+# delete a submission
 def delete(db: Session, id: int, submission: SubmissionWTeam) -> None:
     db_submission: Submission | None = (db.query(Submission)
                                         .filter(and_(Submission.submission_id == id,

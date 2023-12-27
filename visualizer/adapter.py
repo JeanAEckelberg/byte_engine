@@ -75,16 +75,19 @@ class Adapter:
         """
         ...
 
+    documentation?
     def recalc_animation(self, turn_log: dict) -> None:
         self.turn_number = turn_log['tick']
 
+
     def populate_bytesprite_factories(self) -> dict[int: Callable[[pygame.Surface], ByteSprite]]:
-        # Instantiate all bytesprites for each object ands add them here
+        # Instantiate all bytesprites for each object and add them here
         return {
             4: AvatarBytespriteFactoryExample().create_bytesprite,
             7: TileBytespriteFactoryExample().create_bytesprite,
             8: WallBytespriteFactoryExample().create_bytesprite,
         }
+
 
     def render(self) -> None:
         # self.button.render()
@@ -94,11 +97,14 @@ class Adapter:
         text.render()
         self.playback.playback_render()
 
+    documentation?
     def clean_up(self) -> None:
         ...
 
+
     def results_load(self, results: dict) -> None:
         self.menu.load_results_screen(results)
+
 
     def results_event(self, event: pygame.event) -> Any:
         return self.menu.results_events(event)

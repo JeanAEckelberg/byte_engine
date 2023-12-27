@@ -4,6 +4,7 @@ from server.models.team import Team
 from server.schemas.team.team_schema import TeamBase
 
 
+# create method for team
 def create(team: TeamBase, db: Session) -> Team:
     db_team: Team = Team(**team.model_dump())
     db.add(db_team)
@@ -12,6 +13,7 @@ def create(team: TeamBase, db: Session) -> Team:
     return db_team
 
 
+# read most recent team
 def read(db: Session, id: int, eager: bool = False) -> Team | None:
     return (db.query(Team)
             .filter(Team.team_uuid == id)
@@ -24,6 +26,7 @@ def read(db: Session, id: int, eager: bool = False) -> Team | None:
             .first())
 
 
+# read all teams
 def read_all(db: Session, eager: bool = False) -> [Team]:
     return (db.query(Team)
             .all() if not eager
@@ -34,6 +37,7 @@ def read_all(db: Session, eager: bool = False) -> [Team]:
             .all())
 
 
+# read a specified team
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Team]:
     return (db.query(Team)
             .filter_by(**kwargs)
@@ -45,6 +49,7 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Team]:
             .all())
 
 
+# update a team
 def update(db: Session, id: int, team: TeamBase) -> Team | None:
     db_team: Team | None = (db.query(Team)
                             .filter(Team.team_uuid == id)
@@ -60,6 +65,7 @@ def update(db: Session, id: int, team: TeamBase) -> Team | None:
     return db_team
 
 
+# delete a team
 def delete(db: Session, id: int, team: TeamBase) -> None:
     db_team: Team | None = (db.query(Team)
                                         .filter(Team.team_uuid == id)

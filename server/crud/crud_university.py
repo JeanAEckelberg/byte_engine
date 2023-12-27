@@ -4,6 +4,7 @@ from server.models.university import University
 from server.schemas.university.university_schema import UniversityBase
 
 
+# create method for university
 def create(db: Session, university: UniversityBase) -> University:
     db_university: University = University(**university.model_dump(exclude={'uni_id'}))
     db.add(db_university)
@@ -12,6 +13,7 @@ def create(db: Session, university: UniversityBase) -> University:
     return db_university
 
 
+# read most recent university
 def read(db: Session, id: int, eager: bool = False) -> University | None:
     return (db.query(University)
             .filter(University.uni_id == id)
@@ -22,6 +24,7 @@ def read(db: Session, id: int, eager: bool = False) -> University | None:
             .first())
 
 
+# read all universities
 def read_all(db: Session, eager: bool = False) -> [University]:
     return (db.query(University)
             .all() if not eager
@@ -30,6 +33,7 @@ def read_all(db: Session, eager: bool = False) -> [University]:
             .all())
 
 
+# read specified university
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [University]:
     return (db.query(University)
             .filter_by(**kwargs)
@@ -40,6 +44,7 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [University
             .all())
 
 
+# update a university
 def update(db: Session, id: int, university: UniversityBase) -> University | None:
     db_university: University | None = (db.query(University)
                                         .filter(University.uni_id == id)
@@ -55,6 +60,7 @@ def update(db: Session, id: int, university: UniversityBase) -> University | Non
     return db_university
 
 
+# delete a university
 def delete(db: Session, id: int, university: UniversityBase) -> None:
     db_university: University | None = (db.query(University)
                                         .filter(University.uni_id == id)

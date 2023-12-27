@@ -4,6 +4,7 @@ from server.models.submission_run_info import SubmissionRunInfo
 from server.schemas.submission_run_info.submission_run_info_schema import SubmissionRunInfoBase
 
 
+# create submission run info
 def create(db: Session, submission_run_info: SubmissionRunInfoBase) -> SubmissionRunInfo:
     db_submission_run_info: SubmissionRunInfo = SubmissionRunInfo(**submission_run_info.model_dump(
         exclude={'submission_run_info_id'}))
@@ -13,6 +14,7 @@ def create(db: Session, submission_run_info: SubmissionRunInfoBase) -> Submissio
     return db_submission_run_info
 
 
+# read most recent submission run info
 def read(db: Session, id: int, eager: bool = False) -> SubmissionRunInfo | None:
     return (db.query(SubmissionRunInfo)
             .filter(SubmissionRunInfo.submission_run_info_id == id)
@@ -24,6 +26,7 @@ def read(db: Session, id: int, eager: bool = False) -> SubmissionRunInfo | None:
             .first())
 
 
+# read all submission run info
 def read_all(db: Session, eager: bool = False) -> [SubmissionRunInfo]:
     return (db.query(SubmissionRunInfo)
             .all() if not eager
@@ -33,6 +36,7 @@ def read_all(db: Session, eager: bool = False) -> [SubmissionRunInfo]:
             .all())
 
 
+# read specified submission run info
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [SubmissionRunInfo]:
     return (db.query(SubmissionRunInfo)
             .filter_by(**kwargs)
@@ -44,6 +48,7 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Submission
             .all())
 
 
+# update a submission run info
 def update(db: Session, id: int, submission_run_info: SubmissionRunInfoBase) -> SubmissionRunInfo | None:
     db_submission_run_info: SubmissionRunInfo | None = (db.query(SubmissionRunInfo)
                                                         .filter(SubmissionRunInfo.submission_run_info_id == id)
@@ -59,6 +64,7 @@ def update(db: Session, id: int, submission_run_info: SubmissionRunInfoBase) -> 
     return db_submission_run_info
 
 
+# delete a submission run info
 def delete(db: Session, id: int, submission_run_info: SubmissionRunInfoBase) -> None:
     db_submission_run_info: SubmissionRunInfo | None = (db.query(SubmissionRunInfo)
                                                         .filter(SubmissionRunInfo.submission_run_info_id == id)

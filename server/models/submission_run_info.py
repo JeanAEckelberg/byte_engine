@@ -6,6 +6,17 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 
+"""
+'Submission Run Info' Model Class
+submission_run_info: primary key
+run_id: foreign key
+submission_id: foreign key
+error_text
+player_num
+points_awarded
+
+relates to submission, and run
+"""
 class SubmissionRunInfo(Base):
     __tablename__: str = 'submission_run_info'
 

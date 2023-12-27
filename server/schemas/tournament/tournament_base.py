@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
+# All items in Tournament and their data type
 class TournamentBase(BaseModel):
     tournament_id: int
     start_run: datetime

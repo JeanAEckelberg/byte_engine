@@ -5,6 +5,15 @@ from .base import Base
 from .timestamp import TimeStamp
 
 
+"""
+'Run' Model class
+run_id: primary key
+tournament_id: foreign key
+run_time
+seed
+
+relates to submission_run_info, tournament, and turns
+"""
 class Run(Base):
     __tablename__: str = 'run'
     run_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)

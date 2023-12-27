@@ -9,6 +9,7 @@ from server.schemas.tournament.tournament_base import TournamentBase
 from server.schemas.tournament.tournament_schema import TournamentSchema
 
 
+# create method for tournament
 def create(db: Session, tournament: TournamentBase) -> Tournament:
     db_tournament: Tournament = Tournament(**tournament.model_dump(exclude={'tournament_id'}))
     db.add(db_tournament)
@@ -17,6 +18,7 @@ def create(db: Session, tournament: TournamentBase) -> Tournament:
     return db_tournament
 
 
+# read most recent tournamet
 def read(db: Session, id: int, eager: bool = False) -> Tournament | None:
     return (db.query(Tournament)
             .filter(Tournament.tournament_id == id)
@@ -32,6 +34,7 @@ def read(db: Session, id: int, eager: bool = False) -> Tournament | None:
             .first())
 
 
+# read all tournaments
 def read_all(db: Session, eager: bool = False) -> [Tournament]:
     return (db.query(Tournament)
             .all() if not eager
@@ -45,6 +48,7 @@ def read_all(db: Session, eager: bool = False) -> [Tournament]:
             .all())
 
 
+# read specified tournament
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Tournament]:
     return (db.query(Tournament)
             .filter_by(**kwargs)
@@ -60,6 +64,7 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Tournament
             .all())
 
 
+# update a tournament
 def update(db: Session, id: int, tournament: TournamentBase) -> Tournament | None:
     db_tournament: Tournament | None = (db.query(Tournament)
                                      .filter(Tournament.tournament_id == id)
@@ -75,6 +80,7 @@ def update(db: Session, id: int, tournament: TournamentBase) -> Tournament | Non
     return db_tournament
 
 
+# delete a tournament
 def delete(db: Session, id: int) -> None:
     db_tournament: Tournament | None = (db.query(Tournament)
                                      .filter(Tournament.tournament_id == id)

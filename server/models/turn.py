@@ -4,6 +4,15 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 
+"""
+'Turn' Model Class
+turn_id: primary key
+turn_number
+run_id: foreign key
+turn_data
+
+relates to run
+"""
 class Turn(Base):
     __tablename__: str = 'turn'
     turn_id: Mapped[int] = mapped_column(Integer(), primary_key=True)

@@ -4,6 +4,7 @@ from server.models.team_type import TeamType
 from server.schemas.team_type.team_type_schema import TeamTypeBase
 
 
+# create method for team type
 def create(db: Session, team_type: TeamTypeBase) -> TeamType:
     db_team_type: TeamType = TeamType(**team_type.model_dump(exclude={'team_type_id'}))
     db.add(db_team_type)
@@ -12,6 +13,7 @@ def create(db: Session, team_type: TeamTypeBase) -> TeamType:
     return db_team_type
 
 
+# read most recent team type
 def read(db: Session, id: int, eager: bool = False) -> TeamType | None:
     return (db.query(TeamType)
             .filter(TeamType.team_type_id == id)
@@ -22,6 +24,7 @@ def read(db: Session, id: int, eager: bool = False) -> TeamType | None:
             .first())
 
 
+# read all team types
 def read_all(db: Session, eager: bool = False) -> [TeamType]:
     return (db.query(TeamType)
             .all() if not eager
@@ -30,6 +33,7 @@ def read_all(db: Session, eager: bool = False) -> [TeamType]:
             .all())
 
 
+# read specified team type
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [TeamType]:
     return (db.query(TeamType)
             .filter_by(**kwargs)
@@ -40,6 +44,7 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [TeamType]:
             .all())
 
 
+# update a team type
 def update(db: Session, id: int, team_type: TeamTypeBase) -> TeamType | None:
     db_team_type: TeamType | None = (db.query(TeamType)
                                      .filter(TeamType.team_type_id == id)
@@ -55,6 +60,7 @@ def update(db: Session, id: int, team_type: TeamTypeBase) -> TeamType | None:
     return db_team_type
 
 
+# delete a team type
 def delete(db: Session, id: int, team_type: TeamTypeBase) -> None:
     db_team_type: TeamType | None = (db.query(TeamType)
                                      .filter(TeamType.team_type_id == id)

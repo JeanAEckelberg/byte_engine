@@ -5,6 +5,7 @@ from server.schemas.university.university_schema import UniversityBase
 
 
 # University <-> Team: Many to One
+# Schema for Team using TeamBase and includes its relations
 class TeamSchema(TeamBase):
     university: UniversityBase
     team_type: TeamTypeBase

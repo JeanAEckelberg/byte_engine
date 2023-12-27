@@ -7,6 +7,15 @@ from .base import Base
 from uuid import uuid4
 
 
+"""
+'Team' Model Class
+team_uuid: primary key
+uni_id: foreign key
+team_type_id: foreign key
+team_name: must be unique
+
+relates to submissions, university, and team_type
+"""
 class Team(Base):
     __tablename__: str = 'team'
     team_uuid: Mapped[str] = mapped_column(String(), primary_key=True, default=str(uuid4()))

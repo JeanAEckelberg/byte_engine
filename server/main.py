@@ -48,16 +48,19 @@ def root():
     return {"message": "Hello World"}
 
 
+# post submission endpoint
 @app.post('/submission/', response_model=SubmissionBase)
 def post_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
     return crud_submission.create(submission, db)
 
 
+# post team endpoint
 @app.post('/team/', response_model=TeamIdSchema)
 def post_team(team: TeamBase, db: Session = Depends(get_db)):
     return crud_team.create(team, db)
 
 
+# get submission endpoint
 @app.get('/submission', response_model=SubmissionSchema)
 def get_submission(submission_id: int, team_uuid: str, db: Session = Depends(get_db)):
     # Retrieves a list of submissions where the submission id and uuids match
@@ -121,6 +124,6 @@ def get_tournaments(db: Session = Depends(get_db)):
 def get_tournament(tournament_id: int, db: Session = Depends(get_db)):
     return crud_tournament.read(db, tournament_id, eager=True)
 
-# main should not be able to delete (we do not want the public to be able to delete)
+# main should NOT be able to delete (we do not want the public to be able to delete)
 # so we are not making a delete group runs endpoint
 

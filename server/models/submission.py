@@ -6,7 +6,15 @@ from server.models.timestamp import TimeStamp
 
 from .base import Base
 
+"""
+'Submission' Model class
+submission_id: primary key
+team_uuid: foreign key
+submission_time
+file_txt
 
+relates to team, and submission_run_info
+"""
 class Submission(Base):
     __tablename__: str = 'submission'
     submission_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)

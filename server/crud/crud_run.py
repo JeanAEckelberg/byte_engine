@@ -4,6 +4,7 @@ from server.models.run import Run
 from server.schemas.run.run_schema import RunBase
 
 
+# Create method for Run
 def create(db: Session, run: RunBase) -> Run:
     db_run: Run = Run(**run.model_dump(exclude={'run_id'}))
     db.add(db_run)
@@ -12,6 +13,7 @@ def create(db: Session, run: RunBase) -> Run:
     return db_run
 
 
+# read the most recent run
 def read(db: Session, id: int, eager: bool = False) -> Run | None:
     return (db.query(Run)
             .filter(Run.run_id == id)
@@ -24,6 +26,7 @@ def read(db: Session, id: int, eager: bool = False) -> Run | None:
             .first())
 
 
+# read all runs
 def read_all(db: Session, eager: bool = False) -> [Run]:
     return db.query(Run).all() if not eager \
         else db.query(Run).options(joinedload(Run.turns),
@@ -31,6 +34,7 @@ def read_all(db: Session, eager: bool = False) -> [Run]:
                                    joinedload(Run.tournament)).all()
 
 
+# read a specified run
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Run]:
     return (db.query(Run)
             .filter_by(**kwargs)
@@ -42,6 +46,7 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Run]:
             .filter_by(**kwargs).all())
 
 
+# Update a run
 def update(db: Session, id: int, run: RunBase) -> Run | None:
     db_run: Run | None = (db.query(Run)
                           .filter(Run.run_id == id)
@@ -57,6 +62,7 @@ def update(db: Session, id: int, run: RunBase) -> Run | None:
     return db_run
 
 
+# delete a run
 def delete(db: Session, id: int, run: RunBase) -> None:
     db_run: Run | None = (db.query(Run)
                           .filter(Run.run_id == id)

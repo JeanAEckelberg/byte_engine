@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 
+# All items in Turn and their data type
 class TurnBase(BaseModel):
     turn_id: int
     turn_number: int
