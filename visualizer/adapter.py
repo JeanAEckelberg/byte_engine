@@ -75,10 +75,9 @@ class Adapter:
         """
         ...
 
-    documentation?
+    # re-renders the animation
     def recalc_animation(self, turn_log: dict) -> None:
         self.turn_number = turn_log['tick']
-
 
     def populate_bytesprite_factories(self) -> dict[int: Callable[[pygame.Surface], ByteSprite]]:
         # Instantiate all bytesprites for each object and add them here
@@ -88,7 +87,6 @@ class Adapter:
             8: WallBytespriteFactoryExample().create_bytesprite,
         }
 
-
     def render(self) -> None:
         # self.button.render()
         # any logic for rendering text, buttons, and other visuals
@@ -97,14 +95,12 @@ class Adapter:
         text.render()
         self.playback.playback_render()
 
-    documentation?
+    # is used in post render - post render is used to clear the playback buttons
     def clean_up(self) -> None:
         ...
 
-
     def results_load(self, results: dict) -> None:
         self.menu.load_results_screen(results)
-
 
     def results_event(self, event: pygame.event) -> Any:
         return self.menu.results_events(event)
