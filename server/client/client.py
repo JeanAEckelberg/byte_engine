@@ -79,7 +79,10 @@ class Client:
         print("Select a university (id)")
         self.utils.print_table(unis)
 
-        uni_id = int(input())
+        try:
+            uni_id = int(input())
+        except ValueError:
+            print('Invalid integer!')
 
         if uni_id not in map(lambda x: x['uni_id'], unis):
             print("Not a valid uni id")
