@@ -68,6 +68,7 @@ class visualizer_runner:
             print("Getting new logs")
             self.get_latest_log_files(tournament)
             self.tournament_id = tournament.tournament_id
+            print(f'Tournament id: {self.tournament_id}')
         self.visualizer_loop()
 
     # Delete visual logs path at end of competition
@@ -119,6 +120,7 @@ class visualizer_runner:
                     else subprocess.Popen('vis_runner.bat', stdout=f, cwd=idpath, shell=True)
 
                 stdout, stderr = p.communicate()
+                print(f'stdout: {stdout}\nstderr: {stderr}')
 
         except PermissionError:
             print("Whoops")

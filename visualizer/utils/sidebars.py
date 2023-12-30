@@ -1,3 +1,5 @@
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame as pyg
 from visualizer.config import Config
 from game.utils.vector import Vector

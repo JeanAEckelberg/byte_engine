@@ -140,7 +140,7 @@ class ClientRunner:
         self.read_best_logs_and_insert()
         self.delete_runner_temp()
         self.update_tournament_finished()
-        logging.warning(
+        logging.info(
             f'Sleeping for {self.config.SLEEP_TIME_SECONDS_BETWEEN_RUNS} seconds')
         self.tournament = -1
         print('Job completed\n')
@@ -238,7 +238,7 @@ class ClientRunner:
             p = subprocess.Popen(
                 os.path.join('server', 'runners', 'version.bat'), stdout=subprocess.PIPE, shell=True)
             stdout, stderr = p.communicate()
-        return stdout.decode("utf-8")
+        return stdout.decode("utf-8").split('\n')[-1]
 
     def insert_new_tournament(self) -> Tournament:
         """

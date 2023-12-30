@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Callable
 
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame as pyg
 
 from visualizer.config import Config
