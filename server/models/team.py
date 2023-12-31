@@ -7,16 +7,20 @@ from .base import Base
 from uuid import uuid4
 
 
-"""
-'Team' Model Class
-team_uuid: primary key
-uni_id: foreign key
-team_type_id: foreign key
-team_name: must be unique
-
-relates to submissions, university, and team_type
-"""
 class Team(Base):
+    """
+    Team Model Class - Shapes the 'team' table in the database
+    team_uuid: primary key
+    uni_id: foreign key
+    team_type_id: foreign key
+    team_name: must be unique
+
+    Relates to submissions, university, and team_type
+
+    NOTE: team_uuid is **very important** and must be protected. Tables that use it are only have it when the team that
+    generated the uuid can access their *own* information.
+    """
+
     __tablename__: str = 'team'
     team_uuid: Mapped[str] = mapped_column(String(), primary_key=True, default=str(uuid4()))
     uni_id: Mapped[int] = mapped_column(Integer(), ForeignKey("university.uni_id"))
