@@ -110,16 +110,27 @@ class visualizer_runner:
             return crud_tournament.get_latest_tournament(db) if not None else None
 
     def visualizer_loop(self) -> None:
+        print('in visualizer_loop()')
+
         try:
+            print('trying to open os.devnull')
             f = open(os.devnull, 'w')
+            print('opened os.devnull')
             for id in os.listdir(self.logs_path):
+                print(f'ID in for loop: {id}')
                 idpath = os.path.join(self.logs_path, str(id))
+                print(f'ID path made from id: {idpath}')
 
                 p = subprocess.Popen('bash vis_runner.sh', stdout=f, cwd=idpath, shell=True) \
                     if sys.platform != 'win32' \
                     else subprocess.Popen('vis_runner.bat', stdout=f, cwd=idpath, shell=True)
 
+                print('Created p object to start running visualizer')
+
                 stdout, stderr = p.communicate()
+
+                print('made it past creating stdout and stderr')
+
                 print(f'stdout: {stdout}\nstderr: {stderr}')
 
         except PermissionError:

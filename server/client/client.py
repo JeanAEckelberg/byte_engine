@@ -152,7 +152,7 @@ class Client:
             return
 
         # Send client file
-        print('Submitting file.')
+        print('Submitting file.\n')
         with open(CLIENT_DIRECTORY + file) as fl:
             fil = bytes("".join(fl.readlines()), 'utf-8')
             self.utils.submit_file(fil, self.vid)
@@ -164,4 +164,5 @@ class Client:
         if not os.path.isfile('vID'):
             print("Cannot find vID, please register first.")
             return False
+
         return True

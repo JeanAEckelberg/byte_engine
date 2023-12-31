@@ -1,4 +1,6 @@
+import psycopg2
 from fastapi import FastAPI, HTTPException, Depends
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from server.models.base import Base
 from server.database import SessionLocal, engine
@@ -11,6 +13,7 @@ from server.models.turn import Turn
 from server.models.university import University
 from server.models.tournament import Tournament
 from server.models.submission import Submission
+from server.schemas.team.team_schema import TeamSchema
 
 from server.schemas.tournament.tournament_base import TournamentBase
 from server.schemas.tournament.tournament_schema import TournamentSchema
@@ -50,80 +53,118 @@ def root():
 # post submission
 @app.post('/submission/', response_model=SubmissionBase)
 def post_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
-    return crud_submission.create(submission, db)
+    try:
+        return crud_submission.create(submission, db)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @app.post('/team/', response_model=TeamIdSchema)
 def post_team(team: TeamBase, db: Session = Depends(get_db)):
-    return crud_team.create(team, db)
+    try:
+        return crud_team.create(team, db)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get('/team_info/', response_model=TeamIdSchema)
+def get_team_info(uuid: str, db: Session = Depends(get_db)):
+    try:
+        return crud_team.read(db, uuid, True)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # gets the INDIVIDUAL submission data of a specific team
 @app.get('/submission', response_model=SubmissionSchema)
 def get_submission(submission_id: int, team_uuid: str, db: Session = Depends(get_db)):
-    # Retrieves a list of submissions where the submission id and uuids match
-    submission_list: list[Submission] | None = crud_submission.read_all_W_filter(
-        db, submission_id=submission_id, team_uuid=team_uuid)
+    try:
+        # Retrieves a list of submissions where the submission id and uuids match
+        submission_list: list[Submission] | None = crud_submission.read_all_W_filter(
+            db, submission_id=submission_id, team_uuid=team_uuid)
 
-    if submission_list is None:
-        raise HTTPException(status_code=404, detail="Submission not found!")
+        if submission_list is None:
+            raise HTTPException(status_code=404, detail="Submission not found!")
 
-    return submission_list[0]  # returns a single SubmissionSchema to give the submission data to the user
+        return submission_list[0]  # returns a single SubmissionSchema to give the submission data to the user
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # get all runs in a selected group run that a team was a part of
 @app.get('/runs', response_model=list[RunSchema])
 def get_runs(tournament_id: int, team_uuid: str | None = None, db: Session = Depends(get_db)):
-    run_list: list[Run] | None = crud_run.read_all_W_filter(
-        db, tournament_id=tournament_id)
+    try:
+        run_list: list[Run] | None = crud_run.read_all_W_filter(
+            db, tournament_id=tournament_id)
 
-    # getting a run list where the team_uuid exists in the submission_run_info
-    if team_uuid is not None:
-        run_list = [run for run in run_list if team_uuid in [submission_run.submission.team.team_uuid if
-                                                             submission_run.submission is not None else None for
-                                                             submission_run in run.submission_run_infos]]
+        # getting a run list where the team_uuid exists in the submission_run_info
+        if team_uuid is not None:
+            run_list = [run for run in run_list if team_uuid in [submission_run.submission.team.team_uuid if
+                                                                 submission_run.submission is not None else None for
+                                                                 submission_run in run.submission_run_infos]]
 
-    if run_list is None:
-        raise HTTPException(status_code=404, detail="Run not found D:")
+        if run_list is None:
+            raise HTTPException(status_code=404, detail="Run not found D:")
 
-    return run_list
+        return run_list
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # gets MULTIPLE submissions
 # get submissions
 @app.get('/submissions', response_model=list[SubmissionSchema])
 def get_submissions(team_uuid: str, db: Session = Depends(get_db)):
-    return crud_submission.read_all_by_team_id(db, team_uuid)
+    try:
+        return crud_submission.read_all_by_team_id(db, team_uuid)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # get team types
 @app.get('/team_types/', response_model=list[TeamTypeBase])
 def get_team_types(db: Session = Depends(get_db)):
-    return crud_team_type.read_all(db)
+    try:
+        return crud_team_type.read_all(db)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # get universities
 @app.get('/universities/', response_model=list[UniversityBase])
 def get_universities(db: Session = Depends(get_db)):
-    return crud_university.read_all(db)
+    try:
+        return crud_university.read_all(db)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # get runs
 @app.get('/runs/', response_model=list[RunBase])
 def get_runs(db: Session = Depends(get_db)):
-    return crud_run.read_all(db)
+    try:
+        return crud_run.read_all(db)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # get tournaments
 @app.get('/tournaments/', response_model=list[TournamentSchema])
 def get_tournaments(db: Session = Depends(get_db)):
-    return crud_tournament.read_all(db, eager=True)
+    try:
+        return crud_tournament.read_all(db, eager=True)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # get tournament by id
 @app.get('/tournament', response_model=TournamentSchema)
 def get_tournament(tournament_id: int, db: Session = Depends(get_db)):
-    return crud_tournament.read(db, tournament_id, eager=True)
+    try:
+        return crud_tournament.read(db, tournament_id, eager=True)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # main should not be able to delete (we do not want the public to be able to delete)
 # so we are not making a delete group runs endpoint

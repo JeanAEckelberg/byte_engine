@@ -4,7 +4,7 @@ from datetime import datetime, timezone, tzinfo
 
 import requests
 import urllib3
-from requests import Response
+from requests import Response, HTTPError
 
 
 class ClientUtils:
