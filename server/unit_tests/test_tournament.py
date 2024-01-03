@@ -10,7 +10,11 @@ client = TestClient(app=app)
 
 # Test get method
 
-def test_get_tournaments():
+def test_get_tournaments() -> None:
+    """
+    Tests getting the list of tournaments that are stored in teh database.
+    :return: None
+    """
     response = client.get('/tournaments/')
 
     assert response.status_code == 200

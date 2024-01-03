@@ -11,7 +11,11 @@ client = TestClient(app=app)
 # Test get method
 
 
-def test_get_team_types():
+def test_get_team_types() -> None:
+    """
+    Tests that the team types are returned correctly.
+    :return: None
+    """
     response = client.get('/team_types/')
 
     assert response.status_code == 200

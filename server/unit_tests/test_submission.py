@@ -11,7 +11,11 @@ client = TestClient(app=app)
 # Test post method
 
 
-def test_post_submission():
+def test_post_submission() -> None:
+    """
+    Tests posting a submission via the URL.
+    :return: None
+    """
     response = client.post('/submission/',
                            json={"team_uuid": '1',
                                  "submission_id": 2,
@@ -26,7 +30,11 @@ def test_post_submission():
 
 # Test get methods
 
-def test_get_submission():
+def test_get_submission() -> None:
+    """
+    Tests getting a submission via the submission id and team uuid in the URL.
+    :return: None
+    """
     response = client.get('/submission?submission_id=1&team_uuid=1')
     assert response.status_code == 200
     assert response.json() == {"submission_id": 1,
@@ -48,7 +56,11 @@ def test_get_submission():
                                                                  "results": "test"}}]}
 
 
-def test_get_submissions():
+def test_get_submissions() -> None:
+    """
+    Tests getting all submissions given a team uuid in the URL.
+    :return: None
+    """
     response = client.get('/submissions?team_uuid=1')
     assert response.status_code == 200
     assert response.json() == [
@@ -96,6 +108,10 @@ def test_get_submissions():
 # Test read nonexistent submission/s
 
 
-def test_get_nonexistent_submission():
+def test_get_nonexistent_submission() -> None:
+    """
+    Tests that a non-existent submission cannot be retrieved; raises an error.
+    :return: None
+    """
     with pytest.raises(IndexError):
         client.get('/submission?submission_id=2&team_uuid=2')
