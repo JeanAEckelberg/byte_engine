@@ -15,7 +15,7 @@ class Submission(Base):
     submission_time
     file_txt
 
-    relates to team, and submission_run_info
+    Relates to team, and submission_run_info
 
     NOTE: team_uuid is used to refer back to the team that made the submission. When retrieving a submission(s), a team
     can only access their own submissions

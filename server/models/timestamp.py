@@ -3,6 +3,9 @@ import sqlalchemy as sa
 
 
 class TimeStamp(sa.types.TypeDecorator):
+    """
+    This class is used to create time stamps for things like when clients submit code during the competiton.
+    """
     impl = sa.types.DateTime
     LOCAL_TIMEZONE = datetime.utcnow().astimezone().tzinfo
 

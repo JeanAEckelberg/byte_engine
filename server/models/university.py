@@ -4,14 +4,15 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 from .base import Base
 
 
-"""
-'University' Model Class
-uni_id: primary key
-uni_name: must be unique
-
-relates to teams
-"""
 class University(Base):
+    """
+    'University' Model Class - Shapes the 'university' table in the database
+    uni_id: primary key
+    uni_name: must be unique
+
+    Relates to teams
+    """
+
     __tablename__: str = 'university'
 
     uni_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)

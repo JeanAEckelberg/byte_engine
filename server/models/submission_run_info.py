@@ -16,16 +16,14 @@ class SubmissionRunInfo(Base):
     player_num
     points_awarded
 
-    relates to submission, and run
-
-    
+    Relates to submission, and run
     """
 
     __tablename__: str = 'submission_run_info'
 
     # sub_run_info id pk
     submission_run_info_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
-    run_id: Mapped[int] = mapped_column(Integer(), ForeignKey("run.run_id", ondelete='CASCADE'))  # run id
+    run_id: Mapped[int] = mapped_column(Integer(), ForeignKey("run.run_id", ondelete='CASCADE'))  # run id fk
     submission_id: Mapped[int] = mapped_column(Integer(), ForeignKey("submission.submission_id"))  # submission id fk
     error_txt: Mapped[str] = mapped_column(String(), nullable=True)
     player_num: Mapped[int] = mapped_column(Integer(), nullable=False)

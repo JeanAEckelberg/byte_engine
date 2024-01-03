@@ -7,17 +7,18 @@ from .base import Base
 from .timestamp import TimeStamp
 
 
-"""
-'Tournament' Model Class
-tournament_id: primary key
-start_run
-launcher_version
-runs_per_client
-is_finished
-
-relates to runs
-"""
 class Tournament(Base):
+    """
+    'Tournament' Model Class - Shapes the 'tournament' table in the database
+    tournament_id: primary key
+    start_run
+    launcher_version
+    runs_per_client
+    is_finished
+
+    Relates to runs
+    """
+
     # Date times are stored in UTC in ISO format
     __tablename__: str = 'tournament'
     tournament_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
