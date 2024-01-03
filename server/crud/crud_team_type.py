@@ -6,6 +6,13 @@ from server.schemas.team_type.team_type_schema import TeamTypeBase
 
 # create method for team type
 def create(db: Session, team_type: TeamTypeBase) -> TeamType:
+    """
+    This method will create a table in the database called ``Team Type`` based on the run.py class. Refer to the
+    ``models`` package for more information on them.
+    :param db:
+    :param team_type:
+    :return:
+    """
     db_team_type: TeamType = TeamType(**team_type.model_dump(exclude={'team_type_id'}))
     db.add(db_team_type)
     db.commit()
@@ -15,6 +22,14 @@ def create(db: Session, team_type: TeamTypeBase) -> TeamType:
 
 # read most recent team type
 def read(db: Session, id: int, eager: bool = False) -> TeamType | None:
+    """
+    This gets information from the Team Type table and returns it. Eager loading will determine whether to only return
+    the entry in the Team Type table or to return it with more information from the tables that it's related to.
+    :param db:
+    :param id:
+    :param eager:
+    :return:
+    """
     return (db.query(TeamType)
             .filter(TeamType.team_type_id == id)
             .first() if not eager
@@ -26,6 +41,13 @@ def read(db: Session, id: int, eager: bool = False) -> TeamType | None:
 
 # read all team types
 def read_all(db: Session, eager: bool = False) -> [TeamType]:
+    """
+    Returns all Team Type entities from the datatable. Eager loading determines whether to return all entities or return
+    all entities with information from related tables.
+    :param db:
+    :param eager:
+    :return:
+    """
     return (db.query(TeamType)
             .all() if not eager
             else db.query(TeamType)
@@ -35,6 +57,14 @@ def read_all(db: Session, eager: bool = False) -> [TeamType]:
 
 # read specified team type
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [TeamType]:
+    """
+    Similar functionality to the read_all() method, but this filters based on the given information which is unpacked
+    by using ``**``.
+    :param db:
+    :param eager:
+    :param kwargs:
+    :return:
+    """
     return (db.query(TeamType)
             .filter_by(**kwargs)
             .all() if not eager
@@ -46,6 +76,14 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [TeamType]:
 
 # update a team type
 def update(db: Session, id: int, team_type: TeamTypeBase) -> TeamType | None:
+    """
+    This method takes a Team Type object and updates the specified Team Type in the database with it. If there is
+    nothing to update, returns None.
+    :param db:
+    :param id:
+    :param team_type:
+    :return:
+    """
     db_team_type: TeamType | None = (db.query(TeamType)
                                      .filter(TeamType.team_type_id == id)
                                      .one_or_none())
@@ -62,6 +100,13 @@ def update(db: Session, id: int, team_type: TeamTypeBase) -> TeamType | None:
 
 # delete a team type
 def delete(db: Session, id: int, team_type: TeamTypeBase) -> None:
+    """
+    Deletes the specified Team Type entity from the database.
+    :param db:
+    :param id:
+    :param team_type:
+    :return: None
+    """
     db_team_type: TeamType | None = (db.query(TeamType)
                                      .filter(TeamType.team_type_id == id)
                                      .one_or_none())

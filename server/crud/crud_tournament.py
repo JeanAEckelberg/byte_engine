@@ -11,6 +11,13 @@ from server.schemas.tournament.tournament_schema import TournamentSchema
 
 # create method for tournament
 def create(db: Session, tournament: TournamentBase) -> Tournament:
+    """
+    This method will create a table in the database called ``Tournament`` based on the run.py class. Refer to the
+    ``models`` package for more information on them.
+    :param db:
+    :param tournament:
+    :return:
+    """
     db_tournament: Tournament = Tournament(**tournament.model_dump(exclude={'tournament_id'}))
     db.add(db_tournament)
     db.commit()
@@ -20,6 +27,14 @@ def create(db: Session, tournament: TournamentBase) -> Tournament:
 
 # read most recent tournamet
 def read(db: Session, id: int, eager: bool = False) -> Tournament | None:
+    """
+    This gets information from the Tournament table and returns it. Eager loading will determine whether to only return
+    the entry in the Tournament table or to return it with more information from the tables that it's related to.
+    :param db:
+    :param id:
+    :param eager:
+    :return:
+    """
     return (db.query(Tournament)
             .filter(Tournament.tournament_id == id)
             .first() if not eager
@@ -36,6 +51,13 @@ def read(db: Session, id: int, eager: bool = False) -> Tournament | None:
 
 # read all tournaments
 def read_all(db: Session, eager: bool = False) -> [Tournament]:
+    """
+    Returns all Tournament entities from the datatable. Eager loading determines whether to return all entities or
+    return all entities with information from related tables.
+    :param db:
+    :param eager:
+    :return:
+    """
     return (db.query(Tournament)
             .all() if not eager
             else db.query(Tournament)
@@ -50,6 +72,14 @@ def read_all(db: Session, eager: bool = False) -> [Tournament]:
 
 # read specified tournament
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Tournament]:
+    """
+    Similar functionality to the read_all() method, but this filters based on the given information which is unpacked
+    by using ``**``.
+    :param db:
+    :param eager:
+    :param kwargs:
+    :return:
+    """
     return (db.query(Tournament)
             .filter_by(**kwargs)
             .all() if not eager
@@ -66,6 +96,14 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Tournament
 
 # update a tournament
 def update(db: Session, id: int, tournament: TournamentBase) -> Tournament | None:
+    """
+    This method takes a Tournament object and updates the specified Tournament in the database with it. If there is
+    nothing to update, returns None.
+    :param db:
+    :param id:
+    :param tournament:
+    :return:
+    """
     db_tournament: Tournament | None = (db.query(Tournament)
                                      .filter(Tournament.tournament_id == id)
                                      .one_or_none())
@@ -82,6 +120,12 @@ def update(db: Session, id: int, tournament: TournamentBase) -> Tournament | Non
 
 # delete a tournament
 def delete(db: Session, id: int) -> None:
+    """
+    Deletes the specified Tournament entity from the database.
+    :param db:
+    :param id:
+    :return: None
+    """
     db_tournament: Tournament | None = (db.query(Tournament)
                                      .filter(Tournament.tournament_id == id)
                                      .one_or_none())
