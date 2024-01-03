@@ -16,7 +16,8 @@ class Tournament(Base):
     runs_per_client
     is_finished
 
-    Relates to runs
+    Related table:
+        * runs
     """
 
     # Date times are stored in UTC in ISO format

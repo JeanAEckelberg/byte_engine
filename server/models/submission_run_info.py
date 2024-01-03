@@ -16,7 +16,9 @@ class SubmissionRunInfo(Base):
     player_num
     points_awarded
 
-    Relates to submission, and run
+    Related tables:
+        * submission
+        * run
     """
 
     __tablename__: str = 'submission_run_info'

@@ -15,7 +15,10 @@ class Team(Base):
     team_type_id: foreign key
     team_name: must be unique
 
-    Relates to submissions, university, and team_type
+    Related tables:
+        * submissions
+        * university
+        * team_type
 
     NOTE: team_uuid is **very important** and must be protected. Tables that use it are only have it when the team that
     generated the uuid can access their *own* information.

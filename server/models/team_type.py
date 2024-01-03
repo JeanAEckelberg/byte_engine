@@ -11,7 +11,8 @@ class TeamType(Base):
     team_type_name: must be unique - uniqueness prevents confusion when giving prizes at end of competition
     eligible
 
-    Relates to teams
+    Related table:
+        * teams
     """
 
     __tablename__: str = 'team_type'

@@ -13,7 +13,10 @@ class Run(Base):
     run_time
     seed
 
-    Relates to submission_run_info, tournament, and turns
+    Related tables:
+        * submission_run_info
+        * tournament
+        * turn
     """
 
     __tablename__: str = 'run'

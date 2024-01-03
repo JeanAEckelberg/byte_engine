@@ -12,7 +12,8 @@ class Turn(Base):
     run_id: foreign key
     turn_data
 
-    relates to run
+    Related table:
+        * run
     """
 
     __tablename__: str = 'turn'

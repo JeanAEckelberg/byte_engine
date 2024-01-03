@@ -10,7 +10,8 @@ class University(Base):
     uni_id: primary key
     uni_name: must be unique
 
-    Relates to teams
+    Related table:
+        * team
     """
 
     __tablename__: str = 'university'
