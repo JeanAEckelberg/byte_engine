@@ -3,7 +3,9 @@ from server.schemas.submission.submission_base import SubmissionBase
 from submission_run_info_base import SubmissionRunInfoBase
 
 
-# Schema for Submission Run Info using SubmissionRunInfoBase and includes its relations
 class SubmissionRunInfoSchema(SubmissionRunInfoBase):
+    """
+    Schema for Submission Run Info using SubmissionRunInfoBase. Includes its relations.
+    """
     run: RunBase
     submission: SubmissionBase

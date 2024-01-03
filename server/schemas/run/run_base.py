@@ -2,8 +2,10 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
-# All items in Run and their data type
 class RunBase(BaseModel):
+    """
+    All variables to represent the columns in the Run table and their data type.
+    """
     run_id: int
     tournament_id: int
     run_time: datetime

@@ -5,8 +5,11 @@ from server.schemas.university.university_schema import UniversityBase
 
 
 # University <-> Team: Many to One
-# Schema for Team using TeamBase and includes its relations ~ submission relation is partial submission
 class TeamSchemaPartial(TeamBase):
+    """
+    Schema for Team using TeamBase and includes its relations. Submission relation is from the SubmissionSchemaPartial
+    class since the minimum data from it is needed.
+    """
     university: UniversityBase
     team_type: TeamTypeBase
     submissions: list[SubmissionSchemaPartial]

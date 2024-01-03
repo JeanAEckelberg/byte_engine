@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 
 
-# All items in Submission Run Info and their data type
 class SubmissionRunInfoBase(BaseModel):
+    """
+    All variables that represent columns in the Submission Run Info table and their data type.
+    """
     submission_run_info_id: int
     run_id: int
     submission_id: int

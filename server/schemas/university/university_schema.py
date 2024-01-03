@@ -3,6 +3,8 @@ from server.schemas.university.university_base import UniversityBase
 
 
 # University <-> Team: Many to One
-# Schema for University using UniversityBase and includes its relations
 class UniversitySchema(UniversityBase):
+    """
+    Schema for University using UniversityBase. Includes its relations.
+    """
     teams: list[TeamBase]

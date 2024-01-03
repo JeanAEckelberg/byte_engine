@@ -5,7 +5,9 @@ from server.schemas.submission_run_info.submission_run_info_w_submission import 
 from server.schemas.turn.turn_schema import TurnBase
 
 
-# Schema for Run using RunBase and includes its relations~not including tournament
 class RunSchemaWithoutTournament(RunBase):
+    """
+    Schema for Run using RunBase. Includes its relations to other tables EXCEPT tournament.
+    """
     submission_run_infos: list[SubmissionRunInfoWSubmission]
     turns: list[TurnBase]

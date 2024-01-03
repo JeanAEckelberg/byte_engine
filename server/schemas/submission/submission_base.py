@@ -2,8 +2,10 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
-# All items in Submission and their data type
 class SubmissionBase(BaseModel):
+    """
+    All variables to represent the columns in the Submission table and their data type.
+    """
     submission_id: int
     submission_time: datetime
     file_txt: bytes

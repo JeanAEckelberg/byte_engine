@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 
 
-# All items in University and their data type
 class UniversityBase(BaseModel):
+    """
+    All variables that represent columns in the University table and their data type.
+    """
     uni_id: int
     uni_name: str
 
