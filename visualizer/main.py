@@ -208,9 +208,9 @@ class ByteVisualiser:
 
     @playback_speed.setter
     def playback_speed(self, playback_speed: float) -> None:
-        if playback_speed is None or not isinstance(playback_speed, float):
+        if playback_speed is None or not isinstance(playback_speed, float) or playback_speed < 1:
             raise ValueError(
-                f'{self.__class__.__name__}.playback_speed must be a float. It is a(n) {type(playback_speed)} with the value of {playback_speed}')
+                f'{self.__class__.__name__}.playback_speed must be a float greater than or equal to 1.0. It is a(n) {type(playback_speed)} with the value of {playback_speed}.')
         self.__playback_speed: float = playback_speed
 
     @property
