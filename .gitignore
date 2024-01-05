@@ -133,3 +133,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# server temp folders
+/runner_temp
+/vis_temp
+
+
