@@ -1,10 +1,42 @@
 import json
 import os
+from dataclasses import dataclass
 from datetime import datetime, timezone, tzinfo
+from typing import Any, TypeVar, Callable, Generic
 
 import requests
 import urllib3
 from requests import Response, HTTPError
+
+# Generic type for Ok which gets specified in a called method
+T = TypeVar('T')
+
+
+@dataclass
+class Result(Generic[T]):
+    Ok: T | None = None
+    Err: str | None = None
+
+    def is_ok(self) -> bool:
+        return self.Err is None
+
+    def is_err(self) -> bool:
+        return self.Err is not None
+
+
+def as_result(func: Callable):
+    # wraps into Result if it does not already return a Result
+    def wrapper(*args, **kwargs):
+        try:
+            temp: Any = func(*args, **kwargs)
+            if isinstance(temp, Result):
+                return temp
+
+            return Result(Ok=temp)
+
+        except Exception as e:
+            return Result(Err=str(e))
+    return wrapper
 
 
 class ClientUtils:
@@ -24,6 +56,7 @@ class ClientUtils:
         return a.astimezone(tz)
 
     # get team types
+    @as_result
     def get_team_types(self) -> list[dict]:
         resp = requests.get(self.IP + 'team_types/',
                             verify=self.path_to_public)
@@ -31,12 +64,14 @@ class ClientUtils:
         return json.loads(resp.content)
 
     # get unis
+    @as_result
     def get_unis(self) -> list[dict]:
         resp = requests.get(self.IP + 'universities/', verify=self.path_to_public)
         resp.raise_for_status()
         return json.loads(resp.content)
 
     # post get score over time - fix later
+    @as_result
     def get_score_over_time(self, vid, group_run_id, team_uuid):
         resp = requests.post(
             self.IP + 'get_score_over_time', json={'vid': vid}, verify=self.path_to_public)
@@ -46,6 +81,7 @@ class ClientUtils:
         self.print_table(jsn)
 
     # post submission
+    @as_result
     def submit_file(self, fil: bytes, vid: str) -> dict:
         data = {'submission_id': 0, 'submission_time': datetime.utcnow().isoformat(), 'file_txt': fil.decode("utf-8"),
                 'team_uuid': vid}
@@ -55,6 +91,7 @@ class ClientUtils:
         return json.loads(resp.content)
 
     # gets the runs from an INDIVIDUAL get_submission
+    @as_result
     def get_submission(self, subid: int, vid: str, prints_table: bool = True) -> dict:
         resp = requests.get(
             self.IP + f'submission?submission_id={subid}&team_uuid={vid}', verify=self.path_to_public)
@@ -69,6 +106,7 @@ class ClientUtils:
             self.print_table(to_table)
         return jsn
 
+    @as_result
     def get_submission_run_info(self, subid: int, vid: str) -> None:
         resp = requests.get(
             self.IP + f'submission?submission_id={subid}&team_uuid={vid}', verify=self.path_to_public)
@@ -82,6 +120,7 @@ class ClientUtils:
         self.print_table(jsn)
 
     # MULTIPLE get_submissions
+    @as_result
     def get_submissions(self, vid: str) -> None:
         resp = requests.get(
             self.IP + f'submissions?team_uuid={vid}', verify=self.path_to_public)
@@ -94,7 +133,8 @@ class ClientUtils:
 
         self.print_table(to_table)
 
-    # post team
+    # post
+    @as_result
     def register(self, uni_id: int, team_type_id: int, team_name: str) -> Response:
         data = {'uni_id': uni_id, 'team_type_id': team_type_id, 'team_name': team_name}
         resp = requests.post(
@@ -103,12 +143,14 @@ class ClientUtils:
         return resp
 
     # get all runs
+    @as_result
     def get_runs(self) -> dict:
         resp = requests.get(self.IP + f'run/', verify=self.path_to_public)
         resp.raise_for_status()
         return json.loads(resp.content)
 
     # get runs that match a tournament id and a team uuid
+    @as_result
     def get_runs_filter(self, tournament_id: int, vid: str) -> None:
         resp = requests.get(self.IP + f'get_run?tournament_id={tournament_id}&team_uuid={vid}',
                             verify=self.path_to_public)
@@ -117,6 +159,7 @@ class ClientUtils:
         jsn['run_time'] = self.convert_utc_to_local(utc_str=jsn['run_time']).strftime('%m/%d/%Y, %H:%M:%S')
         self.print_table(jsn)
 
+    @as_result
     def get_runs_for_submission(self, submission_id: int, team_uuid: str) -> None:
         resp = requests.get(self.IP + f'submission?submission_id={submission_id}&team_uuid={team_uuid}',
                             verify=self.path_to_public)
@@ -129,8 +172,12 @@ class ClientUtils:
         self.print_table(jsn)
 
     # gets the code file from the specified submission using the submission id
-    def get_code_from_submission(self, submission_id, vid):
-        submission_json: dict = self.get_submission(submission_id, vid, False)
+    @as_result
+    def get_code_from_submission(self, submission_id, vid) -> Result | None:
+        temp: Result[dict] = self.get_submission(submission_id, vid, False)
+        if temp.is_err():
+            return temp
+        submission_json: dict = temp.Ok
         if submission_json['file_txt'] == "":
             print("Bad Vid and subid combination (probably)")
         else:
@@ -221,6 +268,7 @@ class ClientUtils:
                 "Something went wrong. Maybe there isn't data for what you're looking for")
 
     # get tournaments for leaderboard
+    @as_result
     def get_tournaments(self):
         resp = requests.get(self.IP + 'tournaments/', verify=self.path_to_public)
         resp.raise_for_status()
@@ -228,6 +276,7 @@ class ClientUtils:
 
         # get tournaments for leaderboard
 
+    @as_result
     def get_tournament(self, tournament_id: int):
         resp = requests.get(self.IP + f'tournament?tournament_id={tournament_id}', verify=self.path_to_public)
         resp.raise_for_status()
@@ -240,7 +289,7 @@ class ClientUtils:
     #     }
 
     # finds uni_id and uni_name for building the leaderboard by calling get_unis() method
-
+    @as_result
     def get_leaderboard(self, include_ineligible: bool, leaderboard_id: int = -1):
         # collect info needed to build leaderboard
         uni_info: dict = self.get_leaderboard_uni_info()
@@ -249,11 +298,13 @@ class ClientUtils:
         # put info together to build leaderboard
         self.print_leaderboard_info(uni_info, team_info, include_ineligible, leaderboard_id)
 
+    @as_result
     def get_leaderboard_uni_info(self) -> dict:
         unis_info: list[dict] = self.get_unis()
         return {uni['uni_id']: uni['uni_name'] for uni in unis_info}
 
     # finds the type_type_id, team_name, and eligible
+    @as_result
     def get_leaderboard_team_type_info(self) -> dict:
         team_types: list[dict] = self.get_team_types()
         return {team_type['team_type_id']: {'name': team_type['team_type_name'], 'eligible': team_type['eligible']}

@@ -140,7 +140,6 @@ if __name__ == '__main__':
 
     # Run the visualizer
     elif action in ['visualize', 'v']:
-        print(par_args)
         visualiser = ByteVisualiser(end_time=par_args.end_time, skip_start=par_args.skip_start,
                                     playback_speed=par_args.playback_speed, fullscreen=par_args.fullscreen,
                                     log_dir=par_args.logpath)

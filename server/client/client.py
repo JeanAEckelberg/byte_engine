@@ -1,6 +1,6 @@
 import os
 from requests.models import HTTPError
-from server.client.client_utils import ClientUtils
+from server.client.client_utils import ClientUtils, Result
 import json
 
 CLIENT_DIRECTORY = "./"
@@ -44,7 +44,9 @@ class Client:
                     self.utils.get_submissions(self.vid)
                     return
                 if args.get_code_for_submission != -1:
-                    self.utils.get_code_from_submission(args.get_code_for_submission, self.vid)
+                    temp: Result = self.utils.get_code_from_submission(args.get_code_for_submission, self.vid)
+                    if temp.is_err():
+                        print(temp.Err)
                     return
                 # This is connected to the '-get_details_for_submission' command. The difference in naming is to
                 # separate the frontend user experience from the backend work
