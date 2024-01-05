@@ -42,9 +42,6 @@ if __name__ == '__main__':
     vis_subpar.add_argument('-log', action='store', type=str, nargs='?',
                             const=-1, default=None, dest="logpath", help="Specify a log path")
 
-    vis_subpar.add_argument('-server', action='store_true', default=False,
-                            dest='skip', help='Skips visualizer pause and quits on end')
-
     # get user input for parameters for using the ByteVisualizer
     vis_subpar.add_argument('-end_time', action='store', default=-1, type=int, nargs='?', dest='end_time',
                             help='Sets the time for how long the visualizer will pause on the results screen')
