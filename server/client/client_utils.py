@@ -31,7 +31,7 @@ def as_result(func: Callable):
             temp: Any = func(*args, **kwargs)
 
             if isinstance(temp, Result):
-                return temp
+                return Result(Ok=temp.Ok, Err=temp.Err)
 
             return Result(Ok=temp)
 
@@ -297,11 +297,6 @@ class ClientUtils:
             raise HTTPError(resp.content.decode('utf-8'))
         return json.loads(resp.content)
 
-    # def to_leaderboard_record(self, group_runs: list[dict]):
-    #
-    #     to_return: dict = {
-    #         "Team Name": group_runs
-    #     }
 
     # finds uni_id and uni_name for building the leaderboard by calling get_unis() method
     @as_result
@@ -318,7 +313,11 @@ class ClientUtils:
         team_info: dict = temp.Ok
 
         # put info together to build leaderboard
-        self.print_leaderboard_info(uni_info, team_info, include_ineligible, leaderboard_id)
+        temp: Result = self.print_leaderboard_info(uni_info, team_info, include_ineligible, leaderboard_id)
+
+        if temp.is_err():
+            return temp
+
         return Result()
 
     @as_result
@@ -340,16 +339,16 @@ class ClientUtils:
                 for team_type in team_types}
 
     # collects all data needed for building the leaderboard
+    @as_result
     def print_leaderboard_info(self, uni_info: dict, team_info: dict, include_ineligible: bool,
                                leaderboard_id: int = -1) -> Result:
+        temp: Result = self.get_tournaments() if leaderboard_id == -1 \
+            else self.get_tournament(leaderboard_id)
 
-        temp: list[Result] = self.get_tournaments() if leaderboard_id == -1 \
-            else [self.get_tournament(leaderboard_id),]
+        if temp.is_err():
+            return temp
 
-        for result in filter(lambda x: x.is_err(), list):
-            return result
-
-        tournaments: list[dict] = [t.Ok for t in temp]
+        tournaments: Result = temp.Ok
 
         tournament_id = 0 if leaderboard_id != -1 else self.__print_leaderboard_info_helper(tournaments)
 
