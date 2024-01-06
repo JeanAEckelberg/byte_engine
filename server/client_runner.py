@@ -382,7 +382,7 @@ class ClientRunner:
                 crud_team_type.create(db, TeamTypeBase(
                     team_type_id=1,
                     team_type_name='Undergrad',
-                    eligible=False
+                    eligible=True
                 ))
                 print('Undergrad Added')
             except(Exception):
@@ -392,7 +392,7 @@ class ClientRunner:
                 crud_team_type.create(db, TeamTypeBase(
                     team_type_id=2,
                     team_type_name='Graduate',
-                    eligible=True
+                    eligible=False
                 ))
                 print('Graduate Added')
             except(Exception):
