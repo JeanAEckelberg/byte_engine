@@ -1,4 +1,5 @@
 from typing import Callable
+from functools import wraps
 
 import psycopg2
 from fastapi import FastAPI, HTTPException, Depends
@@ -46,11 +47,13 @@ def get_db():
 
 
 def run_with_return_to_client(func: Callable):
+    @wraps(func)
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except Exception as e:
             raise HTTPException(status_code=400, detail=str(e))
+
     return wrapper
 
 # API

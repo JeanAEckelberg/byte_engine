@@ -1,5 +1,5 @@
 import os
-from requests.models import HTTPError
+from requests.models import HTTPError, Response
 from server.client.client_utils import ClientUtils, Result
 import json
 
@@ -78,7 +78,13 @@ class Client:
             print("Team name can't be empty.")
             return
 
-        unis = self.utils.get_unis()
+        temp: Result[list[dict]] = self.utils.get_unis()
+
+        if temp.is_err():
+            print(temp.Err)
+            return
+
+        unis: list[dict] = temp.Ok
 
         print("Select a university (id)")
         self.utils.print_table(unis)
@@ -92,7 +98,12 @@ class Client:
             print("Not a valid uni id")
             return
 
-        team_types = self.utils.get_team_types()
+        temp = self.utils.get_team_types()
+        if temp.is_err():
+            print(temp.Err)
+            return
+
+        team_types = temp.Ok
 
         print("Select a team type (id)")
         self.utils.print_table(team_types)
@@ -103,7 +114,13 @@ class Client:
             print("Not a valid team type")
             return
 
-        response = self.utils.register(uni_id, team_type_id, team_name)
+        temp: Result[Response] = self.utils.register(uni_id, team_type_id, team_name)
+
+        if temp.is_err():
+            print(str(temp.Err))
+            return
+
+        response = temp.Ok
 
         if not response.ok:
             print('Team name contains illegal characters or is already taken.')
@@ -159,8 +176,10 @@ class Client:
         print('Submitting file.\n')
         with open(CLIENT_DIRECTORY + file) as fl:
             fil = bytes("".join(fl.readlines()), 'utf-8')
-            self.utils.submit_file(fil, self.vid)
-
+            temp: Result = self.utils.submit_file(fil, self.vid)
+            if temp.is_err():
+                print(temp.Err)
+                return
         print('File sent successfully.')
 
     def verify(self):

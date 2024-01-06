@@ -29,6 +29,7 @@ def as_result(func: Callable):
     def wrapper(*args, **kwargs):
         try:
             temp: Any = func(*args, **kwargs)
+
             if isinstance(temp, Result):
                 return temp
 
@@ -57,17 +58,19 @@ class ClientUtils:
 
     # get team types
     @as_result
-    def get_team_types(self) -> list[dict]:
+    def get_team_types(self) -> Result[list[dict]]:
         resp = requests.get(self.IP + 'team_types/',
                             verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         return json.loads(resp.content)
 
     # get unis
     @as_result
-    def get_unis(self) -> list[dict]:
+    def get_unis(self) -> Result[list[dict]]:
         resp = requests.get(self.IP + 'universities/', verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         return json.loads(resp.content)
 
     # post get score over time - fix later
@@ -75,19 +78,21 @@ class ClientUtils:
     def get_score_over_time(self, vid, group_run_id, team_uuid):
         resp = requests.post(
             self.IP + 'get_score_over_time', json={'vid': vid}, verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         jsn = json.loads(resp.content)
         print('The following is your team\'s performance in each tournament')
         self.print_table(jsn)
 
     # post submission
     @as_result
-    def submit_file(self, fil: bytes, vid: str) -> dict:
+    def submit_file(self, fil: bytes, vid: str) -> Result[dict]:
         data = {'submission_id': 0, 'submission_time': datetime.utcnow().isoformat(), 'file_txt': fil.decode("utf-8"),
                 'team_uuid': vid}
         resp = requests.post(
             self.IP + 'submission/', json=data, verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         return json.loads(resp.content)
 
     # gets the runs from an INDIVIDUAL get_submission
@@ -95,7 +100,8 @@ class ClientUtils:
     def get_submission(self, subid: int, vid: str, prints_table: bool = True) -> dict:
         resp = requests.get(
             self.IP + f'submission?submission_id={subid}&team_uuid={vid}', verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         jsn = json.loads(resp.content)
         jsn['submission_time'] = self.convert_utc_to_local(utc_str=jsn['submission_time']).strftime(
             '%m/%d/%Y, %H:%M:%S')
@@ -110,7 +116,8 @@ class ClientUtils:
     def get_submission_run_info(self, subid: int, vid: str) -> None:
         resp = requests.get(
             self.IP + f'submission?submission_id={subid}&team_uuid={vid}', verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         jsn = json.loads(resp.content)
         jsn = jsn['submission_run_infos']
         for sri in jsn:
@@ -124,7 +131,8 @@ class ClientUtils:
     def get_submissions(self, vid: str) -> None:
         resp = requests.get(
             self.IP + f'submissions?team_uuid={vid}', verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         jsn = json.loads(resp.content)
         to_table: list = sorted([{'ID': x['submission_id'],
                                   'Submission Time': self.convert_utc_to_local(utc_str=x['submission_time']).strftime(
@@ -135,18 +143,20 @@ class ClientUtils:
 
     # post
     @as_result
-    def register(self, uni_id: int, team_type_id: int, team_name: str) -> Response:
+    def register(self, uni_id: int, team_type_id: int, team_name: str) -> Result[Response]:
         data = {'uni_id': uni_id, 'team_type_id': team_type_id, 'team_name': team_name}
         resp = requests.post(
             self.IP + 'team', json=data, verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         return resp
 
     # get all runs
     @as_result
     def get_runs(self) -> dict:
         resp = requests.get(self.IP + f'run/', verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         return json.loads(resp.content)
 
     # get runs that match a tournament id and a team uuid
@@ -154,7 +164,8 @@ class ClientUtils:
     def get_runs_filter(self, tournament_id: int, vid: str) -> None:
         resp = requests.get(self.IP + f'get_run?tournament_id={tournament_id}&team_uuid={vid}',
                             verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         jsn = json.loads(resp.content)
         jsn['run_time'] = self.convert_utc_to_local(utc_str=jsn['run_time']).strftime('%m/%d/%Y, %H:%M:%S')
         self.print_table(jsn)
@@ -163,7 +174,8 @@ class ClientUtils:
     def get_runs_for_submission(self, submission_id: int, team_uuid: str) -> None:
         resp = requests.get(self.IP + f'submission?submission_id={submission_id}&team_uuid={team_uuid}',
                             verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         jsn = json.loads(resp.content)
         jsn = [submission_run_info['run'] for submission_run_info in jsn['submission_run_infos']]
         for run in jsn:
@@ -272,7 +284,8 @@ class ClientUtils:
     @as_result
     def get_tournaments(self):
         resp = requests.get(self.IP + 'tournaments/', verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         return json.loads(resp.content)
 
         # get tournaments for leaderboard
@@ -280,7 +293,8 @@ class ClientUtils:
     @as_result
     def get_tournament(self, tournament_id: int):
         resp = requests.get(self.IP + f'tournament?tournament_id={tournament_id}', verify=self.path_to_public)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
         return json.loads(resp.content)
 
     # def to_leaderboard_record(self, group_runs: list[dict]):
@@ -308,23 +322,34 @@ class ClientUtils:
         return Result()
 
     @as_result
-    def get_leaderboard_uni_info(self) -> dict:
-        unis_info: list[dict] = self.get_unis()
+    def get_leaderboard_uni_info(self) -> Result | dict:
+        temp: Result = self.get_unis()
+        if temp.is_err():
+            return temp
+        unis_info: list[dict] = temp.Ok
         return {uni['uni_id']: uni['uni_name'] for uni in unis_info}
 
     # finds the type_type_id, team_name, and eligible
     @as_result
-    def get_leaderboard_team_type_info(self) -> dict:
-        team_types: list[dict] = self.get_team_types()
+    def get_leaderboard_team_type_info(self) -> Result | dict:
+        temp: Result = self.get_team_types()
+        if temp.is_err():
+            return temp
+        team_types: list[dict] = temp.Ok
         return {team_type['team_type_id']: {'name': team_type['team_type_name'], 'eligible': team_type['eligible']}
                 for team_type in team_types}
 
     # collects all data needed for building the leaderboard
     def print_leaderboard_info(self, uni_info: dict, team_info: dict, include_ineligible: bool,
-                               leaderboard_id: int = -1) -> None:
+                               leaderboard_id: int = -1) -> Result:
 
-        tournaments: list[dict] = self.get_tournaments() if leaderboard_id == -1 \
-            else [self.get_tournament(leaderboard_id)]
+        temp: list[Result] = self.get_tournaments() if leaderboard_id == -1 \
+            else [self.get_tournament(leaderboard_id),]
+
+        for result in filter(lambda x: x.is_err(), list):
+            return result
+
+        tournaments: list[dict] = [t.Ok for t in temp]
 
         tournament_id = 0 if leaderboard_id != -1 else self.__print_leaderboard_info_helper(tournaments)
 
@@ -353,6 +378,8 @@ class ClientUtils:
         result = list(results.values())
         result.sort(key=lambda row: row['Points Awarded'], reverse=True)
         self.print_table(result)
+
+        return Result()
 
     # Helper method to print the print_leaderboard_method
     def __print_leaderboard_info_helper(self, tournaments: list[dict]) -> int:
