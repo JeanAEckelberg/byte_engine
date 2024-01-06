@@ -139,3 +139,5 @@ dmypy.json
 /vis_temp
 
 
+byte_server.db-shm
+byte_server.db-wal

@@ -379,35 +379,34 @@ class ClientRunner:
                 print('UND Already Exists')
 
             try:
-                crud_university.create(db, UniversityBase(
-                    uni_id=4,
-                    uni_name='GSU'
-                ))
-                print('GSU Added')
-            except(Exception):
-                print('GunnarStateUniversity Already Exists')
-
-            try:
                 crud_team_type.create(db, TeamTypeBase(
                     team_type_id=1,
-                    team_type_name='NotEligible',
+                    team_type_name='Undergrad',
                     eligible=False
                 ))
-                print('NonEligible Added')
+                print('Undergrad Added')
             except(Exception):
-                print('NonEligible Already Exists')
+                print('Undergrad Already Exists')
 
             try:
                 crud_team_type.create(db, TeamTypeBase(
                     team_type_id=2,
-                    team_type_name='Eligible',
+                    team_type_name='Graduate',
                     eligible=True
                 ))
-                print('Eligible Added')
+                print('Graduate Added')
             except(Exception):
-                print('Eligible Already Exists')
+                print('Graduate Already Exists')
 
-
+            try:
+                crud_team_type.create(db, TeamTypeBase(
+                    team_type_id=3,
+                    team_type_name='Alumni',
+                    eligible=False
+                ))
+                print('Alumni Added')
+            except(Exception):
+                print('Alumni Already Exists')
 
 
 if __name__ == "__main__":
