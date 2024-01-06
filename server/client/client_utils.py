@@ -173,7 +173,7 @@ class ClientUtils:
 
     # gets the code file from the specified submission using the submission id
     @as_result
-    def get_code_from_submission(self, submission_id, vid) -> Result | None:
+    def get_code_from_submission(self, submission_id, vid) -> Result:
         temp: Result[dict] = self.get_submission(submission_id, vid, False)
         if temp.is_err():
             return temp
@@ -186,6 +186,7 @@ class ClientUtils:
                 fl.write(content)
             print(
                 f"Code for submission {submission_id} has been written {os.path.realpath(fl.name)}")
+        return Result()
 
     # Building a comma-separated-values list table or ascii table based on passed in data below
     # The tables are used to build the leaderboard
@@ -290,13 +291,14 @@ class ClientUtils:
 
     # finds uni_id and uni_name for building the leaderboard by calling get_unis() method
     @as_result
-    def get_leaderboard(self, include_ineligible: bool, leaderboard_id: int = -1):
+    def get_leaderboard(self, include_ineligible: bool, leaderboard_id: int = -1) -> Result:
         # collect info needed to build leaderboard
         uni_info: dict = self.get_leaderboard_uni_info()
         team_info: dict = self.get_leaderboard_team_type_info()
 
         # put info together to build leaderboard
         self.print_leaderboard_info(uni_info, team_info, include_ineligible, leaderboard_id)
+        return Result()
 
     @as_result
     def get_leaderboard_uni_info(self) -> dict:
