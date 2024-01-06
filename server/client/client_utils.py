@@ -113,17 +113,18 @@ class ClientUtils:
         return jsn
 
     @as_result
-    def get_submission_run_info(self, subid: int, vid: str) -> None:
+    def get_submission_run_info(self, subid: int, vid: str) -> Result[None]:
         resp = requests.get(
             self.IP + f'submission?submission_id={subid}&team_uuid={vid}', verify=self.path_to_public)
         if resp.status_code >= 400:
             raise HTTPError(resp.content.decode('utf-8'))
         jsn = json.loads(resp.content)
         jsn = jsn['submission_run_infos']
+        if len(jsn) == 0:
+            raise ValueError('This submission has no details.')
         for sri in jsn:
             del sri['run']
 
-        print('about to print submission run information')
         self.print_table(jsn)
 
     # MULTIPLE get_submissions
@@ -171,13 +172,15 @@ class ClientUtils:
         self.print_table(jsn)
 
     @as_result
-    def get_runs_for_submission(self, submission_id: int, team_uuid: str) -> None:
+    def get_runs_for_submission(self, submission_id: int, team_uuid: str) -> Result[None]:
         resp = requests.get(self.IP + f'submission?submission_id={submission_id}&team_uuid={team_uuid}',
                             verify=self.path_to_public)
         if resp.status_code >= 400:
             raise HTTPError(resp.content.decode('utf-8'))
         jsn = json.loads(resp.content)
         jsn = [submission_run_info['run'] for submission_run_info in jsn['submission_run_infos']]
+        if len(jsn) == 0:
+            raise ValueError('This submission has no runs.')
         for run in jsn:
             run['run_time'] = self.convert_utc_to_local(utc_str=run['run_time']).strftime('%m/%d/%Y, %H:%M:%S')
             del run['results']

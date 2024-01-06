@@ -38,7 +38,9 @@ class Client:
             # If the subparse doesn't contain an expected value, don't do anything
             if args.subparse.lower() == 'stats' or args.subparse.lower() == 's':
                 if args.runs_for_submission != -1:
-                    self.utils.get_runs_for_submission(args.runs_for_submission, self.vid)
+                    temp: Result = self.utils.get_runs_for_submission(args.runs_for_submission, self.vid)
+                    if temp.is_err():
+                        print(temp.Err)
                     return
                 if args.get_submissions:
                     self.utils.get_submissions(self.vid)
@@ -51,8 +53,9 @@ class Client:
                 # This is connected to the '-get_details_for_submission' command. The difference in naming is to
                 # separate the frontend user experience from the backend work
                 if args.get_submission_run_info != -1:
-                    print('Made it to get submission run information method')
-                    self.utils.get_submission_run_info(args.get_submission_run_info, self.vid)
+                    temp: Result = self.utils.get_submission_run_info(args.get_submission_run_info, self.vid)
+                    if temp.is_err():
+                        print(temp.Err)
                     return
                 return
 
