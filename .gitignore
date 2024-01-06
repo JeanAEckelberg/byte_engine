@@ -135,10 +135,10 @@ dmypy.json
 .pyre/
 
 # server temp folders
-/runner_temp
-/vis_temp
+runner_temp/
+vis_temp/
 
-
+# database related files
 byte_server.db-shm
 byte_server.db-wal
 vID
