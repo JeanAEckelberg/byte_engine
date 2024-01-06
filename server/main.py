@@ -56,6 +56,7 @@ def run_with_return_to_client(func: Callable):
 
     return wrapper
 
+
 # API
 
 @app.get('/')
@@ -99,6 +100,7 @@ def get_submission(submission_id: int, team_uuid: str, db: Session = Depends(get
         raise HTTPException(status_code=404, detail="Submission not found!")
 
     return submission_list[0]  # returns a single SubmissionSchema to give the submission data to the user
+
 
 # get all runs in a selected group run that a team was a part of
 @app.get('/runs', response_model=list[RunSchema])
@@ -152,14 +154,35 @@ def get_runs(db: Session = Depends(get_db)):
 @app.get('/tournaments/', response_model=list[TournamentSchema])
 @run_with_return_to_client
 def get_tournaments(db: Session = Depends(get_db)):
-    return crud_tournament.read_all(db, eager=True)
+    temp: list[Tournament] = crud_tournament.read_all(db)
+
+    if len(temp) == 0:
+        raise Exception('No tournaments found.')
+
+    return temp
 
 
 # get tournament by id
 @app.get('/tournament', response_model=TournamentSchema)
 @run_with_return_to_client
 def get_tournament(tournament_id: int, db: Session = Depends(get_db)):
-    return crud_tournament.read(db, tournament_id, eager=True)
+    temp: Tournament = crud_tournament.read(db, tournament_id, eager=True)
+
+    if temp is None:
+        raise Exception('No tournaments found.')
+
+    return temp
+
+
+@app.get('/latest_tournament/', response_model=TournamentSchema)
+@run_with_return_to_client
+def get_latest_tournament(db: Session = Depends(get_db)):
+    temp: Tournament = crud_tournament.get_latest_tournament(db)
+
+    if temp is None:
+        raise Exception('No tournaments found.')
+
+    return temp
 
 # main should not be able to delete (we do not want the public to be able to delete)
 # so we are not making a delete group runs endpoint

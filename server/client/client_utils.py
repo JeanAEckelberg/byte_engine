@@ -298,25 +298,32 @@ class ClientUtils:
         resp = requests.get(self.IP + f'tournament?tournament_id={tournament_id}', verify=self.path_to_public)
         if resp.status_code >= 400:
             raise HTTPError(resp.content.decode('utf-8'))
-        return json.loads(resp.content)
+        return [json.loads(resp.content), ]
 
+    @as_result
+    def get_latest_tournament(self):
+        resp = requests.get(self.IP + 'latest_tournament/', verify=self.path_to_public)
+        if resp.status_code >= 400:
+            raise HTTPError(resp.content.decode('utf-8'))
+        return [json.loads(resp.content), ]
 
     # finds uni_id and uni_name for building the leaderboard by calling get_unis() method
     @as_result
-    def get_leaderboard(self, include_ineligible: bool, leaderboard_id: int = -1) -> Result:
+    def get_leaderboard(self, wants_all: bool, include_ineligible: bool, leaderboard_id: int | None) -> Result:
         # collect info needed to build leaderboard
         temp: Result = self.get_leaderboard_uni_info()
         if temp.is_err():
             return temp
         uni_info: dict = temp.Ok
 
-        temp = self.get_leaderboard_team_type_info()
+        temp: Result = self.get_leaderboard_team_type_info()
         if temp.is_err():
             return temp
         team_info: dict = temp.Ok
 
         # put info together to build leaderboard
-        temp: Result = self.print_leaderboard_info(uni_info, team_info, include_ineligible, leaderboard_id)
+        temp: Result = self.print_leaderboard_info(wants_all, uni_info, team_info, include_ineligible,
+                                                   leaderboard_id)
 
         if temp.is_err():
             return temp
@@ -343,19 +350,28 @@ class ClientUtils:
 
     # collects all data needed for building the leaderboard
     @as_result
-    def print_leaderboard_info(self, uni_info: dict, team_info: dict, include_ineligible: bool,
-                               leaderboard_id: int = -1) -> Result:
-        temp: Result = self.get_tournaments() if leaderboard_id == -1 \
-            else self.get_tournament(leaderboard_id)
+    def print_leaderboard_info(self, wants_all: bool,  uni_info: dict, team_info: dict, include_ineligible: bool,
+                               leaderboard_id: int | None) -> Result:
+        temp: Result
+
+        if wants_all:
+            temp = self.get_tournaments()
+        elif leaderboard_id is not None and leaderboard_id > -1:
+            temp = self.get_tournament(leaderboard_id)
+        elif not wants_all and leaderboard_id is None:
+            temp = self.get_latest_tournament()
+        else:
+            temp = self.get_tournaments()
 
         if temp.is_err():
             return temp
 
-        tournaments: Result = temp.Ok
+        tournaments: list[dict] = temp.Ok
 
-        tournament_id = 0 if leaderboard_id != -1 else self.__print_leaderboard_info_helper(tournaments)
+        tournament_id = 0 if not wants_all else self.__print_leaderboard_info_helper(tournaments)
 
         results: dict = {}
+
         for run in tournaments[tournament_id]['runs']:
             for submission_run_info in run['submission_run_infos']:
                 team_name: str = submission_run_info['submission']['team']['team_name']
@@ -379,6 +395,10 @@ class ClientUtils:
                     results[team_name]['Points Awarded'] += submission_run_info['points_awarded']
         result = list(results.values())
         result.sort(key=lambda row: row['Points Awarded'], reverse=True)
+
+        if len(result) == 0:
+            raise Exception('No runs for latest tournament.')
+
         self.print_table(result)
 
         return Result()

@@ -79,12 +79,14 @@ if __name__ == '__main__':
     leaderboard_subpar = client_sub_group.add_parser('leaderboard', aliases=['l'],
                                                      help='Commands relating to the leaderboard')
 
+    leaderboard_subpar.add_argument('-all', help='Gets all available leaderboards',
+                                    default=False, action='store_true')
+
     leaderboard_subpar.add_argument('-include_alumni', help='Include alumni in the leaderboard',
                                     default=False, action='store_true')
 
     leaderboard_subpar.add_argument('-leaderboard_id', action='store', type=int, dest='leaderboard_id',
-                                    help='pass the leaderboard_id you want to get. -1 is the default and most '
-                                         'recent submission', default=-1)
+                                    help='pass the leaderboard_id you want to get')
 
     # Stats subgroup
 
