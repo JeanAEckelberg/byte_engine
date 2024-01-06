@@ -73,7 +73,12 @@ def post_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
 @app.post('/team/', response_model=TeamIdSchema)
 @run_with_return_to_client
 def post_team(team: TeamBase, db: Session = Depends(get_db)):
-    return crud_team.create(team, db)
+    # Throw error when team name already exists
+    try:
+        return crud_team.create(team, db)
+    except IntegrityError as e:
+        raise Exception('Encountered an Integrity Error, most likely due to your team name matching a pre-existing '
+                        'team name. Please choose a different name.')
 
 
 @app.get('/team_info/', response_model=TeamIdSchema)
