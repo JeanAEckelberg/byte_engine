@@ -293,8 +293,15 @@ class ClientUtils:
     @as_result
     def get_leaderboard(self, include_ineligible: bool, leaderboard_id: int = -1) -> Result:
         # collect info needed to build leaderboard
-        uni_info: dict = self.get_leaderboard_uni_info()
-        team_info: dict = self.get_leaderboard_team_type_info()
+        temp: Result = self.get_leaderboard_uni_info()
+        if temp.is_err():
+            return temp
+        uni_info: dict = temp.Ok
+
+        temp = self.get_leaderboard_team_type_info()
+        if temp.is_err():
+            return temp
+        team_info: dict = temp.Ok
 
         # put info together to build leaderboard
         self.print_leaderboard_info(uni_info, team_info, include_ineligible, leaderboard_id)
