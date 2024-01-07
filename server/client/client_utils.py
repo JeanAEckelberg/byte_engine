@@ -414,7 +414,7 @@ class ClientUtils:
             list_result.append({
                 'Index': index,
                 'Tournament ID': tournament['tournament_id'],
-                'Start Time': tournament['start_run']
+                'Start Time': self.convert_utc_to_local(tournament['start_run'])
             })
 
         self.print_table(list_result)

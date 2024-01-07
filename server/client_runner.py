@@ -247,7 +247,7 @@ class ClientRunner:
 
         with DB() as db:
             return crud_tournament.create(db, TournamentBase(tournament_id=0,
-                                                             start_run=datetime.now(),
+                                                             start_run=datetime.utcnow(),
                                                              launcher_version=self.get_version_number(),
                                                              runs_per_client=self.total_number_of_games_for_one_client,
                                                              is_finished=False))
@@ -259,7 +259,7 @@ class ClientRunner:
         with DB() as db:
             return crud_run.create(db, RunBase(run_id=0,
                                                tournament_id=tournament_id,
-                                               run_time=datetime.now(),
+                                               run_time=datetime.utcnow(),
                                                seed=seed_id,
                                                results=json.dumps(results).encode("utf-8"))).run_id
 
