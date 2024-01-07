@@ -3,6 +3,8 @@ import sys
 import os
 
 import numpy
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import cv2
 
@@ -21,8 +23,10 @@ class ByteVisualiser:
 
     def __init__(self, end_time: int = -1, skip_start: bool = False, playback_speed: float = 1.0,
                  fullscreen: bool = False,
-                 save_video: bool = False, loop_count: int = 1, turn_start: int = 0, turn_end: int = -1):
+                 save_video: bool = False, loop_count: int = 1, turn_start: int = 0, turn_end: int = -1,
+                 log_dir: str | None = None):
         pygame.init()
+        self.logs = log_dir
         self.config: Config = Config()
         self.turn_logs: dict[str:dict] = {}
         self.size: Vector = self.config.SCREEN_SIZE
@@ -204,9 +208,9 @@ class ByteVisualiser:
 
     @playback_speed.setter
     def playback_speed(self, playback_speed: float) -> None:
-        if playback_speed is None or not isinstance(playback_speed, float):
+        if playback_speed is None or not isinstance(playback_speed, float) or playback_speed < 1:
             raise ValueError(
-                f'{self.__class__.__name__}.playback_speed must be a float. It is a(n) {type(playback_speed)} with the value of {playback_speed}')
+                f'{self.__class__.__name__}.playback_speed must be a float greater than or equal to 1.0. It is a(n) {type(playback_speed)} with the value of {playback_speed}.')
         self.__playback_speed: float = playback_speed
 
     @property
@@ -288,7 +292,7 @@ class ByteVisualiser:
         self.__loop_count: int = loop_count
 
     def load(self) -> None:
-        self.turn_logs: dict = logs_to_dict()
+        self.turn_logs: dict = logs_to_dict(self.logs)
         self.bytesprite_factories = self.adapter.populate_bytesprite_factories()
 
     def prerender(self) -> None:
@@ -332,7 +336,7 @@ class ByteVisualiser:
             # Save button
             if PlaybackButtons.SAVE_BUTTON in button_pressed:
                 self.recording = True
-                self.playback_speed = 10
+                self.playback_speed = 10.0
                 self.tick = 0
             if self.tick % self.config.NUMBER_OF_FRAMES_PER_TURN == 0 and self.paused:
                 self.tick = max(self.tick - self.config.NUMBER_OF_FRAMES_PER_TURN, 0)

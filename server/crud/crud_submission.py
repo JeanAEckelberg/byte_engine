@@ -1,8 +1,8 @@
 import uuid
 from typing import Type
 
+from sqlalchemy import and_, func
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_
 
 from server.models.submission import Submission
 from server.schemas.submission.submission_w_team import SubmissionWTeam
@@ -75,3 +75,11 @@ def delete(db: Session, id: int, submission: SubmissionWTeam) -> None:
 
     db.delete(db_submission)
     db.commit()
+
+
+def get_latest_submission_for_each_team(db: Session) -> list[Type[Submission]]:
+    return (db.query(Submission)
+            .filter(Submission.submission_id.in_(
+        db.query(func.max(Submission.submission_id))
+        .group_by(Submission.team_uuid)))
+            .all())

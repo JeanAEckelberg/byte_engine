@@ -95,7 +95,6 @@ def test_get_submissions():
 
 # Test read nonexistent submission/s
 
-
 def test_get_nonexistent_submission():
     with pytest.raises(IndexError):
         client.get('/submission?submission_id=2&team_uuid=2')
