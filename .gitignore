@@ -142,3 +142,6 @@ vis_temp/
 byte_server.db-shm
 byte_server.db-wal
 vID
+
+# visualizer output video
+out.mp4
