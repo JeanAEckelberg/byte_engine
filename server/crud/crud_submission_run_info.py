@@ -7,8 +7,8 @@ from server.schemas.submission_run_info.submission_run_info_schema import Submis
 # create submission run info
 def create(db: Session, submission_run_info: SubmissionRunInfoBase) -> SubmissionRunInfo:
     """
-    This method will create a table in the database called ``SubmissionRunInfo`` based on the submission_run_info.py
-    class. Refer to the ``models`` package for more information on them.
+    This method will create an entry in the ``SubmissionRunInfo`` table based on the submission_run_info.py file.
+    Refer to the ``models`` package for more information about submission_run_info.py.
     :param db:
     :param submission_run_info:
     :return: SubmissionRunInfo

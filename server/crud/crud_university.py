@@ -7,8 +7,8 @@ from server.schemas.university.university_schema import UniversityBase
 # create method for university
 def create(db: Session, university: UniversityBase) -> University:
     """
-    This method will create a table in the database called ``University`` based on the run.py class. Refer to the
-    ``models`` package for more information on them.
+    This method will create an entry in the ``University`` table based on the university.py file. Refer to the
+    ``models`` package for more information about university.py.
     :param db:
     :param university:
     :return:

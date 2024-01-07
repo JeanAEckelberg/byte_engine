@@ -19,8 +19,9 @@ while the game is running, with buttons including pause, speed up, slow down, re
 class PlaybackButtons(Flag):
     """
     These are enums that are used to represent the playback buttons on the visualizer. They inherit from `Flag` and not
-    `Enum` because Flag enums can use bitwise operators (& AND, | OR, ^ XOR, ~ INVERT). Refer to
-    https://docs.python.org/3.11/library/enum.html#enum.Flag to read more on it.
+    `Enum` because Flag enums can use bitwise operators (& AND, | OR, ^ XOR, ~ INVERT). This allows for multiple values
+    to be returned at the same time. Refer to https://docs.python.org/3.11/library/enum.html#enum.Flag to read more on
+    it.
     """
     PAUSE_BUTTON = auto()
     SAVE_BUTTON = auto()

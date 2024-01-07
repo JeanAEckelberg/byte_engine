@@ -185,5 +185,4 @@ def get_latest_tournament(db: Session = Depends(get_db)):
 
     return temp
 
-# main should NOT be able to delete (we do not want the public to be able to delete)
-# so we are not making a delete group runs endpoint
+# main should NOT be able to delete data (we do not want the public to be able to delete), so deletion endpoints

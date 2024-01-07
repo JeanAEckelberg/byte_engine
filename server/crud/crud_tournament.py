@@ -28,8 +28,8 @@ def create(db: Session, tournament: TournamentBase) -> Tournament:
 # read most recent tournamet
 def read(db: Session, id: int, eager: bool = False) -> Tournament | None:
     """
-    This gets information from the Tournament table and returns it. Eager loading will determine whether to only return
-    the entry in the Tournament table or to return it with more information from the tables that it's related to.
+    This method will create an entry in the ``Tournament`` table based on the tournament.py file. Refer to the
+    ``models`` package for more information about tournament.py.
     :param db:
     :param id:
     :param eager:

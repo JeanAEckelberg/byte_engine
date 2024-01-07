@@ -11,8 +11,8 @@ from server.schemas.submission.submission_w_team import SubmissionWTeam
 # create method for submission
 def create(submission: SubmissionWTeam, db: Session) -> Submission:
     """
-    This method will create a table in the database called ``Submission`` based on the run.py class. Refer to the
-    ``models`` package for more information on them.
+    This method will create an entry in the ``Submission`` table based on the submission.py file. Refer to the
+    ``models`` package for more information about submission.py.
     :param db:
     :param id:
     :param eager:

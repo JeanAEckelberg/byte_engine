@@ -7,8 +7,8 @@ from server.schemas.team_type.team_type_schema import TeamTypeBase
 # create method for team type
 def create(db: Session, team_type: TeamTypeBase) -> TeamType:
     """
-    This method will create a table in the database called ``Team Type`` based on the run.py class. Refer to the
-    ``models`` package for more information on them.
+    This method will create an entry in the ``Team Type`` table based on the team_type.py file. Refer to the
+    ``models`` package for more information about team_type.py.
     :param db:
     :param team_type:
     :return:

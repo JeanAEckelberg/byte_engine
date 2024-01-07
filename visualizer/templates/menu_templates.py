@@ -86,7 +86,7 @@ class Basic(MenuTemplate):
 
     def __init__(self, screen: pygame.Surface, title: str):
         super().__init__(screen)
-        self.title: Text = Text(screen, title, 48)  # creates the title using pygame's Text class
+        self.title: Text = Text(screen, title, 48)  # creates the title using the Text class; refer to text.py
         self.title.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),  # the center of the title
                                                     Vector(0, -100)).as_tuple()
 

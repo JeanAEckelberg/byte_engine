@@ -7,8 +7,8 @@ from server.schemas.run.run_schema import RunBase
 # Create method for Run
 def create(db: Session, run: RunBase) -> Run:
     """
-    This method will create a table in the database called ``Run`` based on the run.py class. Refer to the ``models``
-    package for more information on them.
+    This method will create an entry in the ``Run`` table based on the run.py file. Refer to the ``models``
+    package for more information about the run.py.
     :param db:
     :param run:
     :return: Run

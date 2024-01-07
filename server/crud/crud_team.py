@@ -23,8 +23,8 @@ def create(team: TeamBase, db: Session) -> Team:
 # read most recent team
 def read(db: Session, id: int, eager: bool = False) -> Team | None:
     """
-    This gets information from the Team table and returns it. Eager loading will determine whether to only return the
-    entry in the Team table or to return it with more information from the tables that it's related to.
+    This method will create an entry in the ``Team`` table based on the team.py file. Refer to the
+    ``models`` package for more information about team.py.
     :param db:
     :param id:
     :param eager:

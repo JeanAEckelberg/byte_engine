@@ -7,8 +7,8 @@ from server.schemas.turn.turn_schema import TurnBase
 # create method for turn
 def create(db: Session, turn: TurnBase) -> Turn:
     """
-    This method will create a table in the database called ``Turn`` based on the run.py class. Refer to the ``models``
-    package for more information on them.
+    This method will create an entry in the ``Turn`` table based on the turn.py file. Refer to the
+    ``models`` package for more information about turn.py.
     :param db:
     :param turn:
     :return:
