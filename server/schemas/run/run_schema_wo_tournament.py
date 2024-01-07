@@ -7,4 +7,3 @@ from server.schemas.turn.turn_schema import TurnBase
 
 class RunSchemaWithoutTournament(RunBase):
     submission_run_infos: list[SubmissionRunInfoWSubmission]
-    turns: list[TurnBase]

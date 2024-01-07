@@ -151,7 +151,7 @@ def get_runs(db: Session = Depends(get_db)):
 
 
 # get tournaments
-@app.get('/tournaments/', response_model=list[TournamentSchema])
+@app.get('/tournaments/', response_model=list[TournamentBase])
 @run_with_return_to_client
 def get_tournaments(db: Session = Depends(get_db)):
     temp: list[Tournament] = crud_tournament.read_all(db)

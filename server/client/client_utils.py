@@ -372,7 +372,12 @@ class ClientUtils:
 
         results: dict = {}
 
-        for run in tournaments[tournament_id]['runs']:
+        temp = self.get_tournament(tournaments[tournament_id]['tournament_id'])
+
+        if temp.is_err():
+            return temp
+
+        for run in temp.Ok[0]['runs']:
             for submission_run_info in run['submission_run_infos']:
                 team_name: str = submission_run_info['submission']['team']['team_name']
 

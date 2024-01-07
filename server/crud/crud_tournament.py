@@ -25,9 +25,7 @@ def read(db: Session, id: int, eager: bool = False) -> Tournament | None:
             .options(joinedload(Tournament.runs)
                      .joinedload(Run.submission_run_infos)
                      .joinedload(SubmissionRunInfo.submission)
-                     .joinedload(Submission.team),
-                     joinedload(Tournament.runs)
-                     .joinedload(Run.turns))
+                     .joinedload(Submission.team))
             .filter(Tournament.tournament_id == id)
             .first())
 
@@ -40,9 +38,7 @@ def read_all(db: Session, eager: bool = False) -> [Tournament]:
             .options(joinedload(Tournament.runs)
                      .joinedload(Run.submission_run_infos)
                      .joinedload(SubmissionRunInfo.submission)
-                     .joinedload(Submission.team),
-                     joinedload(Tournament.runs)
-                     .joinedload(Run.turns))
+                     .joinedload(Submission.team))
             .order_by(Tournament.start_run.desc())
             .all())
 
@@ -55,9 +51,7 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Tournament
             .options(joinedload(Tournament.runs)
                      .joinedload(Run.submission_run_infos)
                      .joinedload(SubmissionRunInfo.submission)
-                     .joinedload(Submission.team),
-                     joinedload(Tournament.runs)
-                     .joinedload(Run.turns))
+                     .joinedload(Submission.team))
             .filter_by(**kwargs)
             .all())
 
@@ -93,8 +87,6 @@ def get_latest_tournament(db: Session) -> Tournament | None:
             .options(joinedload(Tournament.runs)
                      .joinedload(Run.submission_run_infos)
                      .joinedload(SubmissionRunInfo.submission)
-                     .joinedload(Submission.team),
-                     joinedload(Tournament.runs)
-                     .joinedload(Run.turns))
+                     .joinedload(Submission.team))
             .order_by(Tournament.tournament_id.desc())
             .first())
