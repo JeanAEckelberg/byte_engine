@@ -85,7 +85,7 @@ if __name__ == '__main__':
     leaderboard_subpar.add_argument('-include_alumni', help='Include alumni in the leaderboard',
                                     default=False, action='store_true')
 
-    leaderboard_subpar.add_argument('-leaderboard_id', action='store', type=int, dest='leaderboard_id',
+    leaderboard_subpar.add_argument('-id', action='store', type=int, dest='id',
                                     help='pass the leaderboard_id you want to get')
 
     # Stats subgroup

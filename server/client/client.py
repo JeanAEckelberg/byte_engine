@@ -60,7 +60,7 @@ class Client:
                 return
 
             if args.subparse.lower() == 'leaderboard' or args.subparse.lower() == "l":
-                temp: Result = self.utils.get_leaderboard(args.all, args.include_alumni, args.leaderboard_id)
+                temp: Result = self.utils.get_leaderboard(args.all, args.include_alumni, args.id)
                 if temp.is_err():
                     print(temp.Err)
                 return
