@@ -10,4 +10,3 @@ class RunSchemaWithoutTournament(RunBase):
     Schema for Run using RunBase. Includes its relations to other tables EXCEPT tournament.
     """
     submission_run_infos: list[SubmissionRunInfoWSubmission]
-    turns: list[TurnBase]

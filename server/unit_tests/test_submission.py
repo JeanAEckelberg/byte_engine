@@ -107,7 +107,6 @@ def test_get_submissions() -> None:
 
 # Test read nonexistent submission/s
 
-
 def test_get_nonexistent_submission() -> None:
     """
     Tests that a non-existent submission cannot be retrieved; raises an error.

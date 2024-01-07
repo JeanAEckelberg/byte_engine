@@ -42,9 +42,7 @@ def read(db: Session, id: int, eager: bool = False) -> Tournament | None:
             .options(joinedload(Tournament.runs)
                      .joinedload(Run.submission_run_infos)
                      .joinedload(SubmissionRunInfo.submission)
-                     .joinedload(Submission.team),
-                     joinedload(Tournament.runs)
-                     .joinedload(Run.turns))
+                     .joinedload(Submission.team))
             .filter(Tournament.tournament_id == id)
             .first())
 
@@ -59,14 +57,14 @@ def read_all(db: Session, eager: bool = False) -> [Tournament]:
     :return:
     """
     return (db.query(Tournament)
+            .order_by(Tournament.start_run.desc())
             .all() if not eager
             else db.query(Tournament)
             .options(joinedload(Tournament.runs)
                      .joinedload(Run.submission_run_infos)
                      .joinedload(SubmissionRunInfo.submission)
-                     .joinedload(Submission.team),
-                     joinedload(Tournament.runs)
-                     .joinedload(Run.turns))
+                     .joinedload(Submission.team))
+            .order_by(Tournament.start_run.desc())
             .all())
 
 
@@ -87,9 +85,7 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Tournament
             .options(joinedload(Tournament.runs)
                      .joinedload(Run.submission_run_infos)
                      .joinedload(SubmissionRunInfo.submission)
-                     .joinedload(Submission.team),
-                     joinedload(Tournament.runs)
-                     .joinedload(Run.turns))
+                     .joinedload(Submission.team))
             .filter_by(**kwargs)
             .all())
 
@@ -105,8 +101,8 @@ def update(db: Session, id: int, tournament: TournamentBase) -> Tournament | Non
     :return:
     """
     db_tournament: Tournament | None = (db.query(Tournament)
-                                     .filter(Tournament.tournament_id == id)
-                                     .one_or_none())
+                                        .filter(Tournament.tournament_id == id)
+                                        .one_or_none())
     if db_tournament is None:
         return
 
@@ -127,10 +123,20 @@ def delete(db: Session, id: int) -> None:
     :return: None
     """
     db_tournament: Tournament | None = (db.query(Tournament)
-                                     .filter(Tournament.tournament_id == id)
-                                     .one_or_none())
+                                        .filter(Tournament.tournament_id == id)
+                                        .one_or_none())
     if db_tournament is None:
         return
 
     db.delete(db_tournament)
     db.commit()
+
+
+def get_latest_tournament(db: Session) -> Tournament | None:
+    return (db.query(Tournament)
+            .options(joinedload(Tournament.runs)
+                     .joinedload(Run.submission_run_infos)
+                     .joinedload(SubmissionRunInfo.submission)
+                     .joinedload(Submission.team))
+            .order_by(Tournament.tournament_id.desc())
+            .first())
