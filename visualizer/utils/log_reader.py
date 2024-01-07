@@ -7,7 +7,7 @@ import json
 # Takes the logs and puts them in a dictionary
 def logs_to_dict(log_dir: str | None) -> dict:
     """
-    Takes the given log directory and and puts them into a dictionary.
+    Takes the given log directory and puts them into a dictionary.
     :param log_dir:
     :return: dict
     """
