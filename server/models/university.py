@@ -5,6 +5,15 @@ from .base import Base
 
 
 class University(Base):
+    """
+    'University' Model Class - Shapes the 'university' table in the database
+    uni_id: primary key
+    uni_name: must be unique
+
+    Related table:
+        * team
+    """
+
     __tablename__: str = 'university'
 
     uni_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)

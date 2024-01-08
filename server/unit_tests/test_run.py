@@ -9,7 +9,11 @@ client = TestClient(app=app)
 # Test Run methods in main.py
 
 # Test get_run method
-def test_get_runs_param():
+def test_get_runs_param() -> None:
+    """
+    Tests getting the runs by using the tournament id and team uuid in the URL.
+    :return: None
+    """
     response = client.get('/runs?tournament_id=1&team_uuid=1')
     assert response.status_code == 200
     print(response.json())
@@ -53,7 +57,11 @@ def test_get_runs_param():
 
 
 # Test run method
-def test_get_runs():
+def test_get_runs() -> None:
+    """
+    Tests getting all runs in the database via the URL.
+    :return: None
+    """
     response = client.get('/runs/')
 
     assert response.status_code == 200

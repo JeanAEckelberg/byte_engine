@@ -10,7 +10,11 @@ client = TestClient(app=app)
 
 # Test get method
 
-def test_get_universities():
+def test_get_universities() -> None:
+    """
+    Tests that getting the universities in from the database works.
+    :return: None
+    """
     response = client.get('/universities/')
 
     assert response.status_code == 200

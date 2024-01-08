@@ -9,7 +9,11 @@ client = TestClient(app=app)
 # Test post method
 
 
-def test_post_team():
+def test_post_team() -> None:
+    """
+    Tests that creating a team works as expected.
+    :return: None
+    """
     response = client.post('/team/',
                            json={"uni_id": 1,
                                  "team_type_id": 1,

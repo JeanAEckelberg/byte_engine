@@ -3,4 +3,7 @@ from server.schemas.run.run_schema_wo_tournament import RunSchemaWithoutTourname
 
 
 class TournamentSchema(TournamentBase):
+    """
+    Schema for Tournament using TournamentBase. Includes its relations.
+    """
     runs: list[RunSchemaWithoutTournament]

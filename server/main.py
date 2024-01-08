@@ -71,6 +71,7 @@ def post_submission(submission: SubmissionWTeam, db: Session = Depends(get_db)):
     return crud_submission.create(submission, db)
 
 
+# post team endpoint
 @app.post('/team/', response_model=TeamIdSchema)
 @run_with_return_to_client
 def post_team(team: TeamBase, db: Session = Depends(get_db)):
@@ -184,5 +185,4 @@ def get_latest_tournament(db: Session = Depends(get_db)):
 
     return temp
 
-# main should not be able to delete (we do not want the public to be able to delete)
-# so we are not making a delete group runs endpoint
+# main should NOT be able to delete data (we do not want the public to be able to delete), so deletion endpoints

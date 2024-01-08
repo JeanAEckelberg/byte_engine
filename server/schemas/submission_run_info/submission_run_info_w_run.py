@@ -3,4 +3,7 @@ from server.schemas.submission_run_info.submission_run_info_base import Submissi
 
 
 class SubmissionRunInfoWRun(SubmissionRunInfoBase):
+    """
+    Schema for SubmissionRunInfo using SubmissionRunInfoBase and only includes its relation to run.
+    """
     run: RunBase

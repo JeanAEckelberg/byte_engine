@@ -6,6 +6,19 @@ from .timestamp import TimeStamp
 
 
 class Run(Base):
+    """
+    Run Model Class - Shapes the 'run' table in the database
+    run_id: primary key
+    tournament_id: foreign key
+    run_time
+    seed
+
+    Related tables:
+        * submission_run_info
+        * tournament
+        * turn
+    """
+
     __tablename__: str = 'run'
     run_id: Mapped[int] = mapped_column(Integer(), primary_key=True, autoincrement=True)
     tournament_id: Mapped[int] = mapped_column(Integer(), ForeignKey("tournament.tournament_id", ondelete='CASCADE'))

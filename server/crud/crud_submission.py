@@ -8,7 +8,16 @@ from server.models.submission import Submission
 from server.schemas.submission.submission_w_team import SubmissionWTeam
 
 
+# create method for submission
 def create(submission: SubmissionWTeam, db: Session) -> Submission:
+    """
+    This method will create an entry in the ``Submission`` table based on the submission.py file. Refer to the
+    ``models`` package for more information about submission.py.
+    :param db:
+    :param id:
+    :param eager:
+    :return:
+    """
     db_submission: Submission = Submission(**submission.model_dump(exclude={'submission_id'}))
     db.add(db_submission)
     db.commit()
@@ -16,7 +25,16 @@ def create(submission: SubmissionWTeam, db: Session) -> Submission:
     return db_submission
 
 
+# read most recent submission
 def read(db: Session, id: int, eager: bool = False) -> Submission | None:
+    """
+    This gets information from the Run table and returns it. Eager loading will determine whether to only return the
+    entry in the Run table or to return it with more information from the tables that it's related to.
+    :param db:
+    :param id:
+    :param eager:
+    :return:
+    """
     return (db.query(Submission)
             .filter(Submission.submission_id == id)
             .first() if not eager
@@ -27,7 +45,15 @@ def read(db: Session, id: int, eager: bool = False) -> Submission | None:
             .first())
 
 
+# read submission based off team id
 def read_all_by_team_id(db: Session, team_uuid: uuid, eager: bool = False) -> list[Type[Submission]]:
+    """
+    Similar functionality to the read_all() method, but this filters based on the given team uuid.
+    :param db:
+    :param team_uuid:
+    :param eager:
+    :return:
+    """
     return (db.query(Submission)
             .filter(Submission.team_uuid == team_uuid)
             .all() if not eager
@@ -38,7 +64,16 @@ def read_all_by_team_id(db: Session, team_uuid: uuid, eager: bool = False) -> li
             .all())
 
 
+# read a specified submission
 def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Submission]:
+    """
+    Similar functionality to the read_all() method, but this filters based on the given information which is unpacked
+    by using ``**``.
+    :param db:
+    :param eager:
+    :param kwargs:
+    :return:
+    """
     return (db.query(Submission)
             .filter_by(**kwargs)
             .all() if not eager
@@ -49,7 +84,16 @@ def read_all_W_filter(db: Session, eager: bool = False, **kwargs) -> [Submission
             .all())
 
 
+# update a submission
 def update(db: Session, id: int, submission: SubmissionWTeam) -> Submission | None:
+    """
+    This method takes a Run object and updates the specified Run in the database with it. If there is nothing to
+    update, returns None.
+    :param db:
+    :param id:
+    :param submission:
+    :return:
+    """
     db_submission: Submission | None = (db.query(Submission)
                                         .filter(and_(Submission.submission_id == id,
                                                      Submission.team_uuid == submission.team_id_uuid))
@@ -65,7 +109,15 @@ def update(db: Session, id: int, submission: SubmissionWTeam) -> Submission | No
     return db_submission
 
 
+# delete a submission
 def delete(db: Session, id: int, submission: SubmissionWTeam) -> None:
+    """
+    Deletes the specified Submission entity from the database.
+    :param db:
+    :param id:
+    :param submission:
+    :return: None
+    """
     db_submission: Submission | None = (db.query(Submission)
                                         .filter(and_(Submission.submission_id == id,
                                                      Submission.team_uuid == submission.team_id_uuid))
