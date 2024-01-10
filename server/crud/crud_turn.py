@@ -34,7 +34,8 @@ def read(db: Session, turn_number: int, run_id: int, eager: bool = False) -> Tur
     This gets information from the Turn table and returns it. Eager loading will determine whether to only return the
     entry in the Turn table or to return it with more information from the tables that it's related to.
     :param db:
-    :param id:
+    :param turn_number:
+    :param run_id:
     :param eager:
     :return:
     """
@@ -90,7 +91,8 @@ def update(db: Session, turn_number: int, run_id: int, turn: TurnBase) -> Turn |
     This method takes a Turn object and updates the specified Turn in the database with it. If there is nothing to
     update, returns None.
     :param db:
-    :param id:
+    :param turn_number:
+    :param run_id:
     :param turn:
     :return:
     """
@@ -114,8 +116,8 @@ def delete(db: Session, turn_number: int, run_id: int) -> None:
     """
     Deletes the specified Turn entity from the database.
     :param db:
-    :param id:
-    :param turn_table:
+    :param turn_number:
+    :param run_id:
     :return: None
     """
     db_turn: Turn | None = (db.query(Turn)
@@ -133,12 +135,11 @@ def delete_with_run_id(db: Session, run_id: int) -> None:
     """
     Deletes the specified Turn entity from the database.
     :param db:
-    :param id:
-    :param turn_table:
+    :param run_id:
     :return: None
     """
     db_turns: Query = (db.query(Turn)
-                       .filter(Turn.run_id == id))
+                       .filter(Turn.run_id == run_id))
 
     db_turns.delete()
     db.commit()
