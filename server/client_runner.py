@@ -149,33 +149,34 @@ class ClientRunner:
     def internal_runner(self, submission_tuple, index) -> None:
         max_score: int = -1
         results = dict()
+
+        # Run game
+        # Create a folder for this client and seed
+        end_path = os.path.join(self.runner_temp_dir, str(index))
+        if not os.path.exists(end_path):
+            os.mkdir(end_path)
+
+        shutil.copy('launcher.pyz', end_path)
+
+        # Write the clients into the folder
+        for index_2, submission in enumerate(submission_tuple):
+            # runner will run -fn argument, which makes the file name the file name
+            # So we can grab the submission_id out of the results later
+            with open(os.path.join(end_path, f'client_{index_2}_{submission.submission_id}.py'), 'x') as f:
+                f.write(str(submission.file_txt, 'utf-8'))
+
+        # Determine what seed this run needs based on it's serial index
+        seed_index = index // self.number_of_unique_games
+        logging.info(f'running run {index} for game ({submission_tuple[0].submission_id}, '
+                        f'{submission_tuple[1].submission_id}) using seed index {seed_index}')
+
+        # Copy the seed into the run folder
+        if os.path.exists(os.path.join(self.seed_path, str(seed_index), 'logs', 'game_map.json')):
+            os.mkdir(os.path.join(end_path, 'logs'))
+            shutil.copyfile(os.path.join(self.seed_path, str(seed_index), 'logs', 'game_map.json'),
+                            os.path.join(end_path, 'logs', 'game_map.json'))
+
         try:
-            # Run game
-            # Create a folder for this client and seed
-            end_path = os.path.join(self.runner_temp_dir, str(index))
-            if not os.path.exists(end_path):
-                os.mkdir(end_path)
-
-            shutil.copy('launcher.pyz', end_path)
-
-            # Write the clients into the folder
-            for index_2, submission in enumerate(submission_tuple):
-                # runner will run -fn argument, which makes the file name the file name
-                # So we can grab the submission_id out of the results later
-                with open(os.path.join(end_path, f'client_{index_2}_{submission.submission_id}.py'), 'x') as f:
-                    f.write(str(submission.file_txt, 'utf-8'))
-
-            # Determine what seed this run needs based on it's serial index
-            seed_index = index // self.number_of_unique_games
-            logging.info(f'running run {index} for game ({submission_tuple[0].submission_id}, '
-                            f'{submission_tuple[1].submission_id}) using seed index {seed_index}')
-
-            # Copy the seed into the run folder
-            if os.path.exists(os.path.join(self.seed_path, str(seed_index), 'logs', 'game_map.json')):
-                os.mkdir(os.path.join(end_path, 'logs'))
-                shutil.copyfile(os.path.join(self.seed_path, str(seed_index), 'logs', 'game_map.json'),
-                                os.path.join(end_path, 'logs', 'game_map.json'))
-
             res = self.run_runner(end_path, os.path.join(os.getcwd(), 'server', 'runners', 'runner'))
 
             if os.path.exists(os.path.join(end_path, 'logs', 'results.json')):
