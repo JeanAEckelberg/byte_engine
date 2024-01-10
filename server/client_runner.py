@@ -18,6 +18,7 @@ from server.models.tournament import Tournament
 from server.models.submission import Submission
 from datetime import datetime
 from queue import Queue
+from sqlalchemy.exc import IntegrityError
 
 import schedule
 
@@ -191,9 +192,20 @@ class ClientRunner:
                 self.insert_submission_run_info(player_sub_ids[i], run_id, result["error"], i,
                                                 result["avatar"]["score"])
 
+            # don't store logs with non-eligible teams
+            if any([not submission.team.team_type.eligible for submission in submission_tuple]):
+                return
+
             # Update information in best run dict
             for submission in submission_tuple:
                 if max_score > self.best_run_for_client.get(submission.submission_id, {'score': -2})["score"]:
+                    # if the best run is updated, delete the turns from the database
+                    if self.best_run_for_client.get(submission.submission_id, None) is not None and \
+                            len([True for _, run in self.best_run_for_client
+                                 if run[run_id] == self.best_run_for_client[submission.submission_id]['run_id']]
+                                ) <= 1:
+                        self.delete_turns_for_run_id(self.best_run_for_client[submission.submission_id]['run_id'])
+
                     self.best_run_for_client[submission.submission_id] = {}
                     self.best_run_for_client[submission.submission_id]["log_path"] = os.path.join(end_path, 'logs')
                     self.best_run_for_client[submission.submission_id]["run_id"] = run_id
@@ -295,7 +307,7 @@ class ClientRunner:
                 if file in ['game_map.json', 'results.json', 'turn_logs.json']:
                     continue
                 with open(os.path.join(path, file)) as fl:
-                    turn_logs.append(TurnBase(turn_id=0, turn_number=int(file[-9:-5]), run_id=self.best_run_for_client[
+                    turn_logs.append(TurnBase(turn_number=int(file[-9:-5]), run_id=self.best_run_for_client[
                         submission_id]["run_id"], turn_data=bytes(fl.read(), 'utf-8')))
 
             self.insert_logs(turn_logs)
@@ -304,8 +316,13 @@ class ClientRunner:
         """
         Inserts logs
         """
-        with DB() as db:
-            crud_turn.create_all(db, logs)
+        try:
+            with DB() as db:
+                crud_turn.create_all(db, logs)
+
+        # do nothing if fails to insert due to records already existing
+        except IntegrityError:
+            ...
 
     def close_server(self) -> None:
         if self.tournament != -1 and not self.tournament.is_finished:
@@ -324,6 +341,10 @@ class ClientRunner:
                 break
             except PermissionError:
                 continue
+
+    def delete_turns_for_run_id(self, run_id: int) -> None:
+        with DB() as db:
+            crud_turn.delete_with_run_id(db, run_id)
 
     def return_team_parings(self, submissions: list[Submission]) -> list[tuple[Submission, Submission]]:
         fixtures = list(itertools.permutations(submissions, 2))
