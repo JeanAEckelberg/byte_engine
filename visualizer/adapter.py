@@ -1,6 +1,5 @@
-import random
-
 import os
+
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from game.config import *
@@ -10,7 +9,6 @@ from visualizer.bytesprites.exampleWallBS import WallBytespriteFactoryExample
 from visualizer.bytesprites.exampleBS import AvatarBytespriteFactoryExample
 from game.utils.vector import Vector
 from visualizer.utils.text import Text
-from visualizer.utils.button import Button, ButtonColors
 from visualizer.bytesprites.bytesprite import ByteSprite
 from visualizer.templates.menu_templates import Basic, MenuTemplate
 from visualizer.templates.playback_template import PlaybackTemplate, PlaybackButtons
@@ -39,7 +37,7 @@ class Adapter:
         is implemented currently. Pressing it or pressing enter will start the visualizer to show the game's results.
         This method will manage any specified events and return them (hence why the return type is Any). Refer to
         menu_templates.py's start_events method for more info.
-        :param event:
+        :param event: The pygame event triggered each frame. See pygame docs for more information.
         :return: Any specified event desired in the start_events method
         """
         return self.menu.start_events(event)
@@ -55,7 +53,7 @@ class Adapter:
         """
         By giving this method an event, this method can execute whatever is specified. An example is provided below
         and commented out. Use as necessary.
-        :param event:
+        :param event: The pygame event triggered each frame. See pygame docs for more information.
         :return: None
         """
 
@@ -65,7 +63,7 @@ class Adapter:
 
     def prerender(self) -> None:
         """
-        This will handle anything that needs to be completed before animations start.
+        This will handle anything that needs to be completed before animations start every turn.
         :return: None
         """
         ...
@@ -73,43 +71,66 @@ class Adapter:
     def continue_animation(self) -> None:
         """
         This method is used after the main.py continue_animation() method.
-        :return:
+        :return: None
         """
         ...
 
-    # re-renders the animation
     def recalc_animation(self, turn_log: dict) -> None:
+        """
+        This method is called every time the turn changes
+        :param turn_log: A dictionary containing the entire turn state
+        :return: None
+        """
         self.turn_number = turn_log['tick']
 
-    def populate_bytesprite_factories(self) -> dict[int: Callable[[pygame.Surface], ByteSprite]]:
-        # Instantiate all bytesprites for each object and add them here
+    def populate_bytesprite_factories(self) -> dict[int, Callable[[pygame.Surface], ByteSprite]]:
+        """
+        Instantiate all bytesprites for each objectType and add them here using the value of ObjectType as the key
+        and the factory function as the value
+        :return: dict[int, Callable[[pygame.Surface], ByteSprite]]
+        """
         return {
-            4: AvatarBytespriteFactoryExample().create_bytesprite,
-            7: TileBytespriteFactoryExample().create_bytesprite,
-            8: WallBytespriteFactoryExample().create_bytesprite,
+            4: AvatarBytespriteFactoryExample.create_bytesprite,
+            7: TileBytespriteFactoryExample.create_bytesprite,
+            8: WallBytespriteFactoryExample.create_bytesprite,
         }
 
     def render(self) -> None:
-        # self.button.render()
-        # any logic for rendering text, buttons, and other visuals
+        """
+        any logic for rendering text, buttons, and other visuals
+        :return: None
+        """
         text = Text(self.screen, f'{self.turn_number} / {self.turn_max}', 48)
         text.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().midtop), Vector(0, 50)).as_tuple()
         text.render()
         self.playback.playback_render()
 
-    # is used in post render - post render is used to clear the playback buttons
     def clean_up(self) -> None:
+        """
+        This method is called after rendering each frame.
+        :return: None
+        """
         ...
 
     def results_load(self, results: dict) -> None:
+        """
+        This method is called to load the end screen for the visualizer.
+        :param results: A dictionary containing the results of the run
+        :return: None
+        """
         self.menu.load_results_screen(results)
 
     def results_event(self, event: pygame.event) -> Any:
+        """
+        This method is called to handle events of the visualizer in the end screen
+        :param event: The pygame event triggered each frame. See pygame docs for more information.
+        :return: Any value that is defined in the results_events
+        """
         return self.menu.results_events(event)
 
     def results_render(self) -> None:
         """
-        This renders the results for the
+        This renders the end screen for the visualizer
         :return:
         """
         self.menu.results_render()
