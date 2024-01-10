@@ -131,15 +131,13 @@ def delete(db: Session, turn_number: int, run_id: int) -> None:
     db.commit()
 
 
-def delete_with_run_id(db: Session, run_id: int) -> None:
+def delete_all(db: Session) -> None:
     """
-    Deletes the specified Turn entity from the database.
+    Deletes all turn records from the database.
     :param db:
-    :param run_id:
     :return: None
     """
-    db_turns: Query = (db.query(Turn)
-                       .filter(Turn.run_id == run_id))
+    db_turns: Query = db.query(Turn)
 
     db_turns.delete()
     db.commit()

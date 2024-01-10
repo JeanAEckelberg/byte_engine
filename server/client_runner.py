@@ -69,7 +69,7 @@ class ClientRunner:
 
         self.version: str = self.get_version_number()
 
-        self.best_run_for_client = {}
+        self.best_run_for_client: dict = {}
         self.runner_temp_dir: str = os.path.join(os.getcwd(), 'server', 'runner_temp')
         self.seed_path: str = os.path.join(self.runner_temp_dir, 'seeds')
 
@@ -118,6 +118,8 @@ class ClientRunner:
         self.total_number_of_games_for_one_client = self.count_number_of_game_appearances(games)
         self.tournament = self.insert_new_tournament()
 
+        self.delete_turns()
+
         if not os.path.exists(self.runner_temp_dir):
             os.mkdir(self.runner_temp_dir)
 
@@ -148,7 +150,7 @@ class ClientRunner:
         print('Job completed\n')
 
     def internal_runner(self, submission_tuple, index) -> None:
-        max_score: int = -1
+        score_for_each_submission: dict[int, int] = {}
         results = dict()
 
         # Run game
@@ -185,7 +187,7 @@ class ClientRunner:
                     results: dict = json.load(f)
 
         finally:
-            player_sub_ids = [x["file_name"].split("_")[-1] for x in results['players']]
+            player_sub_ids: list[int] = [int(x["file_name"].split("_")[-1]) for x in results['players']]
             run_id: int = self.insert_run(
                 self.tournament.tournament_id,
                 self.index_to_seed_id[seed_index],
@@ -193,6 +195,7 @@ class ClientRunner:
             for i, result in enumerate(results["players"]):
                 self.insert_submission_run_info(player_sub_ids[i], run_id, result["error"], i,
                                                 result["avatar"]["score"])
+                score_for_each_submission[player_sub_ids[i]] = result["avatar"]["score"]
 
             # don't store logs with non-eligible teams
             if any([not submission.team.team_type.eligible for submission in submission_tuple]):
@@ -200,18 +203,12 @@ class ClientRunner:
 
             # Update information in best run dict
             for submission in submission_tuple:
-                if max_score > self.best_run_for_client.get(submission.submission_id, {'score': -2})["score"]:
-                    # if the best run is updated, delete the turns from the database
-                    if self.best_run_for_client.get(submission.submission_id, None) is not None and \
-                            len([True for _, run in self.best_run_for_client
-                                 if run[run_id] == self.best_run_for_client[submission.submission_id]['run_id']]
-                                ) <= 1:
-                        self.delete_turns_for_run_id(self.best_run_for_client[submission.submission_id]['run_id'])
-
+                if (score_for_each_submission[submission.submission_id] >
+                        self.best_run_for_client.get(submission.submission_id, {'score': -2})['score']):
                     self.best_run_for_client[submission.submission_id] = {}
                     self.best_run_for_client[submission.submission_id]["log_path"] = os.path.join(end_path, 'logs')
                     self.best_run_for_client[submission.submission_id]["run_id"] = run_id
-                    self.best_run_for_client[submission.submission_id]["score"] = max_score
+                    self.best_run_for_client[submission.submission_id]["score"] = score_for_each_submission[submission.submission_id]
 
     def run_runner(self, end_path, runner) -> bytes:
         """
@@ -344,9 +341,9 @@ class ClientRunner:
             except PermissionError:
                 continue
 
-    def delete_turns_for_run_id(self, run_id: int) -> None:
+    def delete_turns(self) -> None:
         with DB() as db:
-            crud_turn.delete_with_run_id(db, run_id)
+            crud_turn.delete_all(db)
 
     def return_team_parings(self, submissions: list[Submission]) -> list[tuple[Submission, Submission]]:
         fixtures = list(itertools.permutations(submissions, 2))
