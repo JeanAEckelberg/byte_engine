@@ -64,7 +64,7 @@ class visualizer_runner:
             print('No tournament is in the database.')
             return
 
-        if self.tournament_id != tournament.tournament_id:
+        if self.tournament_id != tournament.tournament_id and tournament.is_finished:
             print("Getting new logs")
             self.get_latest_log_files(tournament)
             self.tournament_id = tournament.tournament_id
