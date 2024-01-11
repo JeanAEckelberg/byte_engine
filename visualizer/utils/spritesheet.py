@@ -21,7 +21,9 @@ class SpriteSheet:
     def image_at(self, rectangle: tuple[int, int, int, int], colorkey: pygame.Color | None = None) -> pygame.Surface:
         """
         Load a specific image from a specific location .
-        :param rectangle: A tuple of its representing x,y,width,height
+        :param rectangle: A tuple of ints representing x,y,width,height
+            Where x is the distance from the left, y is the distance from the top, width is width of a single sprite
+            frame, and height is the height of a single sprite frame.
         :param colorkey: The color to be made transparent on this image.
             pygame.Color(255,0,255) is recommended for this use. See the pygame
             `docs <https://www.pygame.org/docs/ref/color.html>`_
@@ -59,7 +61,7 @@ class SpriteSheet:
         list[pygame.Surface]):
         """
         Load a whole strip of images cut equally along the dimensions provided, and return them as a list.
-        :param rect: A tuple of its representing x,y,width,height.
+        :param rect: A tuple of ints representing x,y,width,height.
             Where x is the distance from the left, y is the distance from the top, width is width of a single sprite
             frame, and height is the height of a single sprite frame.
         :param image_count: the number of images/sprite frames to load from a single row
