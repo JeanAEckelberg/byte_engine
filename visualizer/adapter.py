@@ -37,7 +37,9 @@ class Adapter:
         is implemented currently. Pressing it or pressing enter will start the visualizer to show the game's results.
         This method will manage any specified events and return them (hence why the return type is Any). Refer to
         menu_templates.py's start_events method for more info.
-        :param event: The pygame event triggered each frame. See pygame docs for more information.
+        :param event: The pygame event triggered each frame. See pygame
+        `docs <https://www.pygame.org/docs/ref/event.html for more information>`_
+        for more information.
         :return: Any specified event desired in the start_events method
         """
         return self.menu.start_events(event)
@@ -53,7 +55,9 @@ class Adapter:
         """
         By giving this method an event, this method can execute whatever is specified. An example is provided below
         and commented out. Use as necessary.
-        :param event: The pygame event triggered each frame. See pygame docs for more information.
+        :param event: The pygame event triggered each frame. See pygame
+        `docs <https://www.pygame.org/docs/ref/event.html for more information>`_
+        for more information.
         :return: None
         """
 
@@ -123,7 +127,9 @@ class Adapter:
     def results_event(self, event: pygame.event) -> Any:
         """
         This method is called to handle events of the visualizer in the end screen
-        :param event: The pygame event triggered each frame. See pygame docs for more information.
+        :param event: The pygame event triggered each frame. See pygame
+        `docs <https://www.pygame.org/docs/ref/event.html>`_
+        for more information.
         :return: Any value that is defined in the results_events
         """
         return self.menu.results_events(event)
