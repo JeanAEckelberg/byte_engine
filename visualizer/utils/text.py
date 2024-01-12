@@ -11,26 +11,28 @@ Color: TypeAlias = str | int | tuple[int, int, int, Optional[int]] | list[
 
 class Text:
     """
-    Class that creates text to be displayed in the visualizer
+    Class that creates text to be displayed in the visualizer.
 
     Defaults used unless otherwise stated:
-    font: Bauhaus93
-    color: #daa520          (yellowish)
-    position: Vector(0, 0)  (representing pixels on screen, top left pixel)
+    ::
+        font       : Bauhaus93
+        color      : #daa520          (yellowish)
+        position   : Vector(0, 0)     (representing pixels on screen, top left pixel)
 
-    Parameters:
-    screen          :  Screen being used for display
-    font_size       :  Font size used for text
-    font_name       :  Name of font used for text
-    color           :  Color used for text
-    position        :  Position of text to be displayed
-    text            :  Text to be displayed
-
-    In future projects, defaults for text style should be changed according to style of game for ease of code
+    In future projects, defaults for text style should be changed according to style of game for ease of code.
     """
 
     def __init__(self, screen: pygame.Surface, text: str, font_size: int, font_name: str = 'bauhaus93',
                  color: Color = pygame.Color('#daa520'), position: Vector = Vector(0, 0)):
+        """
+        :param screen: Screen being used for display. Refer to `here <https://www.pygame.org/docs/ref/surface.html>`_.
+        :param text: Font size used for text.
+        :param font_size: Font size used for text.
+        :param font_name: Name of font used for text. You can view your supported fonts by calling
+                      ``pygame.font.get_fonts()``.
+        :param color: Color used for text. Refer to `here <https://www.pygame.org/docs/ref/color.html>`_.
+        :param position: Position of text to be displayed Refer to :docs:`vector`.
+        """
         self.__is_init = True
         self.screen: pygame.Surface = screen
         self.font_size: int = font_size
@@ -51,6 +53,10 @@ class Text:
 
     # Render text and rectangle to screen
     def render(self) -> None:
+        """
+
+        :return: None
+        """
         self.position = Vector(*self.__rect.topleft)
         self.screen.blit(self.__text_surface, self.__rect)
 

@@ -8,23 +8,15 @@ import subprocess
 import sys
 import threading
 import time
-from server.models.run import Run
-from server.models.submission_run_info import SubmissionRunInfo
-from server.models.team import Team
-from server.models.team_type import TeamType
-from server.models.turn import Turn
-from server.models.university import University
-from server.models.tournament import Tournament
-from server.models.submission import Submission
+import schedule
+
 from datetime import datetime
 from queue import Queue
 from sqlalchemy.exc import IntegrityError
 
-import schedule
-
+from server.runner_utils import DB
 from server import runner_utils
 from server.crud import crud_tournament, crud_submission, crud_run, crud_submission_run_info, crud_turn, crud_university, crud_team_type
-from server.database import SessionLocal
 from server.models.submission import Submission
 from server.models.tournament import Tournament
 from server.schemas.run.run_base import RunBase
@@ -39,22 +31,28 @@ from server.server_config import Config
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
-class DB:
-    def __init__(self):
-        self.db = SessionLocal()
-
-    def __enter__(self):
-        self.db.begin()
-        return self.db
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.db.close()
-
 class ClientRunner:
+    """
+    This class is responsible for running submitted client bots against each other and getting the results from the
+    games.
+    """
     def __init__(self):
+        """
+        Class variables
+        ---------------
+
+            self.config: Creates an instance of the Config class in ``server_config.py``. That file stores values that
+            are used by the client_runner and visualizer_runner. Use that file to change the values, and **DO NOT**
+            change them in any other file.
+
+            self.total_number_of_games: An int representing the number of games to run during a tournament
+
+            self.number_of
+
+            self.index_to_seed_id
+        """
         self.config: Config = Config()
-        # The group run ID. will be
-        # set by insert_new_group_runlauncher.pyz
+
 
         self.total_number_of_games: int = -1
 
@@ -95,10 +93,10 @@ class ClientRunner:
             while 1:
                 schedule.run_pending()
                 time.sleep(1)
-
-        except (KeyboardInterrupt, Exception) as e:
+        except KeyboardInterrupt:
+            logging.warning("Ending runner due to Keyboard Interrupt")
+        except Exception as e:
             logging.warning("Ending runner due to {0}".format(e))
-
         finally:
             self.close_server()
 
@@ -150,6 +148,12 @@ class ClientRunner:
         print('Job completed\n')
 
     def internal_runner(self, submission_tuple, index) -> None:
+        """
+
+        :param submission_tuple:
+        :param index:
+        :return:
+        """
         score_for_each_submission: dict[int, int] = {}
         results = dict()
 
@@ -277,7 +281,13 @@ class ClientRunner:
     def insert_submission_run_info(self, submission_id: int, run_id: int, error: str | None, player_num: int,
                                    points_awarded: int) -> None:
         """
-        Inserts a run into the DB
+
+        :param submission_id:
+        :param run_id:
+        :param error:
+        :param player_num:
+        :param points_awarded:
+        :return: None
         """
         if error is None:
             error = ''
@@ -291,9 +301,11 @@ class ClientRunner:
                                           player_num=player_num,
                                           points_awarded=points_awarded))
 
-    def delete_tournament_cascade(self, tournament_id) -> None:
+    def delete_tournament_cascade(self, tournament_id: int) -> None:
         """
         Deletes the tournament by using the given id
+        :param tournament_id:
+        :return: None
         """
         with DB() as db:
             crud_tournament.delete(db, tournament_id)
@@ -346,7 +358,11 @@ class ClientRunner:
             crud_turn.delete_all(db)
 
     def return_team_parings(self, submissions: list[Submission]) -> list[tuple[Submission, Submission]]:
-        fixtures = list(itertools.permutations(submissions, 2))
+        # do not remove
+        # noinspection PyTypeChecker
+        fixtures: list[tuple[Submission, Submission]] = list(itertools.permutations(submissions, 2))
+        
+        temp: list[tuple[Submission, ...]]
         self.number_of_unique_games = len(fixtures)
         repeated = fixtures * self.config.NUMBER_OF_GAMES_AGAINST_SAME_TEAM
         self.total_number_of_games = len(repeated)
@@ -377,7 +393,7 @@ class ClientRunner:
                     uni_name='NDSU'
                 ))
                 print('NDSU Added')
-            except(Exception):
+            except IntegrityError:
                 print('NDSU Already Exists')
 
             try:
@@ -386,7 +402,7 @@ class ClientRunner:
                     uni_name='MSUM'
                 ))
                 print('MSUM Added')
-            except(Exception):
+            except IntegrityError:
                 print('MSUM Already Exists')
 
             try:
@@ -395,7 +411,7 @@ class ClientRunner:
                     uni_name='UND'
                 ))
                 print('UND Added')
-            except(Exception):
+            except IntegrityError:
                 print('UND Already Exists')
 
             try:
@@ -405,7 +421,7 @@ class ClientRunner:
                     eligible=True
                 ))
                 print('Undergrad Added')
-            except(Exception):
+            except IntegrityError:
                 print('Undergrad Already Exists')
 
             try:
@@ -415,7 +431,7 @@ class ClientRunner:
                     eligible=False
                 ))
                 print('Graduate Added')
-            except(Exception):
+            except IntegrityError:
                 print('Graduate Already Exists')
 
             try:
@@ -425,7 +441,7 @@ class ClientRunner:
                     eligible=False
                 ))
                 print('Alumni Added')
-            except(Exception):
+            except IntegrityError:
                 print('Alumni Already Exists')
 
 

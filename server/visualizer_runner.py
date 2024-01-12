@@ -1,40 +1,29 @@
 # IMPORTANT NOTE: DO **NOT** REMOVE IMPORTS THAT APPEAR UNUSED. They are still needed for the SQLAlchemy DB connection
 
-import datetime
 import sys
 import time
 import json
+import logging
 import os
 import shutil
 import subprocess
 import schedule
 
 from server.crud import crud_tournament
-from server.database import SessionLocal
 from server.models.run import Run
 from server.models.tournament import Tournament
 from server.models.turn import Turn
-from server.models.submission_run_info import SubmissionRunInfo
-from server.models.team import Team
-from server.models.team_type import TeamType
-from server.models.university import University
-from server.models.submission import Submission
+from server.runner_utils import DB
+
 from server.server_config import Config
 
+# Config for loggers
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-class DB:
-    def __init__(self):
-        self.db = SessionLocal()
+class VisualizerRunner:
+    """
 
-    def __enter__(self):
-        self.db.begin()
-        return self.db
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.db.close()
-
-
-class visualizer_runner:
+    """
     def __init__(self):
 
         # Current tournament id of logs
@@ -55,8 +44,10 @@ class visualizer_runner:
             while 1:
                 schedule.run_pending()
                 time.sleep(1)
-        except (KeyboardInterrupt, Exception) as e:
-            print(f'Ending visualizer due to {e}')
+        except KeyboardInterrupt:
+            logging.warning("Ending runner due to Keyboard Interrupt")
+        except Exception as e:
+            logging.warning("Ending runner due to {0}".format(e))
 
     # Get new logs from the latest tournament
     def internal_runner(self) -> None:
@@ -144,4 +135,4 @@ class visualizer_runner:
 
 
 if __name__ == "__main__":
-    visualizer_runner()
+    VisualizerRunner()

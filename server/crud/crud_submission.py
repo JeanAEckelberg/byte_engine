@@ -47,7 +47,7 @@ def read(db: Session, id: int, eager: bool = False) -> Submission | None:
 
 
 # read submission based off team id
-def read_all_by_team_id(db: Session, team_uuid: uuid, eager: bool = False) -> list[Type[Submission]]:
+def read_all_by_team_id(db: Session, team_uuid: uuid, eager: bool = False) -> [Submission]:
     """
     Similar functionality to the read_all() method, but this filters based on the given team uuid.
     :param db:
@@ -130,7 +130,7 @@ def delete(db: Session, id: int, submission: SubmissionWTeam) -> None:
     db.commit()
 
 
-def get_latest_submission_for_each_team(db: Session) -> list[Type[Submission]]:
+def get_latest_submission_for_each_team(db: Session) -> [Submission]:
     return (db.query(Submission)
             .filter(Submission.submission_id.in_(
                     db.query(
