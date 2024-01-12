@@ -42,12 +42,14 @@ class visualizer_runner:
 
         self.logs_path: str = os.path.join('server', 'vis_temp')
 
+        self.refresh_vis_temp_folder()
+
         (schedule.every(Config().SLEEP_TIME_SECONDS_BETWEEN_VIS).seconds
          .until(Config().END_DATETIME)
          .do(self.internal_runner))
 
         (schedule.every().day.at(str(Config().END_DATETIME.split()[-1]))
-         .do(self.delete_vis_temp))
+         .do(self.delete_vis_temp_folder))
 
         try:
             while 1:
@@ -71,16 +73,20 @@ class visualizer_runner:
             print(f'Tournament id: {self.tournament_id}')
         self.visualizer_loop()
 
-    # Delete visual logs path at end of competition
-    def delete_vis_temp(self) -> None:
+    # Refresh visual logs path between tournaments
+    def refresh_vis_temp_folder(self) -> None:
         if not os.path.exists(self.logs_path):
             os.mkdir(self.logs_path)
         else:
             shutil.rmtree(self.logs_path)
             os.mkdir(self.logs_path)
 
+    def delete_vis_temp_folder(self) -> None:
+        if os.path.exists(self.logs_path):
+            shutil.rmtree(self.logs_path)
+
     def get_latest_log_files(self, tournament: Tournament) -> None:
-        self.delete_vis_temp()
+        self.refresh_vis_temp_folder()
 
         print("Getting latest log files")
         run: Run
