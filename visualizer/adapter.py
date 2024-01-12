@@ -101,7 +101,8 @@ class Adapter:
 
     def render(self) -> None:
         """
-        any logic for rendering text, buttons, and other visuals
+        This method contains all logic for rendering additional text, buttons, and other visuals
+        during the playback phase.
         :return: None
         """
         text = Text(self.screen, f'{self.turn_number} / {self.turn_max}', 48)
