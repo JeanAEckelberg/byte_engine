@@ -141,4 +141,3 @@ class Adapter:
         :return:
         """
         self.menu.results_render()
-
