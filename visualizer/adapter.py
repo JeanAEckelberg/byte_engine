@@ -1,5 +1,3 @@
-import random
-
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
@@ -10,7 +8,6 @@ from visualizer.bytesprites.exampleWallBS import WallBytespriteFactoryExample
 from visualizer.bytesprites.exampleBS import AvatarBytespriteFactoryExample
 from game.utils.vector import Vector
 from visualizer.utils.text import Text
-from visualizer.utils.button import Button, ButtonColors
 from visualizer.bytesprites.bytesprite import ByteSprite
 from visualizer.templates.menu_templates import Basic, MenuTemplate
 from visualizer.templates.playback_template import PlaybackTemplate, PlaybackButtons
@@ -113,4 +110,3 @@ class Adapter:
         :return:
         """
         self.menu.results_render()
-
