@@ -378,12 +378,12 @@ class ClientUtils:
             return temp
 
         for run in temp.Ok[0]['runs']:
+            if any([1 for submission_run_info in run['submission_run_infos']
+                    if not include_ineligible and not team_info[submission_run_info['submission']['team'][
+                    'team_type_id']]['eligible']]):
+                continue
             for submission_run_info in run['submission_run_infos']:
                 team_name: str = submission_run_info['submission']['team']['team_name']
-
-                if not include_ineligible and not team_info[submission_run_info['submission']['team']['team_type_id']][
-                    'eligible']:
-                    continue
 
                 # makes a dict of {'Example Team Name': {all info needed to build leaderboard}}
                 if results.get(team_name) is None:

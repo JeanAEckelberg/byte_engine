@@ -19,7 +19,7 @@ from game.client.user_client import UserClient
 
 
 class Engine:
-    def __init__(self, quiet_mode=False, use_filenames_as_team_names=False):
+    def __init__(self, quiet_mode=False):
         self.clients = list()
         self.master_controller = MasterController()
         self.tick_number = 0
@@ -29,7 +29,6 @@ class Engine:
         self.current_world_key = None
 
         self.quiet_mode = quiet_mode
-        self.use_filenames = use_filenames_as_team_names
 
     # Starting point of the engine. Runs other methods then sits on top of a basic game loop until over
     def loop(self):
@@ -120,8 +119,7 @@ class Engine:
                 finally:
                     # Note: I keep the above thread for both naming conventions to check for client errors
                     try:
-                        if self.use_filenames:
-                            player.file_name = filename
+                        player.file_name = filename
                         player.team_name = thr.retrieve_value()
                     except Exception as e:
                         player.functional = False

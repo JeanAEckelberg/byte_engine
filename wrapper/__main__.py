@@ -31,9 +31,6 @@ if __name__ == '__main__':
     run_subpar.add_argument('-quiet', '-q', action='store_true', default=False,
                             dest='q_bool', help='Runs your AI... quietly :) (the runs per second won\'t be displayed)')
 
-    run_subpar.add_argument('-fn', '-fn', action='store_true', default=False,
-                            dest='fn_bool', help='Replaces team names with file names; for server usage')
-
     # Visualizer Subparser and optionals
     vis_subpar = spar.add_parser('visualize', aliases=['v'],
                                  help='Runs the visualizer! "v -h" shows more options')
@@ -137,7 +134,7 @@ if __name__ == '__main__':
         if par_args.q_bool:
             quiet = True
 
-        engine = Engine(quiet, par_args.fn_bool)
+        engine = Engine(quiet)
         engine.loop()
 
     # Run the visualizer
