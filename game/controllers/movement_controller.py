@@ -37,7 +37,7 @@ class MovementController(Controller):
             case _:  # default case
                 return
 
-        temp_vec: Vector = Vector.add_vectors(avatar_pos, pos_mod)
+        temp_vec: Vector = avatar_pos.add_to_vector(pos_mod)
         # if tile is occupied return
         temp: Tile = world.game_map[temp_vec.y][temp_vec.x]
         while hasattr(temp.occupied_by, 'occupied_by'):
