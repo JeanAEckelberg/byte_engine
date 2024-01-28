@@ -106,7 +106,7 @@ class Adapter:
         :return: None
         """
         text = Text(self.screen, f'{self.turn_number} / {self.turn_max}', 48)
-        text.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().midtop), Vector(0, 50)).as_tuple()
+        text.rect.center = Vector(*self.screen.get_rect().midtop).add_y(50).as_tuple()
         text.render()
         self.playback.playback_render()
 
