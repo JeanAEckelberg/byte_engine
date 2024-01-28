@@ -83,7 +83,7 @@ class Config:
     @property
     def TILE_SIZE(self) -> int:
         """
-        This will be the size of the tile-its going to be squares.
+        This will be the size of the tile; it is a square.
         :return: int
         """
         return self.__TILE_SIZE
@@ -101,6 +101,8 @@ class Config:
     def SCREEN_SIZE(self) -> Vector:
         """
         The screen size is the overall screen size.
+        The x and y values of the Vector object returned represent the horizontal and vertical lengths
+        of the screen respectively.
         :return: Vector
         """
         return self.__SCREEN_SIZE

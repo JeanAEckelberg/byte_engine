@@ -20,7 +20,7 @@ class Config:
     End DateTime
     ++++++++++++
         The End DateTime is an ISO formatted string representing the end of the competition. This will need to be
-        changed for every competition.
+        changed for every competition. Ex. 'YYYY-mm-dd HH:MM', like '2030-01-01 00:00'
     -----
     Sleep Time Between Vis
     ++++++++++++++++++++++
