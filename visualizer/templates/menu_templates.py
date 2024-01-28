@@ -34,11 +34,9 @@ class MenuTemplate:
         self.results_button: Button = Button(screen, 'Exit', lambda: False, font_size=24, padding=10)
 
         # the next two variables shouldn't be type hinted. The center is a tuple of two ints (i.e., tuple[int, int])
-        self.start_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                           Vector(0, 100)).as_tuple()
+        self.start_button.rect.center = Vector(*self.screen.get_rect().center).add_y(100).as_tuple()
 
-        self.results_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                             Vector(0, 100)).as_tuple()
+        self.results_button.rect.center = Vector(*self.screen.get_rect().center).add_y(100).as_tuple()
 
     def start_events(self, event: pygame.event) -> Any:
         """
@@ -87,8 +85,7 @@ class Basic(MenuTemplate):
     def __init__(self, screen: pygame.Surface, title: str):
         super().__init__(screen)
         self.title: Text = Text(screen, title, 48)  # creates the title using the Text class; refer to text.py
-        self.title.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),  # the center of the title
-                                                    Vector(0, -100)).as_tuple()
+        self.title.rect.center = Vector(*self.screen.get_rect().center).add_y(-100).as_tuple()
 
         self.winning_team_name: Text = Text(screen, '', 0)  # name is determined by endgame results
 
