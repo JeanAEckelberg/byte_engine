@@ -158,8 +158,10 @@ class Engine:
             raise FileNotFoundError('Game map not found.')
 
         # Delete previous logs
-        if os.path.exists(LOGS_FILE):
-            os.remove(LOGS_FILE)
+        for filename in os.listdir(LOGS_DIR):
+            if os.path.join(LOGS_DIR, filename) == GAME_MAP_FILE:
+                continue
+            os.remove(os.path.join(LOGS_DIR, filename))
 
         world = None
         with open(GAME_MAP_FILE) as json_file:
