@@ -76,13 +76,15 @@ class Config:
     def NUMBER_OF_FRAMES_PER_TURN(self) -> int:
         """
         If you have an animation, this will be the number of frames the animation goes through for each turn.
+        :return: int
         """
         return self.__NUMBER_OF_FRAMES_PER_TURN
 
     @property
     def TILE_SIZE(self) -> int:
         """
-        This will be the size of the tile-its going to be squares
+        This will be the size of the tile; it is a square.
+        :return: int
         """
         return self.__TILE_SIZE
 
@@ -90,14 +92,18 @@ class Config:
     def SCALE(self) -> int:
         """
         Scale is for the tile size being scaled larger.
-        For example: With a 16x16 tile, it can be scaled by 4 to be a 64x64 tile on the visualizer
+        For example: With a 16x16 tile, it can be scaled by 4 to be a 64x64 tile on the visualizer.
+        :return: int
         """
         return self.__SCALE
 
     @property
     def SCREEN_SIZE(self) -> Vector:
         """
-        The screen size is the overall screen size
+        The screen size is the overall screen size.
+        The x and y values of the Vector object returned represent the horizontal and vertical lengths
+        of the screen respectively.
+        :return: Vector
         """
         return self.__SCREEN_SIZE
 
@@ -106,6 +112,7 @@ class Config:
     def FRAME_RATE(self) -> int:
         """
         Frame Rate is the overall frames per second.
+        :return: int
         """
         return self.__FRAME_RATE
 
@@ -113,6 +120,7 @@ class Config:
     def BACKGROUND_COLOR(self) -> (int, int, int):
         """
         This is where you can set the default background color.
+        :return: tuple of 3 ints representing the red, blue, and green values.
         """
         return self.__BACKGROUND_COLOR
 
@@ -120,6 +128,7 @@ class Config:
     def GAME_BOARD_MARGIN_LEFT(self) -> int:
         """
         This is where you can set the left margin for the main game board.
+        :return: int
         """
         return self.__GAME_BOARD_MARGIN_LEFT
 
@@ -127,6 +136,7 @@ class Config:
     def GAME_BOARD_MARGIN_TOP(self) -> int:
         """
         This is where you can set the top margin for the main game board.
+        :return: int
         """
         return self.__GAME_BOARD_MARGIN_TOP
 
@@ -134,5 +144,6 @@ class Config:
     def VISUALIZE_HELD_ITEMS(self) -> bool:
         """
         This is where you can set if you want held items to be displayed in the visualizer.
+        :return: bool
         """
         return self.__VISUALIZE_HELD_ITEMS
