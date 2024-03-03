@@ -18,6 +18,7 @@ class ObjectType(Enum):
     ACTION = auto()
     PLAYER = auto()
     AVATAR = auto()
+    INVENTORY = auto()
     GAMEBOARD = auto()
     VECTOR = auto()
     TILE = auto()
