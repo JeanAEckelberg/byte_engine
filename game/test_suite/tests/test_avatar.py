@@ -3,6 +3,7 @@ import unittest
 from game.common.avatar import Avatar
 from game.common.items.item import Item
 from game.utils.vector import Vector
+import game.test_suite.utils
 
 
 class TestAvatar(unittest.TestCase):
@@ -15,6 +16,7 @@ class TestAvatar(unittest.TestCase):
     def setUp(self) -> None:
         self.avatar: Avatar = Avatar(None, 1)
         self.item: Item = Item(10, 100, 1, 1)
+        self.utils = game.test_suite.utils
 
     # test set item
     def test_avatar_set_item(self):
@@ -25,9 +27,9 @@ class TestAvatar(unittest.TestCase):
         value: int = 3
         with self.assertRaises(ValueError) as e:
             self.avatar.held_item = value
-        self.assertEqual(str(e.exception), f'Avatar.held_item must be an Item or None. It is a(n) '
-                                           f'{value.__class__.__name__} and has the value of '
-                                           f'{value}')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Avatar.held_item must be an Item or None. It '
+                                                                 f'is a(n) {value.__class__.__name__} and has the '
+                                                                 f'value of {value}', False))
 
     # test set score
     def test_avatar_set_score(self):
@@ -38,8 +40,8 @@ class TestAvatar(unittest.TestCase):
         value: str = 'wow'
         with self.assertRaises(ValueError) as e:
             self.avatar.score = value
-        self.assertEqual(str(e.exception), f'Avatar.score must be an int. It is a(n) '
-                                           f'{value.__class__.__name__} and has the value of {value}')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Avatar.score must be an int. It is a(n) '
+                                           f'{value.__class__.__name__} and has the value of {value}', False))
 
     # test set position
     def test_avatar_set_position(self):
@@ -54,8 +56,8 @@ class TestAvatar(unittest.TestCase):
         value: int = 10
         with self.assertRaises(ValueError) as e:
             self.avatar.position = value
-        self.assertEqual(str(e.exception), f'Avatar.position must be a Vector or None. '
-                                           f'It is a(n) {value.__class__.__name__} and has the value of {value}')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Avatar.position must be a Vector or None. '
+                                           f'It is a(n) {value.__class__.__name__} and has the value of {value}', False))
 
     # test json method
     def test_avatar_json_with_none_item(self):

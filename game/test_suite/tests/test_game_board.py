@@ -5,12 +5,11 @@ from game.common.avatar import Avatar
 from game.common.items.item import Item
 from game.common.stations.station import Station
 from game.common.stations.occupiable_station import OccupiableStation
-from game.common.map.tile import Tile
 from game.common.map.wall import Wall
 from game.utils.vector import Vector
 from game.common.game_object import GameObject
 from game.common.map.game_board import GameBoard
-
+import game.test_suite.utils
 
 class TestGameBoard(unittest.TestCase):
     """
@@ -36,36 +35,41 @@ class TestGameBoard(unittest.TestCase):
         }
         self.game_board: GameBoard = GameBoard(1, Vector(10, 10), self.locations, False)
         self.game_board.generate_map()
-
+        self.utils = game.test_suite.utils
     # test that seed cannot be set after generate_map
     def test_seed_fail(self):
         with self.assertRaises(RuntimeError) as e:
             self.game_board.seed = 20
-        self.assertEqual(str(e.exception), 'GameBoard variables cannot be changed once generate_map is run.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
+                                                                 'generate_map is run.', False))
 
     # test that map_size cannot be set after generate_map
     def test_map_size_fail(self):
         with self.assertRaises(RuntimeError) as e:
             self.game_board.map_size = Vector(1, 1)
-        self.assertEqual(str(e.exception), 'GameBoard variables cannot be changed once generate_map is run.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
+                                                                 'generate_map is run.', False))
 
     # test that locations cannot be set after generate_map
     def test_locations_fail(self):
         with self.assertRaises(RuntimeError) as e:
             self.game_board.locations = self.locations
-        self.assertEqual(str(e.exception), 'GameBoard variables cannot be changed once generate_map is run.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
+                                                                 'generate_map is run.', False))
 
     # test that locations raises RuntimeError even with incorrect data type
     def test_locations_incorrect_fail(self):
         with self.assertRaises(RuntimeError) as e:
             self.game_board.locations = Vector(1, 1)
-        self.assertEqual(str(e.exception), 'GameBoard variables cannot be changed once generate_map is run.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
+                                                                 'generate_map is run.', False))
 
     # test that walled cannot be set after generate_map
     def test_walled_fail(self):
         with self.assertRaises(RuntimeError) as e:
             self.game_board.walled = False
-        self.assertEqual(str(e.exception), 'GameBoard variables cannot be changed once generate_map is run.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
+                                                                 'generate_map is run.', False))
 
     # test that get_objects works correctly with stations
     def test_get_objects_station(self):
