@@ -30,5 +30,7 @@ class PlaceController(Controller):
             case _:
                 return
 
+        self.__place_item(client, tile, world, pos_mod)
+
     def __place_item(self, client: Player, tile: Tile, world: GameBoard, pos_mod: Vector) -> None:
         pass
