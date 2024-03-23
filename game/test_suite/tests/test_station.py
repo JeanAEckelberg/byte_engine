@@ -10,7 +10,7 @@ from game.common.map.game_board import GameBoard
 from game.utils.vector import Vector
 from game.common.enums import ActionType
 from game.common.enums import ObjectType
-
+import game.test_suite.utils
 
 # class that tests stations and its methods
 class TestStation(unittest.TestCase):
@@ -31,7 +31,7 @@ class TestStation(unittest.TestCase):
         self.avatar.inventory = self.inventory
         self.game_board = GameBoard(None, Vector(4, 4), None, False)
         self.inventory_controller = InventoryController()
-
+        self.utils = game.test_suite.utils
     # test adding item to station
     def test_item_occ(self):
         self.station.held_item = self.item
@@ -42,7 +42,8 @@ class TestStation(unittest.TestCase):
         value: str = 'wow'
         with self.assertRaises(ValueError) as e:
             self.station.held_item = value
-        self.assertEqual(str(e.exception), f'Station.held_item must be an Item or None, not {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Station.held_item must be an Item or None, not '
+                                                                 f'{value}.', False))
 
     # test base take action method works
     def test_take_action(self):

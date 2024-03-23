@@ -9,7 +9,7 @@ from game.common.stations.occupiable_station import OccupiableStation
 from game.controllers.movement_controller import MovementController
 from game.utils.vector import Vector
 from game.common.stations.station import Station
-
+import game.test_suite.utils
 
 class TestMovementControllerIfOccupiableStations(unittest.TestCase):
     """
@@ -43,7 +43,7 @@ class TestMovementControllerIfOccupiableStations(unittest.TestCase):
         self.position = Vector(2, 2)
         self.client = Player(None, None, [], self.avatar)
         self.game_board.generate_map()
-
+        self.utils = game.test_suite.utils
     # it is not occupied, so you can move there
 
     def test_move_up(self):
@@ -53,7 +53,7 @@ class TestMovementControllerIfOccupiableStations(unittest.TestCase):
     def test_move_up_fail(self):
         self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
         self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
-        self.assertEqual(str(self.client.avatar.position), str(Vector(2, 1)))
+        self.assertTrue(self.utils.spell_check(str(self.client.avatar.position), str(Vector(2, 1)), False))
 
     def test_move_down(self):
         self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
@@ -62,7 +62,7 @@ class TestMovementControllerIfOccupiableStations(unittest.TestCase):
 
     def test_move_down_fail(self):
         self.movement_controller.handle_actions(ActionType.MOVE_DOWN, self.client, self.game_board)
-        self.assertEqual((str(self.client.avatar.position)), str(Vector(2, 2)))
+        self.assertTrue(self.utils.spell_check(str(self.client.avatar.position), str(Vector(2, 2)), False))
 
     def test_move_left(self):
         self.movement_controller.handle_actions(ActionType.MOVE_LEFT, self.client, self.game_board)
@@ -71,7 +71,7 @@ class TestMovementControllerIfOccupiableStations(unittest.TestCase):
     def test_move_left_fail(self):
         self.movement_controller.handle_actions(ActionType.MOVE_LEFT, self.client, self.game_board)
         self.movement_controller.handle_actions(ActionType.MOVE_LEFT, self.client, self.game_board)
-        self.assertEqual((str(self.client.avatar.position)), str(Vector(1, 2)))
+        self.assertTrue(self.utils.spell_check(str(self.client.avatar.position), str(Vector(1, 2)), False))
 
     def test_move_right(self):
         self.movement_controller.handle_actions(ActionType.MOVE_LEFT, self.client, self.game_board)
@@ -80,4 +80,4 @@ class TestMovementControllerIfOccupiableStations(unittest.TestCase):
 
     def test_move_right_fail(self):
         self.movement_controller.handle_actions(ActionType.MOVE_RIGHT, self.client, self.game_board)
-        self.assertEqual((str(self.client.avatar.position)), str(Vector(2, 2)))
+        self.assertTrue(self.utils.spell_check(str(self.client.avatar.position), str(Vector(2, 2)), False))
