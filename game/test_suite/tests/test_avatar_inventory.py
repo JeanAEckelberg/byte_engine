@@ -2,6 +2,7 @@ import unittest
 
 from game.common.avatar import Avatar
 from game.common.items.item import Item
+import game.test_suite.utils
 
 
 class TestAvatarInventory(unittest.TestCase):
@@ -16,6 +17,7 @@ class TestAvatarInventory(unittest.TestCase):
     def setUp(self) -> None:
         self.avatar: Avatar = Avatar(None, 1)
         self.item: Item = Item(10, 100, 1, 1)
+        self.utils = game.test_suite.utils
 
     # test set inventory
     def test_avatar_set_inventory(self):
@@ -27,15 +29,18 @@ class TestAvatarInventory(unittest.TestCase):
         value: str = 'Fail'
         with self.assertRaises(ValueError) as e:
             self.avatar.inventory = value
-        self.assertEqual(str(e.exception), f'Avatar.inventory must be a list of Items. It is a(n) {value.__class__.__name__} and has the value of {value}')
+        self.assertTrue(
+            self.utils.spell_check(str(e.exception), f'Avatar.inventory must be a list of Items. It is a(n) '
+                                                     f'{value.__class__.__name__} and has the value of {value}', False))
 
     # fails if inventory size is greater than the max_inventory_size
     def test_avatar_set_inventory_fail_2(self):
-        value: list = [Item(1,1), Item(4,2)]
+        value: list = [Item(1, 1), Item(4, 2)]
         with self.assertRaises(ValueError) as e:
             self.avatar.inventory = value
-        self.assertEqual(str(e.exception), 'Avatar.inventory size must be less than or equal to '
-                             f'max_inventory_size. It has the value of {len(value)}')
+        self.assertTrue(self.utils.spell_check(str(e.exception), 'Avatar.inventory size must be less than or equal to '
+                                                                 f'max_inventory_size. It has the value of {len(value)}',
+                                               False))
 
     def test_avatar_set_max_inventory_size(self):
         self.avatar.max_inventory_size = 10
@@ -45,7 +50,9 @@ class TestAvatarInventory(unittest.TestCase):
         value: str = 'Fail'
         with self.assertRaises(ValueError) as e:
             self.avatar.max_inventory_size = value
-        self.assertEqual(str(e.exception), f'Avatar.max_inventory_size must be an int. It is a(n) {value.__class__.__name__} and has the value of {value}')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Avatar.max_inventory_size must be an int. '
+                                                                 f'It is a(n) {value.__class__.__name__} and has the '
+                                                                 f'value of {value}', False))
 
     # Tests picking up an item
     def test_avatar_pick_up(self):
@@ -121,8 +128,9 @@ class TestAvatarInventory(unittest.TestCase):
         value: str = 'wow'
         with self.assertRaises(ValueError) as e:
             taken = self.avatar.take(value)
-        self.assertEqual(str(e.exception), f'str.item must be an item.'
-                                           f' It is a(n) {value.__class__.__name__} with the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'str.item must be an item.'
+                                                                 f' It is a(n) {value.__class__.__name__} with the '
+                                                                 f'value of {value}.', False))
 
     # Tests picking up an item and failing
     def test_avatar_pick_up_full_inventory(self):
