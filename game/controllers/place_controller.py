@@ -1,9 +1,13 @@
 from game.common.enums import *
+from game.common.game_object import GameObject
+from game.common.items.item import Item
 from game.common.map.game_board import GameBoard
 from game.common.map.tile import Tile
 from game.common.player import Player
 from game.controllers.controller import Controller
 from game.utils.vector import Vector
+from game.common.map import occupiable
+from game.common.avatar import *
 
 
 class PlaceController(Controller):
@@ -17,8 +21,6 @@ class PlaceController(Controller):
         pos_mod: Vector
 
         match action:
-            case ActionType.PLACE_ITEM_CENTER:
-                pos_mod = Vector(x=-0, y=0)
             case ActionType.PLACE_ITEM_UP:
                 pos_mod = Vector(x=0, y=-1)
             case ActionType.PLACE_ITEM_DOWN:
@@ -33,4 +35,8 @@ class PlaceController(Controller):
         self.__place_item(client, tile, world, pos_mod)
 
     def __place_item(self, client: Player, tile: Tile, world: GameBoard, pos_mod: Vector) -> None:
-        pass
+        if client.avatar.held_item and hasattr('occupied_by'):
+            tile.place_on_top_of_stack(client.avatar.held_item)
+        else:
+            # cry
+            return
