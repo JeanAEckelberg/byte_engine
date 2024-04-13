@@ -130,4 +130,4 @@ class Vector(GameObject):
         return self
 
     def __str__(self) -> str:
-        return f"Coordinates: ({self.x}, {self.y})"
+        return f'({self.x}, {self.y})'
