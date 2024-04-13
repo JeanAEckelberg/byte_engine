@@ -4,6 +4,7 @@ from game.common.avatar import Avatar
 from game.common.game_object import GameObject
 from game.common.map.game_board import GameBoard
 from game.common.stations.occupiable_station import OccupiableStation
+from game.common.stations.occupiable_station_example import OccupiableStationExample
 from game.common.stations.station import Station
 from game.utils.vector import Vector
 from game.common.enums import *
@@ -89,22 +90,84 @@ class TestOccupiable(unittest.TestCase):
 
     def test_remove_game_obj_from_occupied_by(self) -> None:
         occ_station: OccupiableStation = OccupiableStation()
+        ex_occ_station: OccupiableStationExample = OccupiableStationExample()
+
+        occ_station.occupied_by = ex_occ_station
+
+        self.assertTrue(occ_station.is_occupied_by_game_object(OccupiableStationExample))
+
+        self.assertEqual(occ_station.remove_game_object_from_occupied_by(ex_occ_station), ex_occ_station)
+
+        self.assertFalse(occ_station.is_occupied_by_game_object(OccupiableStation))
+        
+    def test_remove_form_occupied_by_2_stack(self) -> None:
+        occ_station: OccupiableStation = OccupiableStation()
         station: Station = Station()
 
         occ_station.occupied_by = station
 
-        self.assertTrue(occ_station.is_occupied_by_game_object(Station))
+        self.assertTrue(isinstance(occ_station.remove_game_object_from_occupied_by(station), Station))
 
-        occ_station.remove_game_object_from_occupied_by(station)
+    def test_remove_from_occupied_twice(self) -> None:
+        station: OccupiableStation = OccupiableStation()
+        station_1: OccupiableStation = OccupiableStation()
 
-        self.assertFalse(occ_station.is_occupied_by_game_object(Station))
-        
-        
-        
-        
-        
-        
-        
+        # set occupied by order: station -> station 1
+        station.occupied_by = station_1
+
+        # Test that removing station works and that trying to remove it again returns None
+        self.assertEqual(station.remove_object_type_from_occupied_by(ObjectType.OCCUPIABLE_STATION), station_1)
+
+        self.assertEqual(station.remove_object_type_from_occupied_by(ObjectType.OCCUPIABLE_STATION), None)
+
+
+    # test removing duplicate objects in the stack
+    def test_remove_from_occupied_by_duplicates(self):
+
+        station: OccupiableStation = OccupiableStation()
+        station_1: OccupiableStation = OccupiableStation()
+        station_2: OccupiableStation = OccupiableStation()
+        station_3: OccupiableStation = OccupiableStation()
+
+        # set occupied by order: station -> station 1 -> station 2 -> station 3
+        station.occupied_by = station_1
+        station_1.occupied_by = station_2
+        station_2.occupied_by = station_3
+
+        # test the stations are removed in the order: station 1 -> station 2 -> station 3
+        self.assertEqual(station.remove_object_type_from_occupied_by(ObjectType.OCCUPIABLE_STATION), station_1)
+        self.assertEqual(station.remove_object_type_from_occupied_by(ObjectType.OCCUPIABLE_STATION), station_2)
+        self.assertEqual(station.remove_object_type_from_occupied_by(ObjectType.OCCUPIABLE_STATION), station_3)
+        self.assertEqual(station.occupied_by, None)
+
+    def test_remove_from_occupied_by_duplicates_2(self):
+        occ_station1: OccupiableStation = OccupiableStation()
+        occ_station2: OccupiableStation = OccupiableStation()
+        occ_station3: OccupiableStation = OccupiableStation()
+        station: Station = Station()
+
+        # set occupied by order: station -> station 1 -> station 2 -> station 3
+        occ_station1.occupied_by = occ_station2
+        occ_station2.occupied_by = occ_station3
+        occ_station3.occupied_by = station
+
+        # test the stations are removed in the order: station 1 -> station 2 -> station 3
+        self.assertEqual(occ_station1.remove_object_type_from_occupied_by(ObjectType.OCCUPIABLE_STATION), occ_station2)
+        self.assertEqual(occ_station1.remove_object_type_from_occupied_by(ObjectType.OCCUPIABLE_STATION), occ_station3)
+        self.assertEqual(occ_station1.remove_object_type_from_occupied_by(ObjectType.STATION), station)
+        self.assertEqual(occ_station1.occupied_by, None)
+
+    def test_is_occupied_by_game_object(self):
+        occ_station: OccupiableStation = OccupiableStation()
+        station: Station = Station()
+
+        # set occupied by order: occ_station = station
+        occ_station.occupied_by = station
+
+        self.assertEqual(occ_station.remove_object_type_from_occupied_by(ObjectType.STATION), station)
+        self.assertEqual(occ_station.occupied_by, None)
+
+
         
         
         

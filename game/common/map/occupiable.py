@@ -164,14 +164,15 @@ class Occupiable(GameObject):
 
         if not hasattr(next_game_object, 'occupied_by'):
             current_game_object.occupied_by = None
-            return None
-
-        if next_game_object.object_type == object_type:
-            # reassign the current game_object's occupied_by and return what the next game object is
-            current_game_object.occupied_by = next_game_object.occupied_by
             return next_game_object
 
-        return None
+        if next_game_object.object_type == object_type and isinstance(next_game_object, Occupiable):
+            # reassign the current game_object's occupied_by and return what the next game object is IF it's occupiable
+            current_game_object.occupied_by = next_game_object.occupied_by
+            return next_game_object
+        else:
+            current_game_object.occupied_by = None
+            return None
 
     def remove_game_object_from_occupied_by(self, game_object: GameObject | None = None) -> GameObject | None:
         """
@@ -196,16 +197,22 @@ class Occupiable(GameObject):
         if next_game_object is None:
             return None
 
-        if not hasattr(next_game_object, 'occupied_by'):
-            current_game_object.occupied_by = None
-            return None
+        # if not hasattr(next_game_object, 'occupied_by'):
+        #     current_game_object.occupied_by = None
+        #     return None
 
-        if next_game_object is game_object and next_game_object.occupied_by is not None:
-            # reassign the current game_object's occupied_by and return what the next game object
+        # if next_game_object is game_object:
+        #     # reassign the current game_object's occupied_by and return what the next game object
+        #     current_game_object.occupied_by = next_game_object.occupied_by
+        #     return next_game_object
+
+        if next_game_object is game_object and isinstance(next_game_object, Occupiable):
+            # reassign the current game_object's occupied_by and return what the next game object is IF it's occupiable
             current_game_object.occupied_by = next_game_object.occupied_by
             return next_game_object
-
-        return None
+        else:
+            current_game_object.occupied_by = None
+            return next_game_object
 
     def to_json(self) -> dict:
         data: dict = super().to_json()
