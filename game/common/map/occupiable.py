@@ -28,9 +28,8 @@ class Occupiable(GameObject):
 
     @occupied_by.setter
     def occupied_by(self, occupied_by: GameObject | None) -> None:
-        if occupied_by is not None and isinstance(occupied_by, Item):
-            raise ValueError(
-                f'{self.__class__.__name__}.occupied_by must be a GameObject. It is a(n) {occupied_by.__class__.__name__} with the value of {occupied_by}.')
+        # first if statement used to prevent Item objects from being set as occupied_by
+        # this can be discussed further, but it has been removed to allow for more flexibility
         if occupied_by is not None and not isinstance(occupied_by, GameObject):
             raise ValueError(
                 f'{self.__class__.__name__}.occupied_by must be None or an instance of GameObject. It is a(n) {occupied_by.__class__.__name__} with the value of {occupied_by}.')
@@ -128,7 +127,7 @@ class Occupiable(GameObject):
         # if the wanted object isn't found, return False
         return False
 
-    def get_top_of_stack(self, game_object: GameObject):
+    def get_top_of_stack(self):
         """
         Method to get the top object of a stack
         """
@@ -213,6 +212,15 @@ class Occupiable(GameObject):
         else:
             current_game_object.occupied_by = None
             return next_game_object
+
+    def get_stack_list(self):
+        temp_game_object: GameObject = self
+        stack_list: list = []
+
+        while temp_game_object.occupied_by is not None and hasattr(temp_game_object.occupied_by, 'occupied_by'):
+            temp_game_object = temp_game_object.occupied_by
+            stack_list.append(temp_game_object)
+        return stack_list
 
     def to_json(self) -> dict:
         data: dict = super().to_json()

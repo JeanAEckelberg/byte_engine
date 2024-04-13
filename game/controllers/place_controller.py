@@ -16,7 +16,6 @@ class PlaceController(Controller):
 
     def handle_actions(self, action: ActionType, client: Player, world: GameBoard):
         avatar_pos: Vector = client.avatar.position
-        tile: Tile = world.game_map[avatar_pos.y][avatar_pos.x]
 
         pos_mod: Vector
 
@@ -32,11 +31,11 @@ class PlaceController(Controller):
             case _:
                 return
 
-        self.__place_item(client, tile, world, pos_mod)
+        place_tile = world.game_map[avatar_pos.y + pos_mod.y][avatar_pos.x + pos_mod.x]
 
-    def __place_item(self, client: Player, tile: Tile, world: GameBoard, pos_mod: Vector) -> None:
-        if client.avatar.held_item and hasattr('occupied_by'):
+        self.__place_item(client, place_tile)
+
+    def __place_item(self, client: Player, tile: Tile) -> None:
+        if client.avatar.held_item and hasattr(tile.get_top_of_stack(), 'occupied_by'):
             tile.place_on_top_of_stack(client.avatar.held_item)
-        else:
-            # cry
-            return
+            client.avatar.drop_held_item()

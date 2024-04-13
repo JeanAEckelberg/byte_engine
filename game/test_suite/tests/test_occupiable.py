@@ -122,7 +122,7 @@ class TestOccupiable(unittest.TestCase):
 
 
     # test removing duplicate objects in the stack
-    def test_remove_from_occupied_by_duplicates(self):
+    def test_remove_from_occupied_by_duplicates(self) -> None:
 
         station: OccupiableStation = OccupiableStation()
         station_1: OccupiableStation = OccupiableStation()
@@ -140,7 +140,7 @@ class TestOccupiable(unittest.TestCase):
         self.assertEqual(station.remove_object_type_from_occupied_by(ObjectType.OCCUPIABLE_STATION), station_3)
         self.assertEqual(station.occupied_by, None)
 
-    def test_remove_from_occupied_by_duplicates_2(self):
+    def test_remove_from_occupied_by_duplicates_2(self) -> None:
         occ_station1: OccupiableStation = OccupiableStation()
         occ_station2: OccupiableStation = OccupiableStation()
         occ_station3: OccupiableStation = OccupiableStation()
@@ -157,7 +157,7 @@ class TestOccupiable(unittest.TestCase):
         self.assertEqual(occ_station1.remove_object_type_from_occupied_by(ObjectType.STATION), station)
         self.assertEqual(occ_station1.occupied_by, None)
 
-    def test_is_occupied_by_game_object(self):
+    def test_is_occupied_by_game_object(self) -> None:
         occ_station: OccupiableStation = OccupiableStation()
         station: Station = Station()
 
@@ -168,7 +168,8 @@ class TestOccupiable(unittest.TestCase):
         self.assertEqual(occ_station.occupied_by, None)
 
 
-        
+        # test for return list of on the stack
+
         
         
         
