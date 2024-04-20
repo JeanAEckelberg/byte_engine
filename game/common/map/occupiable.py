@@ -46,12 +46,12 @@ class Occupiable(GameObject):
         temp_game_object: GameObject = self
 
         # Execute loop only if the object occupying self is an object (i.e., not none) and can also be occupied
-        while temp_game_object.occupied_by is not None and hasattr(temp_game_object.occupied_by, 'occupied_by'):
+        while temp_game_object.occupied_by is not None and isinstance(temp_game_object.occupied_by, Occupiable):
             # moves to the next thing in the stack of occupiable objects
             temp_game_object = temp_game_object.occupied_by
 
         if temp_game_object.occupied_by is not None:
-            if not isinstance(temp_game_object.occupied_by, Avatar) or not hasattr(game_object, 'occupied_by'):
+            if not isinstance(temp_game_object.occupied_by, Avatar) or not isinstance(game_object, Occupiable):
                 return False
 
             game_object.occupied_by = temp_game_object.occupied_by
@@ -94,7 +94,7 @@ class Occupiable(GameObject):
             if temp_game_object.object_type == object_type:
                 return True
 
-            if hasattr(temp_game_object, 'occupied_by'):
+            if isinstance(temp_game_object, Occupiable):
                 # moves to the next thing in the stack of occupiable objects
                 temp_game_object = temp_game_object.occupied_by
             else:
@@ -118,7 +118,7 @@ class Occupiable(GameObject):
             if isinstance(temp_game_object, game_object_type):
                 return True
 
-            if hasattr(temp_game_object, 'occupied_by'):
+            if isinstance(temp_game_object, Occupiable):
                 # moves to the next thing in the stack of occupiable objects
                 temp_game_object = temp_game_object.occupied_by
             else:
@@ -133,7 +133,8 @@ class Occupiable(GameObject):
         """
         temp_game_object: GameObject = self
 
-        while temp_game_object.occupied_by is not None and hasattr(temp_game_object.occupied_by, 'occupied_by'):
+        #ignore potential warnings
+        while temp_game_object.occupied_by is not None and isinstance(temp_game_object.occupied_by, Occupiable):
             temp_game_object = temp_game_object.occupied_by
 
         return temp_game_object
@@ -161,7 +162,7 @@ class Occupiable(GameObject):
         if next_game_object is None:
             return None
 
-        if not hasattr(next_game_object, 'occupied_by'):
+        if not isinstance(next_game_object, Occupiable):
             current_game_object.occupied_by = None
             return next_game_object
 
@@ -196,7 +197,7 @@ class Occupiable(GameObject):
         if next_game_object is None:
             return None
 
-        # if not hasattr(next_game_object, 'occupied_by'):
+        # if not isinstance(next_game_object, Occupiable):
         #     current_game_object.occupied_by = None
         #     return None
 
@@ -217,7 +218,7 @@ class Occupiable(GameObject):
         temp_game_object: GameObject = self
         stack_list: list = []
 
-        while temp_game_object.occupied_by is not None and hasattr(temp_game_object.occupied_by, 'occupied_by'):
+        while temp_game_object.occupied_by is not None and isinstance(temp_game_object.occupied_by, Occupiable):
             temp_game_object = temp_game_object.occupied_by
             stack_list.append(temp_game_object)
         return stack_list

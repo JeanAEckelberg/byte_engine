@@ -2,6 +2,7 @@ from game.common.enums import *
 from game.common.game_object import GameObject
 from game.common.items.item import Item
 from game.common.map.game_board import GameBoard
+from game.common.map.occupiable import Occupiable
 from game.common.map.tile import Tile
 from game.common.player import Player
 from game.controllers.controller import Controller
@@ -36,6 +37,6 @@ class PlaceController(Controller):
         self.__place_item(client, place_tile)
 
     def __place_item(self, client: Player, tile: Tile) -> None:
-        if client.avatar.held_item and hasattr(tile.get_top_of_stack(), 'occupied_by'):
+        if client.avatar.held_item and isinstance(tile.get_top_of_stack(), Occupiable):
             tile.place_on_top_of_stack(client.avatar.held_item)
             client.avatar.drop_held_item()
