@@ -120,7 +120,6 @@ class TestOccupiable(unittest.TestCase):
 
         self.assertEqual(station.remove_object_type_from_occupied_by(ObjectType.OCCUPIABLE_STATION), None)
 
-
     # test removing duplicate objects in the stack
     def test_remove_from_occupied_by_duplicates(self) -> None:
 

@@ -11,6 +11,7 @@ from game.utils.vector import Vector
 from game.controllers.place_controller import *
 from game.controllers.movement_controller import *
 
+
 class place_controller(unittest.TestCase):
     def setUp(self) -> None:
         self.place_controller: PlaceController = PlaceController()
@@ -50,7 +51,3 @@ class place_controller(unittest.TestCase):
         self.place_controller.handle_actions(ActionType.PLACE_ITEM_RIGHT, self.client, self.game_board)
 
         self.assertTrue(isinstance(self.game_board.game_map[1][2].occupied_by, Item))
-
-
-
-
