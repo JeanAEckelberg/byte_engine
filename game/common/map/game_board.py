@@ -1,9 +1,10 @@
 import random
-from typing import Self, Callable
+from typing import Self
 
 from game.common.avatar import Avatar
 from game.common.enums import *
 from game.common.game_object import GameObject
+from game.common.map.occupiable import Occupiable
 from game.common.map.tile import Tile
 from game.common.map.wall import Wall
 from game.common.stations.occupiable_station import OccupiableStation
@@ -236,7 +237,7 @@ class GameBoard(GameObject):
 
     def __to_place_validator(self, coords: Vector, locations_list: locations) -> bool:
         for i in range(locations_list.size):
-            if not hasattr(locations_list[i], 'occupied_by') and i < locations_list.size:
+            if not isinstance(locations_list[i], Occupiable) and i < locations_list.size:
                 raise AttributeError(f'{self.__class__.__name__} Current location is unoccupiable. '
                                      f'It is a(n) {locations_list[i].__class__.__name__} '
                                      f'and is at {coords}. This object must be at the end of the locations list.')

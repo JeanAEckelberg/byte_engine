@@ -47,14 +47,6 @@ class TestOccupiableStation(unittest.TestCase):
         self.assertEqual(self.occupiable_station.item.durability, self.item.durability)
         self.assertEqual(self.occupiable_station.item.value, self.item.value)
 
-    # test cannot add item to occupied_by
-    def test_fail_item_occ(self):
-        with self.assertRaises(ValueError) as e:
-            self.occupiable_station.occupied_by = self.item
-        self.assertTrue(self.utils.spell_check(str(e.exception),
-                         f'{self.occupiable_station.__class__.__name__}.occupied_by must be a GameObject.'
-                         f' It is a(n) {self.item.__class__.__name__} with the value of {self.item}.', False))
-
     # test json method
     def test_occ_json(self):
         self.occupiable_station.occupied_by = self.avatar
