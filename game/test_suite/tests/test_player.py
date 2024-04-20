@@ -60,7 +60,7 @@ class TestPlayer(unittest.TestCase):
     def test_functional_false(self):
         self.player.functional = False
         self.functional = False
-        self.assertEquals(self.player.functional, self.functional)
+        self.assertEqual(self.player.functional, self.functional)
 
     def test_functional_fail_int(self):
         value: str = 'Strig'

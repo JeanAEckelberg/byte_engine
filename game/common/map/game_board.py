@@ -4,6 +4,7 @@ from typing import Self, Callable
 from game.common.avatar import Avatar
 from game.common.enums import *
 from game.common.game_object import GameObject
+from game.common.map.occupiable import Occupiable
 from game.common.map.tile import Tile
 from game.common.map.wall import Wall
 from game.common.stations.occupiable_station import OccupiableStation
@@ -232,7 +233,7 @@ class GameBoard(GameObject):
         :param game_object_list:
         :return: a list of game object
         """
-        return [game_object for game_object in game_object_list if hasattr(game_object, 'occupied_by')]
+        return [game_object for game_object in game_object_list if isinstance(game_object, Occupiable)]
 
     def __help_populate(self, vector_list: list[Vector], game_object_list: list[GameObject]) -> None:
         """
@@ -256,7 +257,7 @@ class GameBoard(GameObject):
 
             temp_tile: GameObject = self.game_map[vector.y][vector.x]
 
-            while temp_tile.occupied_by is not None and hasattr(temp_tile.occupied_by, 'occupied_by'):
+            while temp_tile.occupied_by is not None and isinstance(temp_tile.occupied_by, Occupiable):
                 temp_tile = temp_tile.occupied_by
 
             if temp_tile.occupied_by is not None:
@@ -272,11 +273,11 @@ class GameBoard(GameObject):
         # stack remaining game_objects on last vector
         temp_tile: GameObject = self.game_map[last_vec.y][last_vec.x]
 
-        while temp_tile.occupied_by is not None and hasattr(temp_tile.occupied_by, 'occupied_by'):
+        while temp_tile.occupied_by is not None and isinstance(temp_tile.occupied_by, Occupiable):
             temp_tile = temp_tile.occupied_by
 
         for game_object in remaining_objects:
-            if not hasattr(temp_tile, 'occupied_by') or temp_tile.occupied_by is not None:
+            if not isinstance(temp_tile, Occupiable) or temp_tile.occupied_by is not None:
                 raise ValueError(
                     f'Last item on the given tile doesn\'t have the \'occupied_by\' attribute.'
                     f' It is a(n) {temp_tile.occupied_by.__class__.__name__} with the value of {temp_tile.occupied_by}.')
@@ -299,7 +300,7 @@ class GameBoard(GameObject):
 
 # Add the objects to the end of to_return (a list of GameObject)
     def __get_objects_help(self, look_for: ObjectType, temp: GameObject | Tile, to_return: list[GameObject]):
-        while hasattr(temp, 'occupied_by'):
+        while isinstance(temp, Occupiable):
             if temp.object_type is look_for:
                 to_return.append(temp)
 

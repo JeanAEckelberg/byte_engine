@@ -1,3 +1,4 @@
+from game.common.map.occupiable import Occupiable
 from game.common.player import Player
 from game.common.map.game_board import GameBoard
 from game.common.map.tile import Tile
@@ -40,7 +41,7 @@ class MovementController(Controller):
         temp_vec: Vector = avatar_pos.add_to_vector(pos_mod)
         # if tile is occupied return
         temp: Tile = world.game_map[temp_vec.y][temp_vec.x]
-        while hasattr(temp.occupied_by, 'occupied_by'):
+        while isinstance(temp.occupied_by, Occupiable):
             temp: Tile = temp.occupied_by
             
         if temp.occupied_by is not None:
@@ -50,7 +51,7 @@ class MovementController(Controller):
         
         # while the object that occupies tile has the occupied by attribute, escalate check for avatar
         temp: Tile = world.game_map[avatar_pos.y][avatar_pos.x]
-        while hasattr(temp.occupied_by, 'occupied_by'):
+        while isinstance(temp.occupied_by, Occupiable):
             temp = temp.occupied_by
 
         temp.occupied_by = None
