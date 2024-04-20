@@ -127,7 +127,7 @@ class Occupiable(GameObject):
         # if the wanted object isn't found, return False
         return False
 
-    def get_top_of_stack(self):
+    def get_top_of_stack(self) -> GameObject | None:
         """
         Method to get the top object of a stack
         """
@@ -196,15 +196,6 @@ class Occupiable(GameObject):
         # at top of stack without finding wanted object
         if next_game_object is None:
             return None
-
-        # if not isinstance(next_game_object, Occupiable):
-        #     current_game_object.occupied_by = None
-        #     return None
-
-        # if next_game_object is game_object:
-        #     # reassign the current game_object's occupied_by and return what the next game object
-        #     current_game_object.occupied_by = next_game_object.occupied_by
-        #     return next_game_object
 
         if next_game_object is game_object and isinstance(next_game_object, Occupiable):
             # reassign the current game_object's occupied_by and return what the next game object is IF it's occupiable

@@ -52,7 +52,6 @@ class ActionType(Enum):
     SELECT_SLOT_7 = auto()
     SELECT_SLOT_8 = auto()
     SELECT_SLOT_9 = auto()
-    PLACE_ITEM_CENTER = auto()
     PLACE_ITEM_UP = auto()
     PLACE_ITEM_DOWN = auto()
     PLACE_ITEM_LEFT = auto()

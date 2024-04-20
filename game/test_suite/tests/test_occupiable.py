@@ -166,30 +166,3 @@ class TestOccupiable(unittest.TestCase):
 
         self.assertEqual(occ_station.remove_object_type_from_occupied_by(ObjectType.STATION), station)
         self.assertEqual(occ_station.occupied_by, None)
-
-
-        # test for return list of on the stack
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    # NOTE: Test removing multiple objects at the same time from the occupiable stack
-    # Also test removing ONE thing from a stack that has multiple things on it
