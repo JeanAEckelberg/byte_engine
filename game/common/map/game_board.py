@@ -148,6 +148,9 @@ class GameBoard(GameObject):
 
     @game_map.setter
     def game_map(self, game_map: dict[Vector, list[Tile]]) -> None:
+
+        # FIX ME STILL MADE FOR THE 2D LIST IMPLEMENTATION
+
         if game_map is not None and (not isinstance(game_map, list) or
                                      any(map(lambda l: not isinstance(l, list), game_map)) or
                                      any([any(map(lambda g: not isinstance(g, Tile), tile_list))
@@ -219,7 +222,7 @@ class GameBoard(GameObject):
             coords: Vector = Vector(x, y)
 
             to_place = self.locations[coords]
-            output.update({coords: [Tile(),] + to_place})
+            output.update({coords: [Tile(), ] + to_place})
 
             # Add walls
             if self.walled and (x == 0 or x == self.map_size.x or y == 0 or y == self.map_size.y):
@@ -242,6 +245,7 @@ class GameBoard(GameObject):
                                      f'It is a(n) {locations_list[i].__class__.__name__} '
                                      f'and is at {coords}. This object must be at the end  of the locations list.')
             return True
+
     # def generate_map(self) -> None:
     #     # generate map
     #     self.game_map = [[Tile() for _ in range(self.map_size.x)] for _ in range(self.map_size.y)]
@@ -324,7 +328,7 @@ class GameBoard(GameObject):
     #         temp_tile.occupied_by = game_object
     #         temp_tile = temp_tile.occupied_by
 
-# Returns the Vector and a list of GameObject for whatever objects you are trying to get
+    # Returns the Vector and a list of GameObject for whatever objects you are trying to get
     def get_objects(self, look_for: ObjectType) -> list[tuple[Vector, list[GameObject]]]:
         results: list[tuple[Vector, list[GameObject]]] = []
         found: list[GameObject] = []
@@ -338,25 +342,28 @@ class GameBoard(GameObject):
 
         return results
 
-# Add the objects to the end of to_return (a list of GameObject)
-#     def __get_objects_help(self, look_for: ObjectType, temp: GameObject | Tile, to_return: list[GameObject]):
-#         while hasattr(temp, 'occupied_by'):
-#             if temp.object_type is look_for:
-#                 to_return.append(temp)
-#
-#             # The final temp is the last occupied by option which is either an Avatar, Station, or None
-#             temp = temp.occupied_by
-#
-#         if temp is not None and temp.object_type is look_for:
-#             to_return.append(temp)
+    # Add the objects to the end of to_return (a list of GameObject)
+    #     def __get_objects_help(self, look_for: ObjectType, temp: GameObject | Tile, to_return: list[GameObject]):
+    #         while hasattr(temp, 'occupied_by'):
+    #             if temp.object_type is look_for:
+    #                 to_return.append(temp)
+    #
+    #             # The final temp is the last occupied by option which is either an Avatar, Station, or None
+    #             temp = temp.occupied_by
+    #
+    #         if temp is not None and temp.object_type is look_for:
+    #             to_return.append(temp)
 
     def to_json(self) -> dict:
         data: dict[str, object] = super().to_json()
-        tiles: list[Tile] = [self.game_map[key][0] for key in self.game_map.keys()] if self.game_map is not None else \
-            None
+
+        # can simplify if wanted. will be fun puzzle :)
+        data['game_map'] = None if self.game_map is None else \
+            {coord: tiles for (coord, tiles) in zip([vector.to_json() for vector in self.game_map.keys()],
+                                                    [self.game_map[key][0] for key in self.game_map.keys()])}
 
         # game map is a dictionary of vector:list of game objects; FIX THIS LATER
-        data["game_map"] = [tile.to_json() for tile in tiles] if self.game_map is not None else None
+        # data["game_map"] = [tile.to_json() for tile in tiles] if self.game_map is not None else None
         data["seed"] = self.seed
         data["map_size"] = self.map_size.to_json()
         data["location_vectors"] = [[vec.to_json() for vec in k] for k in
@@ -396,9 +403,10 @@ class GameBoard(GameObject):
             zip(data["location_vectors"], data["location_objects"])} if data["location_vectors"] is not None else None
         self.walled: bool = data["walled"]
         self.event_active: int = data['event_active']
-        self.game_map: dict[Vector, list[Tile]] = {
-            
-        }
+
+        # I hope this works :sob:
+        self.game_map: dict[Vector, list[Tile]] = None if temp is None else \
+            {coord.from_json(): tile.from_json() for (coord, tile) in temp}
         # self.game_map: dict[Vector, list[Tile]] = [
         #     [Tile().from_json(tile) for tile in y] for y in temp] if temp is not None else None
         return self
