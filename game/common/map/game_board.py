@@ -147,17 +147,15 @@ class GameBoard(GameObject):
         return self.__game_map
 
     @game_map.setter
-    def game_map(self, game_map: dict[Vector, list[Tile]]) -> None:
-
-        # FIX ME STILL MADE FOR THE 2D LIST IMPLEMENTATION
-
-        if game_map is not None and (not isinstance(game_map, list) or
-                                     any(map(lambda l: not isinstance(l, list), game_map)) or
-                                     any([any(map(lambda g: not isinstance(g, Tile), tile_list))
-                                          for tile_list in game_map])):
+    def game_map(self, game_map: dict[Vector, list[Tile]] | None) -> None:
+        if game_map is not None and (not isinstance(game_map, dict) or len(game_map) == 0 or
+                                     any(map(lambda x: not isinstance(x, list), game_map.values())) or
+                                     any([not isinstance(sublist[0], Tile) for sublist in game_map.values()])):
             raise ValueError(
-                f'{self.__class__.__name__}.game_map must be a dict[Vector, list[Tile]]. '
-                f'It is a(n) {game_map.__class__.__name__} with the value of {game_map}.')
+                f'{self.__class__.__name__}.game_map must be a dict[Vector, list[Tile]].'
+                f'It has a value of {game_map}.'
+            )
+
         self.__game_map = game_map
 
     @property
@@ -210,7 +208,7 @@ class GameBoard(GameObject):
         self.game_map = self.__map_init()
 
     def __map_init(self) -> dict[Vector, list[Tile]]:
-        tile = [Tile]
+        tile: list[Tile] = [Tile(), ]
         x: int = 0
         y: int = 0
 
@@ -221,7 +219,8 @@ class GameBoard(GameObject):
 
             coords: Vector = Vector(x, y)
 
-            to_place = self.locations[coords]
+            to_place: list[GameObject] | list = self.locations.get(coords, [])
+
             output.update({coords: [Tile(), ] + to_place})
 
             # Add walls
@@ -229,18 +228,20 @@ class GameBoard(GameObject):
                 # add a Wall object to the tile to create border
                 output[coords][0].occupied_by = Wall()
 
-            if self.locations[coords] is not None and self.__can_place_validator(coords, tile):
+            if coords in self.locations.keys() and self.__can_place_validator(coords, tile):
+                # this doesn't account for assigning multiple things in the stack
                 output[coords][1].occupied_by = self.locations[coords]
 
             # Increment coords
             if x == self.map_size.x - 1:
                 x = 0
                 y += 1
-            return output
+
+        return output
 
     def __can_place_validator(self, coords: Vector, locations_list: dict[tuple[Vector]:list[GameObject]]) -> bool:
-        for i in range(locations_list.size):
-            if not isinstance(locations_list[i], Occupiable) and i < locations_list.size:
+        for i in range(len(locations_list)):
+            if not isinstance(locations_list[i], Occupiable) and i < len(locations_list):
                 raise AttributeError(f'{self.__class__.__name__} Current location is unoccupiable. '
                                      f'It is a(n) {locations_list[i].__class__.__name__} '
                                      f'and is at {coords}. This object must be at the end  of the locations list.')
@@ -330,15 +331,28 @@ class GameBoard(GameObject):
 
     # Returns the Vector and a list of GameObject for whatever objects you are trying to get
     def get_objects(self, look_for: ObjectType) -> list[tuple[Vector, list[GameObject]]]:
+        """
+        Zips together the game map's keys and values. A nested for loop then iterates through the zipped lists, and
+        looks for any objects that have the same object type that was passed in. A list of tuples containing the
+        coordinates and the objects found is returned.
+        """
+
         results: list[tuple[Vector, list[GameObject]]] = []
         found: list[GameObject] = []
 
-        for vector in self.game_map.keys():
-            for obj in self.game_map.keys():
-                if obj.object_type is look_for:
-                    found.append(obj)
+        # Zips the keys and values together
+        zipped: list[tuple[Vector, list[GameObject]]] = zip(self.game_map.keys(), self.game_map.values())
 
-            results.append((vector, found))
+        # Loops through the zipped list
+        for couple in zipped:
+            for obj in couple[1]:
+                if obj.object_type is look_for:
+                    found.append(obj)  # add the matching object to the found list
+
+            # add values to result if something was found
+            if len(found) > 0:
+                results.append((couple[0], found))  # Add tuple pairings and objects found
+                found = []  # reset the found list
 
         return results
 
@@ -359,8 +373,8 @@ class GameBoard(GameObject):
 
         # can simplify if wanted. will be fun puzzle :)
         data['game_map'] = None if self.game_map is None else \
-            {coord: tiles for (coord, tiles) in zip([vector.to_json() for vector in self.game_map.keys()],
-                                                    [self.game_map[key][0] for key in self.game_map.keys()])}
+            {coord: tiles for (coord, tiles) in list(zip([vector.to_json() for vector in self.game_map.keys()],
+                                                         [self.game_map[key][0] for key in self.game_map.keys()]))}
 
         # game map is a dictionary of vector:list of game objects; FIX THIS LATER
         # data["game_map"] = [tile.to_json() for tile in tiles] if self.game_map is not None else None
@@ -404,7 +418,6 @@ class GameBoard(GameObject):
         self.walled: bool = data["walled"]
         self.event_active: int = data['event_active']
 
-        # I hope this works :sob:
         self.game_map: dict[Vector, list[Tile]] = None if temp is None else \
             {coord.from_json(): tile.from_json() for (coord, tile) in temp}
         # self.game_map: dict[Vector, list[Tile]] = [
