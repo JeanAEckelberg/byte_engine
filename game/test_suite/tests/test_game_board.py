@@ -82,22 +82,25 @@ class TestGameBoard(unittest.TestCase):
 
     # test that get_objects works correctly with occupiable stations
     def test_get_objects_occupiable_station(self):
-        occupiable_stations: list[tuple[Vector, list[OccupiableStation]]] = self.game_board.get_objects(
+        occupiable_stations: list[tuple[Vector, list[GameObject]]] = self.game_board.get_objects(
             ObjectType.OCCUPIABLE_STATION)
         self.assertTrue(
             all(map(lambda occupiable_station: isinstance(occupiable_station[1][0], OccupiableStation),
                     occupiable_stations)))
         objects_stacked = [x[1] for x in occupiable_stations]
         objects_unstacked = [x for xs in objects_stacked for x in xs]
-        self.assertEqual(len(objects_unstacked), 6)
+        self.assertEqual(len(objects_unstacked), 5)
 
     def test_get_objects_occupiable_station_2(self):
-        occupiable_stations: list[tuple[Vector, list[OccupiableStation]]] = self.game_board.get_objects(
+        occupiable_stations: list[tuple[Vector, list[GameObject]]] = self.game_board.get_objects(
             ObjectType.OCCUPIABLE_STATION)
-        self.assertTrue(any(map(lambda vec_list: len(vec_list[1]) == 3, occupiable_stations)))
+
+        # checks if the list of GameObjects has 4 OccupiableStations in that list
+        self.assertTrue(any(map(lambda vec_list: len(vec_list[1]) == 4, occupiable_stations)))
+
         objects_stacked = [x[1] for x in occupiable_stations]
         objects_unstacked = [x for xs in objects_stacked for x in xs]
-        self.assertEqual(len(objects_unstacked), 6)
+        self.assertEqual(len(objects_unstacked), 5)
 
     # test that get_objects works correctly with avatar
     def test_get_objects_avatar(self):
@@ -115,6 +118,7 @@ class TestGameBoard(unittest.TestCase):
     def test_game_board_json(self):
         data: dict = self.game_board.to_json()
         temp: GameBoard = GameBoard().from_json(data)
+
         for (k, v), (x, y) in zip(self.locations.items(), temp.locations.items()):
             for (i, j), (a, b) in zip(zip(k, v), zip(x, y)):
                 self.assertEqual(i.object_type, a.object_type)

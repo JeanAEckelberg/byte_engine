@@ -229,8 +229,11 @@ class GameBoard(GameObject):
                 output[coords][0].occupied_by = Wall()
 
             if coords in self.locations.keys() and self.__can_place_validator(coords, tile):
+                for index, obj in enumerate(self.locations[coords]):
+                    output[coords][index].occupied_by = obj
+
                 # this doesn't account for assigning multiple things in the stack
-                output[coords][1].occupied_by = self.locations[coords]
+                # output[coords][1].occupied_by = self.locations[coords]
 
             # Increment coords
             if x == self.map_size.x - 1:
@@ -371,17 +374,20 @@ class GameBoard(GameObject):
     def to_json(self) -> dict:
         data: dict[str, object] = super().to_json()
 
-        # can simplify if wanted. will be fun puzzle :)
-        data['game_map'] = None if self.game_map is None else \
-            {coord: tiles for (coord, tiles) in list(zip([vector.to_json() for vector in self.game_map.keys()],
-                                                         [self.game_map[key][0] for key in self.game_map.keys()]))}
+        # data['game_map'] = None if self.game_map is None else \
+        #     {coord: tiles for (coord, tiles) in list(zip([vector.to_json() for vector in self.game_map.keys()],
+        #                                                  [self.game_map[key][0].to_json() for key in
+        #                                                   self.game_map.keys()]))}
+        data['game_map_vectors'] = [vec.to_json() for vec in self.game_map.keys()] if self.game_map is not None \
+            else None
+        data['game_map_objects'] = [[obj.to_json() for obj in v] for v in
+                                    self.game_map.values()] if self.game_map is not None else None
 
-        # game map is a dictionary of vector:list of game objects; FIX THIS LATER
         # data["game_map"] = [tile.to_json() for tile in tiles] if self.game_map is not None else None
         data["seed"] = self.seed
         data["map_size"] = self.map_size.to_json()
-        data["location_vectors"] = [[vec.to_json() for vec in k] for k in
-                                    self.locations.keys()] if self.locations is not None else None
+        data["location_vectors"] = [vec.to_json() for vec in self.locations.keys()] if self.locations is not None \
+            else None
         data["location_objects"] = [[obj.to_json() for obj in v] for v in
                                     self.locations.values()] if self.locations is not None else None
         data["walled"] = self.walled
@@ -409,7 +415,6 @@ class GameBoard(GameObject):
 
     def from_json(self, data: dict) -> Self:
         super().from_json(data)
-        temp = data["game_map"]
         self.seed: int | None = data["seed"]
         self.map_size: Vector = Vector().from_json(data["map_size"])
         self.locations: dict[tuple[Vector]:list[GameObject]] = {
@@ -418,8 +423,9 @@ class GameBoard(GameObject):
         self.walled: bool = data["walled"]
         self.event_active: int = data['event_active']
 
-        self.game_map: dict[Vector, list[Tile]] = None if temp is None else \
-            {coord.from_json(): tile.from_json() for (coord, tile) in temp}
+        self.game_map: dict[Vector: list[Tile]] = {
+            tuple(map(lambda vec: Vector().from_json(vec), k)): [self.__from_json_helper(obj) for obj in v] for k, v in
+            zip(data["game_map_vectors"], data["game_map_objects"])} if data["game_map_vectors"] is not None else None
         # self.game_map: dict[Vector, list[Tile]] = [
         #     [Tile().from_json(tile) for tile in y] for y in temp] if temp is not None else None
         return self

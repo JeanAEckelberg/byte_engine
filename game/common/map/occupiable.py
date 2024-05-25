@@ -32,7 +32,8 @@ class Occupiable(GameObject):
         # this can be discussed further, but it has been removed to allow for more flexibility
         if occupied_by is not None and not isinstance(occupied_by, GameObject):
             raise ValueError(
-                f'{self.__class__.__name__}.occupied_by must be None or an instance of GameObject. It is a(n) {occupied_by.__class__.__name__} with the value of {occupied_by}.')
+                f'{self.__class__.__name__}.occupied_by must be None or an instance of GameObject. It is a(n) '
+                f'{occupied_by.__class__.__name__} with the value of {occupied_by}.')
         self.__occupied_by = occupied_by
 
     def place_on_top_of_stack(self, game_object: GameObject) -> bool:
