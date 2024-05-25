@@ -26,7 +26,7 @@ class TestGameBoard(unittest.TestCase):
         self.item: Item = Item(10, None)
         self.wall: Wall = Wall()
         self.avatar: Avatar = Avatar()
-        self.locations: dict[tuple[Vector]:list[GameObject]] = {
+        self.locations: dict[Vector, list[GameObject]] = {
             Vector(0, 0): [Station(None)],
             Vector(1, 0): [OccupiableStation(self.item), Station(None)],
             Vector(2, 0): [OccupiableStation(self.item), OccupiableStation(self.item), OccupiableStation(self.item),
@@ -119,7 +119,11 @@ class TestGameBoard(unittest.TestCase):
         data: dict = self.game_board.to_json()
         temp: GameBoard = GameBoard().from_json(data)
 
-        for (k, v), (x, y) in zip(self.locations.items(), temp.locations.items()):
-            for (i, j), (a, b) in zip(zip(k, v), zip(x, y)):
-                self.assertEqual(i.object_type, a.object_type)
-                self.assertEqual(j.object_type, b.object_type)
+        self.assertEqual(self.game_board.seed, temp.seed)
+        self.assertEqual(self.game_board.map_size, temp.map_size)
+        self.assertEqual(self.game_board.walled, temp.walled)
+        self.assertEqual(self.game_board.event_active, temp.event_active)
+
+        self.assertEqual(self.game_board.game_map.keys(), temp.game_map.keys())
+
+        self.assertTrue(temp.game_map == self.game_board.game_map)

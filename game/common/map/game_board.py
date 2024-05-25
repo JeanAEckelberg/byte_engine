@@ -114,7 +114,7 @@ class GameBoard(GameObject):
     """
 
     def __init__(self, seed: int | None = None, map_size: Vector = Vector(),
-                 locations: dict[tuple[Vector]:list[GameObject]] | None = None, walled: bool = False):
+                 locations: dict[Vector, list[GameObject]] | None = None, walled: bool = False):
 
         super().__init__()
         # game_map is initially going to be None. Since generation is slow, call generate_map() as needed
@@ -400,6 +400,8 @@ class GameBoard(GameObject):
     def __from_json_helper(self, data: dict) -> GameObject:
         temp: ObjectType = ObjectType(data['object_type'])
         match temp:
+            case ObjectType.TILE:
+                return Tile().from_json(data)
             case ObjectType.WALL:
                 return Wall().from_json(data)
             case ObjectType.OCCUPIABLE_STATION:
@@ -417,14 +419,16 @@ class GameBoard(GameObject):
         super().from_json(data)
         self.seed: int | None = data["seed"]
         self.map_size: Vector = Vector().from_json(data["map_size"])
-        self.locations: dict[tuple[Vector]:list[GameObject]] = {
-            tuple(map(lambda vec: Vector().from_json(vec), k)): [self.__from_json_helper(obj) for obj in v] for k, v in
+
+        self.locations: dict[Vector, list[GameObject]] = {
+            Vector().from_json(k): [self.__from_json_helper(obj) for obj in v] for k, v in
             zip(data["location_vectors"], data["location_objects"])} if data["location_vectors"] is not None else None
+
         self.walled: bool = data["walled"]
         self.event_active: int = data['event_active']
 
-        self.game_map: dict[Vector: list[Tile]] = {
-            tuple(map(lambda vec: Vector().from_json(vec), k)): [self.__from_json_helper(obj) for obj in v] for k, v in
+        self.game_map: dict[Vector, list[GameObject]] = {
+            Vector().from_json(k): [self.__from_json_helper(obj) for obj in v] for k, v in
             zip(data["game_map_vectors"], data["game_map_objects"])} if data["game_map_vectors"] is not None else None
         # self.game_map: dict[Vector, list[Tile]] = [
         #     [Tile().from_json(tile) for tile in y] for y in temp] if temp is not None else None
