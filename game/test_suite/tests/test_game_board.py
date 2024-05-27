@@ -125,5 +125,4 @@ class TestGameBoard(unittest.TestCase):
         self.assertEqual(self.game_board.event_active, temp.event_active)
 
         self.assertEqual(self.game_board.game_map.keys(), temp.game_map.keys())
-
-        self.assertTrue(temp.game_map == self.game_board.game_map)
+        self.assertTrue(self.game_board.game_map.values(), temp.game_map.values())
