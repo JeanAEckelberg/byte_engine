@@ -76,7 +76,7 @@ class TestGameBoard(unittest.TestCase):
 
     # test that get_objects works correctly with stations
     def test_get_objects_station(self):
-        stations: list[tuple[Vector, list[Station]]] = self.game_board.get_objects(ObjectType.STATION)
+        stations: list[tuple[Vector, list[GameObject]]] = self.game_board.get_objects(ObjectType.STATION)
         self.assertTrue(all(map(lambda station: isinstance(station[1][0], Station), stations)))
         self.assertEqual(len(stations), 2)
 
@@ -104,15 +104,80 @@ class TestGameBoard(unittest.TestCase):
 
     # test that get_objects works correctly with avatar
     def test_get_objects_avatar(self):
-        avatars: list[tuple[Vector, list[Avatar]]] = self.game_board.get_objects(ObjectType.AVATAR)
+        avatars: list[tuple[Vector, list[GameObject]]] = self.game_board.get_objects(ObjectType.AVATAR)
         self.assertTrue(all(map(lambda avatar: isinstance(avatar[1][0], Avatar), avatars)))
         self.assertEqual(len(avatars), 1)
 
     # test that get_objects works correctly with walls
     def test_get_objects_wall(self):
-        walls: list[tuple[Vector, list[Wall]]] = self.game_board.get_objects(ObjectType.WALL)
+        walls: list[tuple[Vector, list[GameObject]]] = self.game_board.get_objects(ObjectType.WALL)
         self.assertTrue(all(map(lambda wall: isinstance(wall[1][0], Wall), walls)))
         self.assertEqual(len(walls), 1)
+
+    # testing a successful case of the place_on_top method
+    def test_place_on_top_occupiable(self):
+        success: bool = self.game_board.place_on_top(Vector(2, 0), Avatar())
+        objects: list[GameObject] = self.game_board.game_map[Vector(2, 0)]
+
+        # test return value is true
+        self.assertTrue(success)
+
+        # test all occupiable stations are still in the list
+        [self.assertEqual(objects[x].object_type, ObjectType.OCCUPIABLE_STATION) for x in range(1, len(objects) - 1)]
+
+        # test that the avatar is at the top of the list
+        self.assertEqual(objects[-1].object_type, ObjectType.AVATAR)
+
+    # testing another successful case of the place_on_top method
+    def test_place_under_top_object(self):
+        success: bool = self.game_board.place_on_top(Vector(0, 0), OccupiableStation())
+        objects: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
+
+        # test return value is true
+        self.assertTrue(success)
+
+        # test that the UnoccupiableStation is first before the Station
+        self.assertEqual(objects[0].object_type, ObjectType.OCCUPIABLE_STATION)
+        self.assertEqual(objects[1].object_type, ObjectType.STATION)
+
+    # testing a failing case of the place_on_top method
+    def test_place_on_top_fail(self):
+        before: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
+
+        success: bool = self.game_board.place_on_top(Vector(0, 0), Avatar())
+        objects: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
+
+        # test return value is false
+        self.assertFalse(success)
+
+        # test that the list hasn't changed
+        self.assertEqual(before, self.game_board.game_map[Vector(0, 0)])
+
+    def test_get_objects_from(self):
+        result: list[GameObject] = self.game_board.get_objects_from(Vector(2, 0), ObjectType.OCCUPIABLE_STATION)
+
+        # check if the resulting lists are the same
+        self.assertEqual(result, self.game_board.game_map[Vector(2, 0)])
+
+    def test_get_objects_from_fail(self):
+        result = self.game_board.get_objects_from(Vector(50, 0), ObjectType.OCCUPIABLE_STATION)
+        self.assertEqual(result, None)
+
+    def test_object_is_found_at(self):
+        result: bool = self.game_board.object_is_found_at(Vector(0, 0), ObjectType.STATION)
+        self.assertTrue(result)
+
+    def test_object_is_found_at_fail(self):
+        result: bool = self.game_board.object_is_found_at(Vector(0, 0), ObjectType.OCCUPIABLE_STATION)
+        self.assertFalse(result)
+
+    def test_get_all_objects_from(self):
+        result: list[GameObject] = self.game_board.get_all_objects_from(Vector(0, 0))
+        self.assertEqual(result, self.game_board.game_map[Vector(0, 0)])
+
+    def test_get_all_objects_from_fail(self):
+        result: list[GameObject] = self.game_board.get_all_objects_from(Vector(100, 0))
+        self.assertEqual(result, None)
 
     # test json method
     def test_game_board_json(self):

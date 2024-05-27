@@ -12,34 +12,29 @@ class Tile(Occupiable):
     """
     `Tile Class Notes:`
 
-        The Tile class exists to encapsulate all objects that could be placed on the gameboard.
+        Tiles are used as a placeholder object when generating the GameBoard.
 
-        Tiles will represent things like the floor in the game. They inherit from Occupiable, which allows for tiles to
-        have certain GameObjects and the avatar on it.
+        When the GameBoard is generated, it's specified where certain objects need to go. However, not every space on
+        the map may have something there. If that is the case, a Tile is used to ensure `None` values are avoided.
+
+        When something is meant to be placed on a Tile object, that new object takes its place.
+
+        Here is an example:
+
+            Current: [Tile]
+            Object to place: Station
+            Result: [Station]
+
+        Tiles are a great way to represent the floor when nothing else is present, but once something else should be
+        there, that should be the focus.
 
         If the game being developed requires different tiles with special properties, future classes may be added and
-        inherit from this class.
+        inherit from this class, and the rule about the Tile objects being replaced can always be removed.
     """
-    def __init__(self, occupied_by: GameObject = None):
-        super().__init__(occupied_by)
+    def __init__(self):
+        super().__init__()
         self.object_type: ObjectType = ObjectType.TILE
 
     def from_json(self, data: dict) -> Self:
         super().from_json(data)
-        occupied_by: dict | None = data['occupied_by']
-        if occupied_by is None:
-            self.occupied_by = None
-            return self
-        # Add all possible game objects that can occupy a tile here (requires python 3.10) 
-        match ObjectType(occupied_by['object_type']):
-            case ObjectType.AVATAR:
-                self.occupied_by: Avatar = Avatar().from_json(occupied_by)
-            case ObjectType.OCCUPIABLE_STATION:
-                self.occupied_by: OccupiableStation = OccupiableStation().from_json(occupied_by)
-            case ObjectType.STATION:
-                self.occupied_by: Station = Station().from_json(occupied_by)
-            case ObjectType.WALL:
-                self.occupied_by: Wall = Wall().from_json(occupied_by)
-            case _:
-                raise Exception(f'The object type of the object is not handled properly. The object type passed in is {occupied_by}.')
         return self

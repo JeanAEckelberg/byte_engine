@@ -86,6 +86,10 @@ class TestGameBoard(unittest.TestCase):
                                                f'It is a(n) {value.__class__.__name__} with the value of {value}.',
                                                False))
 
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # TEST IF GENERATING THE MAP WITH WALLS WORKS PROPERLY
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     # test walled
     def test_walled(self):
         self.game_board.walled = True
