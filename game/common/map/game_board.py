@@ -226,9 +226,10 @@ class GameBoard(GameObject):
             # Add walls
             if self.walled and (x == 0 or x == self.map_size.x or y == 0 or y == self.map_size.y):
                 # add a list containing one Wall object to create border
+                # if adding a wall, nothing should be below nor above it
                 output[coords] = [Wall()]
-
-            output.update({coords: to_place})
+            else:
+                output.update({coords: to_place})
 
             # if coords in self.locations and self.__can_place_validator(coords, tile):
             #     for index, obj in enumerate(self.locations[coords]):
@@ -354,7 +355,9 @@ class GameBoard(GameObject):
         self.__invalid_coord_check(coords, None)
 
         for obj in self.game_map[coords]:
-            return obj if obj.object_type == object_type else None
+            if obj.object_type == object_type:
+                self.game_map[coords].remove(obj)
+                return obj
 
     def __invalid_coord_check(self, coords: Vector, return_val: bool | None) -> bool | None:
         if coords not in self.game_map:

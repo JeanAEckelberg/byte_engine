@@ -26,10 +26,10 @@ class TestMovementControllerIfOccupiableStationIsOccupiable(unittest.TestCase):
 
         # (1, 0), (2, 0), (0, 1), (0, 2), (1, 3), (2, 3), (3, 1), (3, 2)
         self.locations: dict = {
-            (Vector(1, 0), Vector(2, 0), Vector(0, 1), Vector(0, 2)): [OccupiableStation(None, None),
-                                                                       OccupiableStation(None, None),
-                                                                       OccupiableStation(None, None),
-                                                                       OccupiableStation(None, None)],
+            (Vector(1, 0), Vector(2, 0), Vector(0, 1), Vector(0, 2)): [OccupiableStation(None),
+                                                                       OccupiableStation(None),
+                                                                       OccupiableStation(None),
+                                                                       OccupiableStation(None)],
             (Vector(1, 1),): [self.avatar, ],
         }
         self.game_board = GameBoard(0, Vector(3, 3), self.locations, False)

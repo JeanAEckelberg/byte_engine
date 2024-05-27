@@ -21,7 +21,7 @@ class OccupiableStation(Occupiable, Station):
         Occupiable Station Example is a small file that shows an example of how this class can be
         used. The example class can be deleted or expanded upon if necessary.
     """
-    def __init__(self, held_item: Item | None = None, ):
+    def __init__(self, held_item: Item | None = None):
         super().__init__(held_item=held_item)
         self.object_type: ObjectType = ObjectType.OCCUPIABLE_STATION
         self.held_item = held_item

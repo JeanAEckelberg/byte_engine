@@ -32,11 +32,10 @@ class PlaceController(Controller):
             case _:
                 return
 
-        place_tile = world.game_map[avatar_pos.y + pos_mod.y][avatar_pos.x + pos_mod.x]
+        updated_coords: Vector = avatar_pos.add_x_y(pos_mod.x, pos_mod.y)
 
-        self.__place_item(client, place_tile)
+        self.__place_item(client, updated_coords, world)
 
-    def __place_item(self, client: Player, tile: Tile) -> None:
-        if client.avatar.held_item and isinstance(tile.get_top_of_stack(), Occupiable):
-            tile.place_on_top_of_stack(client.avatar.held_item)
-            client.avatar.drop_held_item()
+    def __place_item(self, client: Player, updated_coords: Vector, world: GameBoard) -> None:
+        if client.avatar.held_item:
+            world.place_on_top(updated_coords, client.avatar.drop_held_item())

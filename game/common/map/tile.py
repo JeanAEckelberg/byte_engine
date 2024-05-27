@@ -17,13 +17,15 @@ class Tile(Occupiable):
         When the GameBoard is generated, it's specified where certain objects need to go. However, not every space on
         the map may have something there. If that is the case, a Tile is used to ensure `None` values are avoided.
 
-        When something is meant to be placed on a Tile object, that new object takes its place.
+        When something is meant to be placed on a Tile object, it will simply be appended to it.
 
         Here is an example:
 
             Current: [Tile]
             Object to place: Station
-            Result: [Station]
+            Result: [Tile, Station]
+
+        The additional objects are appended since it's more time efficient.
 
         Tiles are a great way to represent the floor when nothing else is present, but once something else should be
         there, that should be the focus.

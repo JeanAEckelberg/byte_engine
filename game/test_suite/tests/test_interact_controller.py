@@ -32,13 +32,13 @@ class TestInteractController(unittest.TestCase):
         self.station_example: StationExample = StationExample(self.item)
         self.occupiable_station_example = OccupiableStationExample(self.item)
         self.avatar: Avatar = Avatar(Vector(5, 5))
-        self.locations: dict[tuple[Vector]:list[GameObject]] = {
-            (Vector(1, 1),): [Station(None)],
-            (Vector(5, 4),): [self.occupiable_station_example],
-            (Vector(6, 5),): [self.station_example],
-            (Vector(4, 5),): [StationReceiverExample()],
-            (Vector(5, 5),): [self.avatar],
-            (Vector(5, 6),): [self.wall]
+        self.locations: dict[Vector, list[GameObject]] = {
+            Vector(1, 1): [Station(None)],
+            Vector(5, 4): [self.occupiable_station_example],
+            Vector(6, 5): [self.station_example],
+            Vector(4, 5): [StationReceiverExample()],
+            Vector(5, 5): [self.avatar],
+            Vector(5, 6): [self.wall]
         }
         self.game_board: GameBoard = GameBoard(1, Vector(10, 10), self.locations, False)
         self.player: Player = Player(None, None, [], self.avatar)

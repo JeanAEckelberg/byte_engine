@@ -50,4 +50,4 @@ class place_controller(unittest.TestCase):
     def test_place_right(self) -> None:
         self.place_controller.handle_actions(ActionType.PLACE_ITEM_RIGHT, self.client, self.game_board)
 
-        self.assertTrue(isinstance(self.game_board.game_map[1][2].occupied_by, Item))
+        self.assertTrue(isinstance(self.game_board.game_map[2][1].occupied_by, Item))
