@@ -38,4 +38,4 @@ class PlaceController(Controller):
 
     def __place_item(self, client: Player, updated_coords: Vector, world: GameBoard) -> None:
         if client.avatar.held_item:
-            world.place_on_top(updated_coords, client.avatar.drop_held_item())
+            world.place_on_top_of(updated_coords, client.avatar.drop_held_item())

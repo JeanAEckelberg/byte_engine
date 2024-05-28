@@ -116,7 +116,7 @@ class TestGameBoard(unittest.TestCase):
 
     # testing a successful case of the place_on_top method
     def test_place_on_top_occupiable(self):
-        success: bool = self.game_board.place_on_top(Vector(2, 0), Avatar())
+        success: bool = self.game_board.place_on_top_of(Vector(2, 0), Avatar())
         objects: list[GameObject] = self.game_board.game_map[Vector(2, 0)]
 
         # test return value is true
@@ -130,7 +130,7 @@ class TestGameBoard(unittest.TestCase):
 
     # testing another successful case of the place_on_top method
     def test_place_under_top_object(self):
-        success: bool = self.game_board.place_on_top(Vector(0, 0), OccupiableStation())
+        success: bool = self.game_board.place_on_top_of(Vector(0, 0), OccupiableStation())
         objects: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
 
         # test return value is true
@@ -144,7 +144,7 @@ class TestGameBoard(unittest.TestCase):
     def test_place_on_top_fail(self):
         before: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
 
-        success: bool = self.game_board.place_on_top(Vector(0, 0), Avatar())
+        success: bool = self.game_board.place_on_top_of(Vector(0, 0), Avatar())
         objects: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
 
         # test return value is false
@@ -178,6 +178,32 @@ class TestGameBoard(unittest.TestCase):
     def test_get_all_objects_from_fail(self):
         result: list[GameObject] = self.game_board.get_all_objects_from(Vector(100, 0))
         self.assertEqual(result, None)
+
+    # test that the removed object is returned
+    def test_remove_object_from(self):
+        before: GameObject = self.game_board.game_map[Vector(0, 0)][0]
+        after: GameObject = self.game_board.remove_object(Vector(0, 0), ObjectType.STATION)
+        self.assertEqual(before, after)
+
+    # test that the returned value is None due to the object not being found
+    def test_remove_object_from_none(self):
+        result = self.game_board.remove_object(Vector(0, 0), ObjectType.OCCUPIABLE_STATION)
+        self.assertEqual(result, None)
+
+    # test that None is returned because of a bad coordinate
+    def test_remove_object_from_bad_coord(self):
+        result = self.game_board.remove_object(Vector(100, 0), ObjectType.STATION)
+        self.assertEqual(result, None)
+
+    # test that all matching objects in the entire map are returned
+    def test_get_objects(self):
+        result: list[tuple[Vector, list[GameObject]]] = self.game_board.get_objects(ObjectType.OCCUPIABLE_STATION)
+        [[self.assertEqual(x.object_type, ObjectType.OCCUPIABLE_STATION) for x in sublist[1]] for sublist in result]
+
+    # test that an ObjectType that's not on the map returns an empty list
+    def test_get_objects_fail(self):
+        result: list[tuple[Vector, list[GameObject]]] = self.game_board.get_objects(ObjectType.OCCUPIABLE)
+        self.assertEqual(result, [])
 
     # test json method
     def test_game_board_json(self):
