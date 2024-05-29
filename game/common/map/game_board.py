@@ -177,7 +177,7 @@ class GameBoard(GameObject):
         return self.__locations
 
     @locations.setter
-    def locations(self, locations: dict[tuple[Vector]:list[GameObject]] | None) -> None:
+    def locations(self, locations: dict[Vector, list[GameObject]] | None) -> None:
         if self.game_map is not None:
             raise RuntimeError(f'{self.__class__.__name__} variables cannot be changed once generate_map is run.')
         if locations is not None and not isinstance(locations, dict):

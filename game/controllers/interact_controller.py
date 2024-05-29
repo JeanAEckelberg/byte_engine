@@ -60,7 +60,7 @@ class InteractController(Controller):
         # find result in interaction
         vector.x += client.avatar.position.x
         vector.y += client.avatar.position.y
-        stat: Station = world.game_map[vector]
+        stat: Station = world.get_top_of(vector)
 
         if stat is not None and isinstance(stat, Station):
             stat.take_action(client.avatar)
