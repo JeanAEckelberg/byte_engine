@@ -139,6 +139,7 @@ class TestGameBoard(unittest.TestCase):
         # test that the UnoccupiableStation is first before the Station
         self.assertEqual(objects[0].object_type, ObjectType.OCCUPIABLE_STATION)
         self.assertEqual(objects[1].object_type, ObjectType.STATION)
+        self.assertEqual(self.game_board.get_top_of(Vector(0, 0)).object_type, ObjectType.STATION)
 
     # testing a failing case of the place_on_top method
     def test_place_on_top_fail(self):
@@ -204,6 +205,11 @@ class TestGameBoard(unittest.TestCase):
     def test_get_objects_fail(self):
         result: list[tuple[Vector, list[GameObject]]] = self.game_board.get_objects(ObjectType.OCCUPIABLE)
         self.assertEqual(result, [])
+
+    # ensure the avatar position is stored properly
+    def test_avatar_pos_check(self):
+        pos: Vector = self.avatar.position
+        self.assertEqual(pos, Vector(0, 1))
 
     # test json method
     def test_game_board_json(self):

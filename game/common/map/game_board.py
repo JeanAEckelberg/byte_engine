@@ -177,7 +177,7 @@ class GameBoard(GameObject):
         return self.__locations
 
     @locations.setter
-    def locations(self, locations: dict[tuple[Vector]:list[GameObject]] | None) -> None:
+    def locations(self, locations: dict[Vector, list[GameObject]] | None) -> None:
         if self.game_map is not None:
             raise RuntimeError(f'{self.__class__.__name__} variables cannot be changed once generate_map is run.')
         if locations is not None and not isinstance(locations, dict):
@@ -228,7 +228,8 @@ class GameBoard(GameObject):
                 # add a list containing one Wall object to create border
                 # if adding a wall, nothing should be below nor above it
                 output[coords] = [Wall()]
-            else:
+            elif self.__valid_placement(to_place):
+                self.__assign_avatar_pos(coords, to_place)
                 output.update({coords: to_place})
 
             # if coords in self.locations and self.__can_place_validator(coords, tile):
@@ -245,13 +246,28 @@ class GameBoard(GameObject):
 
         return output
 
-    # def __can_place_validator(self, coords: Vector, locations_list: dict[tuple[Vector]:list[GameObject]]) -> bool:
-    #     for i in range(len(locations_list)):
-    #         if not isinstance(locations_list[i], Occupiable) and i < len(locations_list):
-    #             raise AttributeError(f'{self.__class__.__name__} Current location is unoccupiable. '
-    #                                  f'It is a(n) {locations_list[i].__class__.__name__} '
-    #                                  f'and is at {coords}. This object must be at the end  of the locations list.')
-    #         return True
+    def __valid_placement(self, to_place: list[GameObject]) -> bool:
+        # check that everything except the last object in the list is occupiable
+        for i in to_place[:len(to_place) - 1]:
+            if not isinstance(i, Occupiable):
+                raise AttributeError(f'{self.__class__.__name__} cannot generate the map with an unoccupiable object '
+                                     f'in the middle of a list of occupiable objects. Object of type {type(i)} was '
+                                     f'misplaced.')
+
+        return True
+
+    def __assign_avatar_pos(self, coords: Vector, to_place: list[GameObject]) -> None:
+        obj: GameObject = to_place[-1]
+        if isinstance(obj, Avatar):
+            obj.position = coords
+
+    def __can_place_validator(self, coords: Vector, locations_list: dict[tuple[Vector]:list[GameObject]]) -> bool:
+        for i in range(len(locations_list)):
+            if not isinstance(locations_list[i], Occupiable) and i < len(locations_list):
+                raise AttributeError(f'{self.__class__.__name__} Current location is unoccupiable. '
+                                     f'It is a(n) {locations_list[i].__class__.__name__} '
+                                     f'and is at {coords}. This object must be at the end  of the locations list.')
+            return True
 
     def place_on_top_of(self, coords: Vector, game_obj: GameObject) -> bool:
         """

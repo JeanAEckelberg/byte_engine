@@ -26,6 +26,7 @@ class MovementController(Controller):
         avatar_pos: Vector = Vector(client.avatar.position.x, client.avatar.position.y)
 
         pos_mod: Vector
+
         match action:
             case ActionType.MOVE_UP:
                 pos_mod = Vector(x=0, y=-1)
@@ -39,20 +40,12 @@ class MovementController(Controller):
                 return
 
         temp_vec: Vector = avatar_pos.add_to_vector(pos_mod)
-        # if tile is occupied return
-        temp: Tile = world.game_map[temp_vec.y][temp_vec.x]
-        while isinstance(temp.occupied_by, Occupiable):
-            temp: Tile = temp.occupied_by
-            
-        if temp.occupied_by is not None:
-            return 
-        
-        temp.occupied_by = client.avatar
-        
-        # while the object that occupies tile has the occupied by attribute, escalate check for avatar
-        temp: Tile = world.game_map[avatar_pos.y][avatar_pos.x]
-        while isinstance(temp.occupied_by, Occupiable):
-            temp = temp.occupied_by
 
-        temp.occupied_by = None
-        client.avatar.position = Vector(temp_vec.x, temp_vec.y)
+        # if the top of the given coordinates are not occupiable, return to do nothing
+        if not isinstance(world.get_top_of(temp_vec), Occupiable):
+            return
+
+        # add the avatar to the top of the list of the coordinate
+        world.place_on_top_of(temp_vec, client.avatar)
+
+        client.avatar.position = Vector(temp_vec.x, temp_vec.y)  # reassign the avatar's position
