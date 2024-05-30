@@ -41,11 +41,15 @@ class MovementController(Controller):
 
         temp_vec: Vector = avatar_pos.add_to_vector(pos_mod)
 
-        # if the top of the given coordinates are not occupiable, return to do nothing
-        if not isinstance(world.get_top_of(temp_vec), Occupiable):
+        # if the top of the given coordinates are not occupiable or are invalid, return to do nothing
+        if world.is_invalid_coords(temp_vec) or not world.is_occupiable(temp_vec):
             return
+
+        # remove the avatar from its previous location
+        world.remove_object(client.avatar.position, ObjectType.AVATAR)
 
         # add the avatar to the top of the list of the coordinate
         world.place_on_top_of(temp_vec, client.avatar)
 
-        client.avatar.position = Vector(temp_vec.x, temp_vec.y)  # reassign the avatar's position
+        # reassign the avatar's position
+        client.avatar.position = Vector(temp_vec.x, temp_vec.y)

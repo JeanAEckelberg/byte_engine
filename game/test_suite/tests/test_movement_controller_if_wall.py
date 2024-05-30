@@ -22,18 +22,19 @@ class TestMovementControllerIfWall(unittest.TestCase):
     def setUp(self) -> None:
         self.movement_controller = MovementController()
         self.avatar = Avatar(Vector(2, 2), 1)
-        self.locations: dict[tuple[Vector]: list[GameObject]] = {
-            (Vector(2, 2),): [self.avatar]
+
+        self.locations: dict[Vector: list[GameObject]] = {
+            Vector(2, 2): [self.avatar]
         }
-        self.game_board = GameBoard(0, Vector(4, 4), self.locations, True)
+
+        self.game_board = GameBoard(0, Vector(3, 3), self.locations, True)
         self.station = Station()
         self.occupiable_station = OccupiableStation()
         self.wall = Wall()
-        # test movements up, down, left and right by starting with default 3,3 then know if it changes from there \/
         self.client = Player(None, None, [], self.avatar)
         self.game_board.generate_map()
         self.utils = game.test_suite.utils
-    # if there is a wall
+
     def test_move_up(self):
         self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
         self.assertEqual((str(self.client.avatar.position)), str(Vector(2, 1)))

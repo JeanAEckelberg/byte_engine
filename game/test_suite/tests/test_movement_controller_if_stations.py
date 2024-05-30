@@ -1,5 +1,6 @@
 import unittest
 
+from game.common.game_object import GameObject
 from game.controllers.movement_controller import MovementController
 from game.common.map.game_board import GameBoard
 from game.common.stations.station import Station
@@ -19,18 +20,26 @@ class TestMovementControllerIfStations(unittest.TestCase):
 
     def setUp(self) -> None:
         self.movement_controller = MovementController()
-        # (1, 0), (2, 0), (0, 1), (0, 2), (1, 3), (2, 3), (3, 1), (3, 2)
-        self.locations: dict = {(Vector(1, 0), Vector(2, 0), Vector(0, 1), Vector(0, 2), Vector(1, 3), Vector(2, 3),
-                                 Vector(3, 1), Vector(3, 2)): [Station(None), Station(None), Station(None),
-                                                               Station(None), Station(None), Station(None),
-                                                               Station(None), Station(None)]}
+        self.avatar = Avatar(Vector(2, 2), 1)
+
+        self.locations: dict[Vector: list[GameObject]] = {
+            Vector(1, 0): [Station(None)],
+            Vector(2, 0): [Station(None)],
+            Vector(0, 1): [Station(None)],
+            Vector(0, 2): [Station(None)],
+            Vector(1, 3): [Station(None)],
+            Vector(2, 3): [Station(None)],
+            Vector(3, 1): [Station(None)],
+            Vector(3, 2): [Station(None)],
+            Vector(2, 2): [self.avatar]
+        }
+
         self.game_board = GameBoard(0, Vector(4, 4), self.locations, False)
         # test movements up, down, left and right by starting with default 3,3 then know if it changes from there \/
-        self.avatar = Avatar(Vector(2, 2), 1)
         self.client = Player(None, None, [], self.avatar)
         self.game_board.generate_map()
         self.utils = game.test_suite.utils
-    # if there is a station
+
     def test_move_up_fail(self):
         self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
         self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)

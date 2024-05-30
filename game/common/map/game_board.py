@@ -301,16 +301,28 @@ class GameBoard(GameObject):
                 Failure
         :param coords:
         :param game_obj:
-        :return: True or False representing a success or not
+        :return: True to represent a success
         """
 
-        # if given invalid coordinates, or if neither given object nor top of stack are Occupiable, don't place anything
-        # also, if the given game_obj is None, return False
-        if (self.__is_invalid_coord(coords) or (not isinstance(game_obj, Occupiable) and
-                                                not isinstance(self.game_map[coords][-1],
-                                                               Occupiable)) or game_obj is None
-                or isinstance(self.game_map[coords][-1], Wall)):
-            return False
+        # if given invalid coordinates, or if neither given object nor top of stack are Occupiable, raise an error
+        if self.is_invalid_coords(coords):
+            raise ValueError(f'{self.__class__.__name__}.place_on_top_of() was given the following nonexistent '
+                             f'coordinates: {str(coords)}.')
+
+        # If the passed in object is not a game object, raise an error
+        if game_obj is None or not isinstance(game_obj, GameObject):
+            raise ValueError(
+                f'{self.__class__.__name__}.place_on_top_of() can only place GameObjects. None values are'
+                f'not accepted.')
+
+        # If placing an unoccupiable object on an unoccupiable object, raise an error
+        if not isinstance(game_obj, Occupiable) and not isinstance(self.game_map[coords][-1], Occupiable):
+            raise ValueError(f'{self.__class__.__name__}.place_on_top_of() cannot place the unoccupiable object of type '
+                             f'{type(game_obj)} under or above the top-most object of type {type(game_obj)}.')
+
+        # If attempting to place an object on a Wall, raise an error
+        if isinstance(self.game_map[coords][-1], Wall):
+            raise ValueError(f'{self.__class__.__name__}.place_on_top_of() cannot place objects above or below a Wall.')
 
         top_of_stack: GameObject = self.game_map[coords][-1]
         location_objects: list[GameObject] = self.game_map[coords]
@@ -323,7 +335,20 @@ class GameBoard(GameObject):
         return True
 
     def get_top_of(self, coords: Vector) -> GameObject:
+        """
+        Returns the last object in the list of objects located at the given coordinate.
+        :param coords:
+        :return: the last GameObject in list of coordinates
+        """
+
+        if self.is_invalid_coords(coords):
+            raise ValueError(f'{self.__class__.__name__}.get_top_of was given the following nonexistent coordinates: '
+                             f'{coords}.')
+
         return self.game_map[coords][-1]
+
+    def is_occupiable(self, coords: Vector) -> bool:
+        return isinstance(self.get_top_of(coords), Occupiable)
 
     def get_objects_from(self, coords: Vector, object_type: ObjectType) -> list[GameObject] | None:
         """
@@ -358,7 +383,7 @@ class GameBoard(GameObject):
         :return: True or False to determine if the object is at that location
         """
 
-        if self.__is_invalid_coord(coords):
+        if self.is_invalid_coords(coords):
             return False
 
         return any(map(lambda obj: obj.object_type == object_type, self.game_map[coords]))
@@ -372,7 +397,7 @@ class GameBoard(GameObject):
         :return: removed GameObject or None
         """
 
-        if self.__is_invalid_coord(coords):
+        if self.is_invalid_coords(coords):
             return None
 
         objects = self.game_map[coords]
@@ -382,13 +407,13 @@ class GameBoard(GameObject):
                 self.game_map[coords].remove(obj)
 
             if len(objects) == 0:
-                # if the list is empty, replace it as a list containing a single Tile object
-                objects = [Tile()]
+                # if the list is empty, append a single Tile object
+                objects.append(Tile())
                 return obj
 
         return None
 
-    def __is_invalid_coord(self, coords: Vector) -> bool:
+    def is_invalid_coords(self, coords: Vector) -> bool:
         """
         Determines if coodinates are in the game map or not.
         :param coords:

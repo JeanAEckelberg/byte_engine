@@ -9,7 +9,7 @@ from game.common.map.wall import Wall
 from game.utils.vector import Vector
 from game.common.game_object import GameObject
 from game.common.map.game_board import GameBoard
-import game.test_suite.utils
+from game.test_suite.utils import spell_check
 
 
 class TestGameBoard(unittest.TestCase):
@@ -37,42 +37,41 @@ class TestGameBoard(unittest.TestCase):
 
         self.game_board: GameBoard = GameBoard(1, Vector(3, 3), self.locations, False)
         self.game_board.generate_map()
-        self.utils = game.test_suite.utils
 
     # test that seed cannot be set after generate_map
     def test_seed_fail(self):
         with self.assertRaises(RuntimeError) as e:
             self.game_board.seed = 20
-        self.assertTrue(self.utils.spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
-                                                                 'generate_map is run.', False))
+        self.assertTrue(spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
+                                                      'generate_map is run.', False))
 
     # test that map_size cannot be set after generate_map
     def test_map_size_fail(self):
         with self.assertRaises(RuntimeError) as e:
             self.game_board.map_size = Vector(1, 1)
-        self.assertTrue(self.utils.spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
-                                                                 'generate_map is run.', False))
+        self.assertTrue(spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
+                                                      'generate_map is run.', False))
 
     # test that locations cannot be set after generate_map
     def test_locations_fail(self):
         with self.assertRaises(RuntimeError) as e:
             self.game_board.locations = self.locations
-        self.assertTrue(self.utils.spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
-                                                                 'generate_map is run.', False))
+        self.assertTrue(spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
+                                                      'generate_map is run.', False))
 
     # test that locations raises RuntimeError even with incorrect data type
     def test_locations_incorrect_fail(self):
         with self.assertRaises(RuntimeError) as e:
             self.game_board.locations = Vector(1, 1)
-        self.assertTrue(self.utils.spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
-                                                                 'generate_map is run.', False))
+        self.assertTrue(spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
+                                                      'generate_map is run.', False))
 
     # test that walled cannot be set after generate_map
     def test_walled_fail(self):
         with self.assertRaises(RuntimeError) as e:
             self.game_board.walled = False
-        self.assertTrue(self.utils.spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
-                                                                 'generate_map is run.', False))
+        self.assertTrue(spell_check(str(e.exception), 'GameBoard variables cannot be changed once '
+                                                      'generate_map is run.', False))
 
     # test that get_objects works correctly with stations
     def test_get_objects_station(self):
@@ -141,18 +140,30 @@ class TestGameBoard(unittest.TestCase):
         self.assertEqual(objects[1].object_type, ObjectType.STATION)
         self.assertEqual(self.game_board.get_top_of(Vector(0, 0)).object_type, ObjectType.STATION)
 
-    # testing a failing case of the place_on_top method
-    def test_place_on_top_fail(self):
+    # testing an invalid coordinate raising an error
+    def test_place_on_top_of_invalid_coordinate(self):
         before: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
 
-        success: bool = self.game_board.place_on_top_of(Vector(0, 0), Avatar())
-        objects: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
-
-        # test return value is false
-        self.assertFalse(success)
+        with self.assertRaises(ValueError) as e:
+            self.game_board.place_on_top_of(Vector(100, 0), Avatar())
+        self.assertTrue(
+            spell_check(str(e.exception), f'GameBoard.place_on_top_of() was given the following nonexistent '
+                                          f'coordinates: (100, 0).', True))
 
         # test that the list hasn't changed
         self.assertEqual(before, self.game_board.game_map[Vector(0, 0)])
+
+    # testing a non-game object/None value raises an error
+    def test_place_on_top_of_not_game_object(self):
+        pass
+
+    # testing a placing an unoccupiable object on another unoccupiable object
+    def test_place_on_top_of_unoccupiable(self):
+        pass
+
+    # testing placing on top/beneath a wall raises an error
+    def test_place_on_top_of_wall(self):
+        pass
 
     def test_get_objects_from(self):
         result: list[GameObject] = self.game_board.get_objects_from(Vector(2, 0), ObjectType.OCCUPIABLE_STATION)

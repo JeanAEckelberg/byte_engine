@@ -2,13 +2,12 @@ import unittest
 
 from game.common.action import ActionType
 from game.common.avatar import Avatar
+from game.common.game_object import GameObject
 from game.common.map.game_board import GameBoard
-from game.common.map.wall import Wall
 from game.common.player import Player
 from game.common.stations.occupiable_station import OccupiableStation
 from game.controllers.movement_controller import MovementController
 from game.utils.vector import Vector
-from game.common.stations.station import Station
 
 
 class TestMovementControllerIfOccupiableStationIsOccupiable(unittest.TestCase):
@@ -24,18 +23,18 @@ class TestMovementControllerIfOccupiableStationIsOccupiable(unittest.TestCase):
 
         self.avatar = Avatar(None, 1)
 
-        # (1, 0), (2, 0), (0, 1), (0, 2), (1, 3), (2, 3), (3, 1), (3, 2)
-        self.locations: dict = {
-            (Vector(1, 0), Vector(2, 0), Vector(0, 1), Vector(0, 2)): [OccupiableStation(None),
-                                                                       OccupiableStation(None),
-                                                                       OccupiableStation(None),
-                                                                       OccupiableStation(None)],
-            (Vector(1, 1),): [self.avatar, ],
+        self.locations: dict[Vector, list[GameObject]] = {
+            Vector(1, 0): [OccupiableStation(None)],
+            Vector(2, 0): [OccupiableStation(None)],
+            Vector(0, 1): [OccupiableStation(None)],
+            Vector(0, 2): [OccupiableStation(None)],
+            Vector(1, 1): [self.avatar],
         }
+
         self.game_board = GameBoard(0, Vector(3, 3), self.locations, False)
         self.occ_station = OccupiableStation()
-        # self.wall = Wall()
-        # test movements up, down, left and right by starting with default 3,3 then know if it changes from there \/
+
+        # test movements up, down, left and right by starting with default 3,3 then know if it changes from there
         self.client = Player(None, None, [], self.avatar)
         self.game_board.generate_map()
 

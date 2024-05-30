@@ -41,4 +41,4 @@ class TestPlaceController(unittest.TestCase):
     def test_place_right(self) -> None:
         self.place_controller.handle_actions(ActionType.PLACE_ITEM_RIGHT, self.client, self.game_board)
 
-        self.assertTrue(isinstance(self.game_board.game_map[Vector(2, 2)], Item))
+        self.assertTrue(isinstance(self.game_board.get_top_of(Vector(2, 2)), Item))
