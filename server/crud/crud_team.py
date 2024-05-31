@@ -21,7 +21,7 @@ def create(team: TeamBase, db: Session) -> Team:
 
 
 # read most recent team
-def read(db: Session, id: int, eager: bool = False) -> Team | None:
+def read(db: Session, id: str, eager: bool = False) -> Team | None:
     """
     This method will create an entry in the ``Team`` table based on the team.py file. Refer to the
     ``models`` package for more information about team.py.

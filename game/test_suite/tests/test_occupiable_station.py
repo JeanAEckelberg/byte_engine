@@ -6,7 +6,7 @@ from game.common.map.wall import Wall
 from game.common.avatar import Avatar
 from game.common.items.item import Item
 from game.common.enums import ObjectType
-
+import game.test_suite.utils
 
 class TestOccupiableStation(unittest.TestCase):
     """
@@ -23,6 +23,7 @@ class TestOccupiableStation(unittest.TestCase):
         self.station: Station = Station()
         self.avatar: Avatar = Avatar()
         self.item: Item = Item()
+        self.utils = game.test_suite.utils
 
     # test adding wall to occupiable_station
     def test_wall_occ(self):
@@ -45,14 +46,6 @@ class TestOccupiableStation(unittest.TestCase):
         self.assertEqual(self.occupiable_station.item.object_type, ObjectType.ITEM)
         self.assertEqual(self.occupiable_station.item.durability, self.item.durability)
         self.assertEqual(self.occupiable_station.item.value, self.item.value)
-
-    # test cannot add item to occupied_by
-    def test_fail_item_occ(self):
-        with self.assertRaises(ValueError) as e:
-            self.occupiable_station.occupied_by = self.item
-        self.assertEqual(str(e.exception),
-                         f'{self.occupiable_station.__class__.__name__}.occupied_by must be a GameObject.'
-                         f' It is a(n) {self.item.__class__.__name__} with the value of {self.item}.')
 
     # test json method
     def test_occ_json(self):

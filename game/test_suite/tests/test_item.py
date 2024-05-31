@@ -3,6 +3,7 @@ import unittest
 from game.common.avatar import Avatar
 from game.common.items.item import Item
 from game.common.enums import ObjectType
+import game.test_suite.utils
 
 
 class TestItem(unittest.TestCase):
@@ -15,6 +16,7 @@ class TestItem(unittest.TestCase):
     def setUp(self) -> None:
         self.avatar: Avatar = Avatar(None, 1)
         self.item: Item = Item()
+        self.utils = game.test_suite.utils
 
     # test set durability
     def test_set_durability(self):
@@ -29,17 +31,20 @@ class TestItem(unittest.TestCase):
         value: str = 'fail'
         with self.assertRaises(ValueError) as e:
             self.item.durability = value
-        self.assertEqual(str(e.exception), f'Item.durability must be an int. It is a(n) {value.__class__.__name__} with the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Item.durability must be an int. It is a(n) '
+                                                                 f'{value.__class__.__name__} with the value of '
+                                                                 f'{value}.', False))
 
     def test_set_durability_stack_size_fail(self):
-        value: list = Item(10,None,10,10)
+        value: Item = Item(10, None, 10, 10)
         value2: int = 10
         with self.assertRaises(ValueError) as e:
             self.item = value
             self.item.durability = value2
-        self.assertEqual(str(e.exception), f'Item.durability must be set to None if stack_size is not equal to 1.'
-                                           f' {value.__class__.__name__}.'
-                                           f'durability has the value of {value2}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Item.durability must be set to None if stack_size'
+                                                                 f' is not equal to 1.'
+                                                                 f' {value.__class__.__name__}.'
+                                                                 f'durability has the value of {value2}.', False))
 
     # test set value
     def test_set_value(self):
@@ -50,8 +55,9 @@ class TestItem(unittest.TestCase):
         value: str = 'fail'
         with self.assertRaises(ValueError) as e:
             self.item.value = value
-        self.assertEqual(str(e.exception), f'Item.value must be an int.'
-                                           f' It is a(n) {value.__class__.__name__} with the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Item.value must be an int.'
+                                                                 f' It is a(n) {value.__class__.__name__} with the value of {value}.'
+                                               , False))
 
     # test set quantity
     def test_set_quantity(self):
@@ -63,16 +69,17 @@ class TestItem(unittest.TestCase):
         value: str = 'fail'
         with self.assertRaises(ValueError) as e:
             self.item.quantity = value
-        self.assertEqual(str(e.exception), f'Item.quantity must be an int.'
-                                           f' It is a(n) {value.__class__.__name__} with the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Item.quantity must be an int.'
+                                                                 f' It is a(n) {value.__class__.__name__} with the value'
+                                                                 f' of {value}.', False))
 
     def test_set_quantity_fail_greater_than_0(self):
         value: Item = -1
         with self.assertRaises(ValueError) as e:
             self.item.quantity = value
-        self.assertEqual(str(e.exception), f'Item.quantity must be greater than or '
-                                           f'equal to 0. {self.item.__class__.__name__}.quantity '
-                                           f'has the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Item.quantity must be greater than or '
+                                                                 f'equal to 0. {self.item.__class__.__name__}.quantity '
+                                                                 f'has the value of {value}.', False))
 
     def test_set_quantity_fail_stack_size(self):
         value: Item = 10
@@ -80,8 +87,10 @@ class TestItem(unittest.TestCase):
         with self.assertRaises(ValueError) as e:
             self.item.quantity = value
             self.item.stack_size = value2
-        self.assertEqual(str(e.exception), f'Item.quantity cannot be greater than '
-                             f'{self.item.__class__.__name__}.stack_size. {self.item.__class__.__name__}.quantity has the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Item.quantity cannot be greater than '
+                                                                 f'{self.item.__class__.__name__}.stack_size. '
+                                                                 f'{self.item.__class__.__name__}.quantity has '
+                                                                 f'the value of {value}.', False))
 
     def test_stack_size(self):
         self.item = Item(10, None, 10, 10)
@@ -91,8 +100,9 @@ class TestItem(unittest.TestCase):
         value: str = 'fail'
         with self.assertRaises(ValueError) as e:
             self.item.stack_size = value
-        self.assertEqual(str(e.exception), f'Item.stack_size must be an int.'
-                                           f' It is a(n) {value.__class__.__name__} with the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Item.stack_size must be an int.'
+                                                                 f' It is a(n) {value.__class__.__name__} with the value'
+                                                                 f' of {value}.',False))
 
     def test_stack_size_fail_quantity(self):
         # value, durability, quantity, stack size
@@ -100,8 +110,10 @@ class TestItem(unittest.TestCase):
         with self.assertRaises(ValueError) as e:
             item: Item = Item(10, None, 10, 10)
             item.stack_size = value
-        self.assertEqual(str(e.exception), f'Item.stack_size must be greater than or equal to the quantity.'
-                                           f' {self.item.__class__.__name__}.stack_size has the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception), f'Item.stack_size must be greater than or equal '
+                                                                 f'to the quantity. '
+                                                                 f'{self.item.__class__.__name__}.stack_size has the '
+                                                                 f'value of {value}.', False))
 
     def test_pick_up(self):
         # value, durability, quantity, stack size

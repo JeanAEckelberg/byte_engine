@@ -5,11 +5,11 @@ from game.common.avatar import Avatar
 from game.common.items.item import Item
 from game.common.stations.station import Station
 from game.common.stations.occupiable_station import OccupiableStation
-from game.common.map.tile import Tile
 from game.common.map.wall import Wall
 from game.utils.vector import Vector
 from game.common.game_object import GameObject
 from game.common.map.game_board import GameBoard
+import game.test_suite.utils
 
 
 class TestGameBoard(unittest.TestCase):
@@ -35,6 +35,7 @@ class TestGameBoard(unittest.TestCase):
             (Vector(5, 6),): [self.wall]
         }
         self.game_board: GameBoard = GameBoard(1, Vector(10, 10), self.locations, False)
+        self.utils = game.test_suite.utils
 
     # test seed
     def test_seed(self):
@@ -45,9 +46,10 @@ class TestGameBoard(unittest.TestCase):
         value: str = 'False'
         with self.assertRaises(ValueError) as e:
             self.game_board.seed = value
-        self.assertEqual(str(e.exception),
-                         f'GameBoard.seed must be an int. '
-                         f'It is a(n) {value.__class__.__name__} with the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception),
+                                               f'GameBoard.seed must be an int. '
+                                               f'It is a(n) {value.__class__.__name__} with the value of {value}.',
+                                               False))
 
     # test map_size
     def test_map_size(self):
@@ -58,9 +60,10 @@ class TestGameBoard(unittest.TestCase):
         value: str = 'wow'
         with self.assertRaises(ValueError) as e:
             self.game_board.map_size = value
-        self.assertEqual(str(e.exception),
-                         f'GameBoard.map_size must be a Vector.'
-                         f' It is a(n) {value.__class__.__name__} with the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception),
+                                               f'GameBoard.map_size must be a Vector. '
+                                               f'It is a(n) {value.__class__.__name__} with the value of {value}.',
+                                               False))
 
     # test locations
     def test_locations(self):
@@ -77,10 +80,11 @@ class TestGameBoard(unittest.TestCase):
         value: str = 'wow'
         with self.assertRaises(ValueError) as e:
             self.game_board.locations = value
-        self.assertEqual(str(e.exception),
-                         f'Locations must be a dict. The key must be a tuple of Vector Objects,'
-                         f' and the value a list of GameObject. '
-                         f'It is a(n) {value.__class__.__name__} with the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception),
+                                               f'Locations must be a dict. The key must be a tuple of Vector Objects, '
+                                               f'and the value a list of GameObject. '
+                                               f'It is a(n) {value.__class__.__name__} with the value of {value}.',
+                                               False))
 
     # test walled
     def test_walled(self):
@@ -91,9 +95,10 @@ class TestGameBoard(unittest.TestCase):
         value: str = 'wow'
         with self.assertRaises(ValueError) as e:
             self.game_board.walled = value
-        self.assertEqual(str(e.exception),
-                         f'GameBoard.walled must be a bool.'
-                         f' It is a(n) {value.__class__.__name__} with the value of {value}.')
+        self.assertTrue(self.utils.spell_check(str(e.exception),
+                                               f'GameBoard.walled must be a bool. '
+                                               f'It is a(n) {value.__class__.__name__} with the value of {value}.',
+                                               False))
 
     # test json method
     def test_game_board_json(self):

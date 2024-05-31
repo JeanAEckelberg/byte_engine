@@ -58,24 +58,15 @@ class PlaybackTemplate:
         self.fastest_speed_button: Button = Button(self.screen, '4x', lambda: PlaybackButtons.FASTEST_SPEED_BUTTON,
                                                    font_size=18)
 
-        self.prev_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                          Vector(-80, 225)).as_tuple()
-        self.pause_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                           Vector(0, 225)).as_tuple()
-        self.next_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                          Vector(80, 225)).as_tuple()
-        self.start_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                           Vector(-80, 275)).as_tuple()
-        self.save_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                          Vector(0, 275)).as_tuple()
-        self.end_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                         Vector(80, 275)).as_tuple()
-        self.normal_speed_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                                  Vector(-80, 325)).as_tuple()
-        self.fast_speed_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                                Vector(0, 325)).as_tuple()
-        self.fastest_speed_button.rect.center = Vector.add_vectors(Vector(*self.screen.get_rect().center),
-                                                                   Vector(80, 325)).as_tuple()
+        self.prev_button.rect.center = Vector(*self.screen.get_rect().center).add_x_y(-80, 225).as_tuple()
+        self.pause_button.rect.center = Vector(*self.screen.get_rect().center).add_y(225).as_tuple()
+        self.next_button.rect.center = Vector(*self.screen.get_rect().center).add_x_y(80, 225).as_tuple()
+        self.start_button.rect.center = Vector(*self.screen.get_rect().center).add_x_y(-80, 275).as_tuple()
+        self.save_button.rect.center = Vector(*self.screen.get_rect().center).add_y(275).as_tuple()
+        self.end_button.rect.center = Vector(*self.screen.get_rect().center).add_x_y(80, 275).as_tuple()
+        self.normal_speed_button.rect.center = Vector(*self.screen.get_rect().center).add_x_y(-80, 325).as_tuple()
+        self.fast_speed_button.rect.center = Vector(*self.screen.get_rect().center).add_y(325).as_tuple()
+        self.fastest_speed_button.rect.center = Vector(*self.screen.get_rect().center).add_x_y(80, 325).as_tuple()
 
     def playback_render(self) -> None:
         """

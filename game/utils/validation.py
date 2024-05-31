@@ -4,20 +4,15 @@ import re
 from game.config import ALLOWED_MODULES
 
 
-def verify_code(filename, already_string=False):
+def verify_code(filename: str) -> ([], bool, bool):
     """
     This file is used to verify a client's code. It helps to prevent certain attempts at purposefully interfering with the
     code and competition.
     """
-    contents = None
+    with open(filename, 'r') as f:
+        contents = f.read()
 
-    if already_string:
-        contents = filename
-    else:
-        with open(filename, 'r') as f:
-            contents = f.read()
-
-    contents = contents.split('\n')
+    contents = contents.splitlines()
 
     illegal_imports = list()
     uses_open = False
@@ -30,25 +25,23 @@ def verify_code(filename, already_string=False):
                 break
 
             # Check for illegal keywords
-            if 'from' in token:
+            if 'from' == token:
                 module = line[line.index('from') + 1]
                 if module not in ALLOWED_MODULES:
                     illegal_imports.append(module)
                 else:
                     break
-            elif 'import' in token:
+            elif 'import' == token:
                 module = line[line.index('import') + 1]
                 if module not in ALLOWED_MODULES:
                     illegal_imports.append(module)
                 else:
                     break
-            if 'open' in token:
-                uses_open = True
+            uses_open = 'open(' in token
 
-            if 'print' in token:
-                uses_print = True
+            uses_print = 'print(' in token
 
-    return (illegal_imports, uses_open, uses_print)
+    return illegal_imports, uses_open, uses_print
 
 def verify_num_clients(clients, set_clients, min_clients, max_clients):
     res = None
