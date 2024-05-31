@@ -248,10 +248,10 @@ class GameBoard(GameObject):
 
     def __valid_placement(self, to_place: list[GameObject]) -> bool:
         # check that everything except the last object in the list is occupiable
-        for i in to_place[:len(to_place) - 1]:
-            if not isinstance(i, Occupiable):
+        for obj in to_place[:len(to_place) - 1]:
+            if not isinstance(obj, Occupiable):
                 raise AttributeError(f'{self.__class__.__name__} cannot generate the map with an unoccupiable object '
-                                     f'in the middle of a list of occupiable objects. Object of type {type(i)} was '
+                                     f'in the middle of a list of occupiable objects. Object of type {type(obj)} was '
                                      f'misplaced.')
 
         return True
@@ -310,15 +310,15 @@ class GameBoard(GameObject):
                              f'coordinates: {str(coords)}.')
 
         # If the passed in object is not a game object, raise an error
-        if game_obj is None or not isinstance(game_obj, GameObject):
+        if game_obj is None:
             raise ValueError(
-                f'{self.__class__.__name__}.place_on_top_of() can only place GameObjects. None values are'
-                f'not accepted.')
+                f'{self.__class__.__name__}.place_on_top_of() cannot use None values.')
 
         # If placing an unoccupiable object on an unoccupiable object, raise an error
         if not isinstance(game_obj, Occupiable) and not isinstance(self.game_map[coords][-1], Occupiable):
-            raise ValueError(f'{self.__class__.__name__}.place_on_top_of() cannot place the unoccupiable object of type '
-                             f'{type(game_obj)} under or above the top-most object of type {type(game_obj)}.')
+            raise ValueError(f'{self.__class__.__name__}.place_on_top_of() cannot place the unoccupiable object of '
+                             f'type {game_obj.__class__.__name__} under or above the top-most object of type '
+                             f'{self.game_map[coords][-1].__class__.__name__}.')
 
         # If attempting to place an object on a Wall, raise an error
         if isinstance(self.game_map[coords][-1], Wall):

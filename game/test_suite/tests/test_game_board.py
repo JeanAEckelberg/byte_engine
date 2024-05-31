@@ -6,6 +6,7 @@ from game.common.items.item import Item
 from game.common.stations.station import Station
 from game.common.stations.occupiable_station import OccupiableStation
 from game.common.map.wall import Wall
+from game.controllers.movement_controller import MovementController
 from game.utils.vector import Vector
 from game.common.game_object import GameObject
 from game.common.map.game_board import GameBoard
@@ -113,8 +114,8 @@ class TestGameBoard(unittest.TestCase):
         self.assertTrue(all(map(lambda wall: isinstance(wall[1][0], Wall), walls)))
         self.assertEqual(len(walls), 1)
 
-    # testing a successful case of the place_on_top method
-    def test_place_on_top_occupiable(self):
+    # testing a successful case of the place_on_top_of method
+    def test_place_on_top_of_occupiable(self):
         success: bool = self.game_board.place_on_top_of(Vector(2, 0), Avatar())
         objects: list[GameObject] = self.game_board.game_map[Vector(2, 0)]
 
@@ -146,20 +147,47 @@ class TestGameBoard(unittest.TestCase):
 
         with self.assertRaises(ValueError) as e:
             self.game_board.place_on_top_of(Vector(100, 0), Avatar())
-        self.assertTrue(
-            spell_check(str(e.exception), f'GameBoard.place_on_top_of() was given the following nonexistent '
-                                          f'coordinates: (100, 0).', True))
+        self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() was given the '
+                                                      f'following nonexistent coordinates: (100, 0).', False))
 
         # test that the list hasn't changed
         self.assertEqual(before, self.game_board.game_map[Vector(0, 0)])
 
-    # testing a non-game object/None value raises an error
+    # testing placing a None value raises an error
     def test_place_on_top_of_not_game_object(self):
-        pass
+        before: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
 
-    # testing a placing an unoccupiable object on another unoccupiable object
+        # test placing a None value
+        with self.assertRaises(ValueError) as e:
+            self.game_board.place_on_top_of(Vector(0, 0), None)
+        self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() cannot use None values.',
+                                    True))
+
+        # test that the list hasn't changed
+        self.assertEqual(before, self.game_board.game_map[Vector(0, 0)])
+
+    # testing placing an unoccupiable object on another unoccupiable object fails
     def test_place_on_top_of_unoccupiable(self):
-        pass
+        before: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
+
+        # test placing a GameObject that doesn't inherit from occupiable works
+        with self.assertRaises(ValueError) as e:
+            self.game_board.place_on_top_of(Vector(0, 0), Station())
+        self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() cannot place the unoccupiable '
+                                                      f'object of type Station under or above the top-most object of '
+                                                      f'type Station.', True))
+
+        # test that the list hasn't changed
+        self.assertEqual(before, self.game_board.game_map[Vector(0, 0)])
+
+        # test placing a non-GameObject doesn't work.
+        with self.assertRaises(ValueError) as e:
+            self.game_board.place_on_top_of(Vector(0, 0), MovementController())
+        self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() cannot place the unoccupiable '
+                                                      f'object of type MovementController under or above the top-most '
+                                                      f'object of type Station.', True))
+        # test that the list hasn't changed
+        self.assertEqual(before, self.game_board.game_map[Vector(0, 0)])
 
     # testing placing on top/beneath a wall raises an error
     def test_place_on_top_of_wall(self):
