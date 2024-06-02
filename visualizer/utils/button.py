@@ -15,17 +15,19 @@ Color: TypeAlias = str | int | tuple[int, int, int, Optional[int]] | list[
 # Class for colors used for button class
 class ButtonColors:
     """
-    Class for using colors for the Button class
+    Class for using colors for the Button class.
 
-    Can select three colors for both the text and button: default, mouse hover, and mouse clicked
+    Can select three colors for both the text and button: default, mouse hover, and mouse clicked.
 
-    Parameters:
-    fg_color           :  Used to store default text color              Default - #daa520
-    fg_color_hover     :  Text color for hovering over button           Default - #fff000
-    fg_color_clicked   :  Text color for clicking button                Default - #1ceb42
-    bg_color           :  bg color for button                           Default - #7851a9
-    bg_color_hover     :  bg color for hovering over button             Default - #9879bf
-    bg_color_clicked   :  bg color for clicking button                  Default - #604187
+    Defaults used unless otherwise stated:
+    ::
+
+        fg_color           :  #daa520
+        fg_color_hover     :  #fff000
+        fg_color_clicked   :  #1ceb42
+        bg_color           :  #7851a9
+        bg_color_hover     :  #9879bf
+        bg_color_clicked   :  #604187
 
     In future projects, defaults for button colors should be changed according to style of game for ease of code
     """
@@ -36,6 +38,15 @@ class ButtonColors:
                  bg_color: Color = pygame.Color('#7851a9'),
                  bg_color_hover: Color = pygame.Color('#9879bf'),
                  bg_color_clicked: Color = pygame.Color('#604187')):
+        """
+        All parameters are ``pygame.Color``. Refer to `here <https://www.pygame.org/docs/ref/color.html>`_.
+        :param fg_color: Used to store default text color.
+        :param fg_color_hover: Text color for hovering over button.
+        :param fg_color_clicked: Text color for clicking button.
+        :param bg_color: bg color for button.
+        :param bg_color_hover: bg color for hovering over button.
+        :param bg_color_clicked: bg color for clicking button.
+        """
         self.fg_color: Color = fg_color
         self.fg_color_hover: Color = fg_color_hover
         self.fg_color_clicked: Color = fg_color_clicked
@@ -130,19 +141,19 @@ class Button(Text):
     """
     Class that creates an intractable button extending the Text class.
 
-    Defaults same as defaults used in Text class.
-    Must give an action the button can perform upon being clicked
-    Can select padding for bg button and amount the border_radius for the bg button
+    Must give an action the button can perform upon being clicked.
+    Can select padding for bg button and amount the border_radius for the bg button.
 
-    Parameters:
-    Text              :  All parameters from the Text class (screen, text, font_size, font_name, fg_color, position)
-    action            :  Action performed when button is clicked
-    colors            :  Of type ButtonColors, contains all colors used in Button class       Default - ButtonColors()
-    padding           :  Amount of padding given to bg rect                                   Default - 5
-    click_duration  :  Duration of click on button (milliseconds)                           Default - 100
-    border_radius     :  Level of smoothing to corners of button                              Default - 5
+    All parameters of Text are the same defaults of the Text class.
+    Defaults used unless otherwise stated:
+    ::
 
-    In future projects, defaults for button style should be changed according to style of game for ease of code
+        colors           :  ButtonColors()
+        padding          :  5
+        click_duration   :  100
+        border_radius    :  5
+
+    In future projects, defaults for button style should be changed according to style of game for ease of code.
     """
 
     def __init__(self, screen: pygame.Surface, text: str, action: Callable,
@@ -153,6 +164,20 @@ class Button(Text):
                  border_radius: int = 5,
                  click_duration: int = 100,
                  position: Vector = Vector(0, 0)):
+        """
+        Parameters screen, text, font_size, font_name, fg_color, and position are all parameters used in
+        Text. Refer to :docs:`text`.
+        :param screen:
+        :param text:
+        :param action: Action performed when button is clicked.
+        :param font_size:
+        :param font_name:
+        :param colors: Of type ButtonColors, contains all colors used in Button class.
+        :param padding: Amount of padding given to bg rect.
+        :param border_radius: Level of smoothing to corners of button.
+        :param click_duration: Duration of click on button (milliseconds).
+        :param position:
+        """
         super().__init__(screen, text, font_size, font_name, colors.fg_color, position)
         self.colors: ButtonColors = colors
         self.padding: int = padding
@@ -239,7 +264,7 @@ class Button(Text):
     def get_bg_rect(self) -> pygame.Rect:
         """
         This method gets the background Rect of the button.
-        :return: pygame.Rect
+        :return: pygame.Rect. Refer to `here <https://www.pygame.org/docs/ref/rect.html>`_.
         """
         self.position = Vector(*self.rect.topleft)
         return pygame.Rect(
@@ -256,8 +281,10 @@ class Button(Text):
         """
         return self.action(*args, **kwargs)
 
-    # Method for rendering button, called by render method in adapter class
     def render(self) -> None:
+        """
+        Method for rendering button, called by render method in adapter class.
+        """
         # Count isClicked up by seconds (get_ticks gets time in milliseconds)
         self.__isClicked = math.floor(pygame.time.get_ticks() - self.__clickedTime)
         # Get bg_rect
@@ -275,8 +302,15 @@ class Button(Text):
         # Render text on top of button
         super().render()
 
-    # Method for when button is clicked, called by on_event method in adapter
     def mouse_clicked(self, event: pygame.event, default: Any = None, *args, **kwargs) -> Any:
+        """
+        Method for when button is clicked, called by on_event method in adapter
+        :param event: pygame.event. Refer to `here <https://www.pygame.org/docs/ref/event.html>`_.
+        :param default: what happens when button is not clicked.
+        :param args:
+        :param kwargs:
+        :return:
+        """
         # Get bg_rect
         bg_rect: pygame.Rect = self.get_bg_rect()
         # If both the mouse is hovering over the button and clicks, change color and execute self.action

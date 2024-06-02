@@ -3,62 +3,60 @@ from game.utils.vector import Vector
 
 class Config:
     """
-    Config
-    ------
-        Configuration class for the game visualizer. By encapsulating the visualizer settings in a class, the readonly
-        nature of the following settings are enforced to a greater degree.
+    Configuration class for the game visualizer. By encapsulating the visualizer settings in a class, the readonly
+    nature of the following settings are enforced to a greater degree.
 
-    Number Of Frames Per Turn
-    +++++++++++++++++++++++++
+    **Number Of Frames Per Turn**
         Number of frames per turn is an int representing the number of animation frames on
         each turn. See spritesheets for an example of what is needed for 4 frames per turn.
         Set this to 1 if you do not want any animations.
+
     -----
 
-    Tile Size
-    +++++++++
+    **Tile Size**
         Tile size is an int that represents the size of each sprite (it's a square, so this
         applies to both width and height).
+
     -----
 
-    Scale
-    +++++
+    **Scale**
         Scale is an int that represents the ratio between the tile size and the number of
         pixels that it will take on the visualizer itself.
+
     -----
 
-    Screen Size
-    +++++++++++
+    **Screen Size**
         Screen size is a Vector that represents the dimensions of the visualizer.
+
     -----
 
-    Frame Rate
-    ++++++++++
+    **Frame Rate**
         Frame rate is an int that represents the number of frames per second.
+
     -----
 
-    Background Color
-    ++++++++++++++++
+    **Background Color**
         Background Color is a tuple of 3 ints representing the red, green, and blue values
         of the background.
+
     -----
 
-    Gameboard Margin Left
-    +++++++++++++++++++++
+    **Gameboard Margin Left**
         Gameboard Margin Left is an int representing the margin from the left side
         of the screen that the gameboard will adhere to.
+
     -----
 
-    Gameboard Margin Top
-    ++++++++++++++++++++
+    **Gameboard Margin Top**
         Gameboard Margin Top is an int representing the margin from the top side of
         the screen that the gameboard will adhere to.
+
     -----
 
-    Visualize Held Items
-    ++++++++++++++++++++
+    **Visualize Held Items**
         Visualize Held Items is a boolean that represents if held items should be
         rendered and has supporting ByteSprites.
+
     -----
     """
 

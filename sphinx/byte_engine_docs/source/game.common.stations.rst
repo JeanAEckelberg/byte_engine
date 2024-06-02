@@ -1,50 +1,53 @@
 Stations Package
 ================
 
+Submodules
+----------
+
 Occupiable Station Class
 ------------------------
 
 .. automodule:: game.common.stations.occupiable_station
    :members:
-   :no-undoc-members:
+   :undoc-members:
    :show-inheritance:
 
------
-
 Occupiable Station Example Class
---------------------------------
+--------------------------------------------------------
 
 .. automodule:: game.common.stations.occupiable_station_example
    :members:
-   :no-undoc-members:
+   :undoc-members:
    :show-inheritance:
 
------
-
-Station Class
--------------
+Station Module
+--------------
 
 .. automodule:: game.common.stations.station
    :members:
-   :no-undoc-members:
+   :undoc-members:
    :show-inheritance:
 
------
-
-Station Example Class
----------------------
+Station Example
+---------------
 
 .. automodule:: game.common.stations.station_example
    :members:
-   :no-undoc-members:
+   :undoc-members:
    :show-inheritance:
 
------
-
-Station Receiver Example Class
-------------------------------
+Station Receiver Example
+------------------------
 
 .. automodule:: game.common.stations.station_receiver_example
    :members:
-   :no-undoc-members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: game.common.stations
+   :members:
+   :undoc-members:
    :show-inheritance:

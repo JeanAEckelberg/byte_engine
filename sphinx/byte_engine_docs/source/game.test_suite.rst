@@ -1,15 +1,37 @@
 Test Suite Package
 ==================
 
+Subpackages
+-----------
+
 .. toctree::
    :maxdepth: 4
 
    game.test_suite.tests
 
-Runner.py File
---------------
+Submodules
+----------
+
+Runner File
+-----------
 
 .. automodule:: game.test_suite.runner
    :members:
-   :no-undoc-members:
+   :undoc-members:
+   :show-inheritance:
+
+Utils File
+----------
+
+.. automodule:: game.test_suite.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: game.test_suite
+   :members:
+   :undoc-members:
    :show-inheritance:
