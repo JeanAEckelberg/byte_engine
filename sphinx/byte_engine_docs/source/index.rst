@@ -28,6 +28,9 @@ README Document
 
 .. toctree::
    game
+   visualizer
+   server
+   db_viewer
 
 -----
 

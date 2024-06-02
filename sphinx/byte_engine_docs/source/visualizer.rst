@@ -1,4 +1,4 @@
-Test Suite Package
+Visualizer Package
 ==================
 
 Subpackages
@@ -7,23 +7,32 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   game.test_suite.tests
+   visualizer.bytesprites
+   visualizer.templates
 
 Submodules
 ----------
 
-Runner File
------------
+Adapter Class
+-------------
 
-.. automodule:: game.test_suite.runner
+.. automodule:: visualizer.adapter
    :members:
    :undoc-members:
    :show-inheritance:
 
-Utils File
+Config File
+-----------
+
+.. automodule:: visualizer.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Main Class
 ----------
 
-.. automodule:: game.test_suite.utils
+.. automodule:: visualizer.main
    :members:
    :undoc-members:
    :show-inheritance:
@@ -31,7 +40,7 @@ Utils File
 Module contents
 ---------------
 
-.. automodule:: game.test_suite
+.. automodule:: visualizer
    :members:
    :undoc-members:
    :show-inheritance:

@@ -29,6 +29,7 @@ class Avatar(GameObject):
         **Picking up items:**
 
             Example 1:
+                ::
                 When you pick up an item (which will now be referred to as picked_up_item), picked_up_item has a given
                 quantity. In this case, let's say the quantity of picked_up_item is 2.
 
