@@ -3,6 +3,7 @@ import unittest
 from game.common.enums import ObjectType
 from game.common.avatar import Avatar
 from game.common.items.item import Item
+from game.common.map.game_object_container import GameObjectContainer
 from game.common.stations.station import Station
 from game.common.stations.occupiable_station import OccupiableStation
 from game.common.map.wall import Wall
@@ -116,22 +117,23 @@ class TestGameBoard(unittest.TestCase):
 
     # testing a successful case of the place_on_top_of method
     def test_place_on_top_of_occupiable(self):
-        success: bool = self.game_board.place_on_top_of(Vector(2, 0), Avatar())
-        objects: list[GameObject] = self.game_board.game_map[Vector(2, 0)]
+        success: bool = self.game_board.place(Vector(2, 0), Avatar())
+        container: GameObjectContainer = self.game_board.game_map[Vector(2, 0)]
 
         # test return value is true
         self.assertTrue(success)
 
         # test all occupiable stations are still in the list
-        [self.assertEqual(objects[x].object_type, ObjectType.OCCUPIABLE_STATION) for x in range(1, len(objects) - 1)]
+        [self.assertEqual(container.get_objects()[x].object_type, ObjectType.OCCUPIABLE_STATION)
+         for x in range(len(container.get_objects()) - 1)]
 
         # test that the avatar is at the top of the list
-        self.assertEqual(objects[-1].object_type, ObjectType.AVATAR)
+        self.assertEqual(container.get_objects()[-1].object_type, ObjectType.AVATAR)
 
     # testing another successful case of the place_on_top method
     def test_place_under_top_object(self):
-        success: bool = self.game_board.place_on_top_of(Vector(0, 0), OccupiableStation())
-        objects: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
+        success: bool = self.game_board.place(Vector(0, 0), OccupiableStation())
+        objects: GameObjectContainer = self.game_board.game_map[Vector(0, 0)]
 
         # test return value is true
         self.assertTrue(success)
@@ -143,10 +145,10 @@ class TestGameBoard(unittest.TestCase):
 
     # testing an invalid coordinate raising an error
     def test_place_on_top_of_invalid_coordinate(self):
-        before: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
+        before: GameObjectContainer = self.game_board.game_map[Vector(0, 0)]
 
         with self.assertRaises(ValueError) as e:
-            self.game_board.place_on_top_of(Vector(100, 0), Avatar())
+            self.game_board.place(Vector(100, 0), Avatar())
         self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() was given the '
                                                       f'following nonexistent coordinates: (100, 0).', False))
 
@@ -155,11 +157,11 @@ class TestGameBoard(unittest.TestCase):
 
     # testing placing a None value raises an error
     def test_place_on_top_of_not_game_object(self):
-        before: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
+        before: GameObjectContainer = self.game_board.game_map[Vector(0, 0)]
 
         # test placing a None value
         with self.assertRaises(ValueError) as e:
-            self.game_board.place_on_top_of(Vector(0, 0), None)
+            self.game_board.place(Vector(0, 0), None)
         self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() cannot use None values.',
                                     True))
 
@@ -168,11 +170,11 @@ class TestGameBoard(unittest.TestCase):
 
     # testing placing an unoccupiable object on another unoccupiable object fails
     def test_place_on_top_of_unoccupiable(self):
-        before: list[GameObject] = self.game_board.game_map[Vector(0, 0)]
+        before: GameObjectContainer = self.game_board.game_map[Vector(0, 0)]
 
         # test placing a GameObject that doesn't inherit from occupiable works
         with self.assertRaises(ValueError) as e:
-            self.game_board.place_on_top_of(Vector(0, 0), Station())
+            self.game_board.place(Vector(0, 0), Station())
         self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() cannot place the unoccupiable '
                                                       f'object of type Station under or above the top-most object of '
                                                       f'type Station.', True))
@@ -182,7 +184,7 @@ class TestGameBoard(unittest.TestCase):
 
         # test placing a non-GameObject doesn't work.
         with self.assertRaises(ValueError) as e:
-            self.game_board.place_on_top_of(Vector(0, 0), MovementController())
+            self.game_board.place(Vector(0, 0), MovementController())
         self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() cannot place the unoccupiable '
                                                       f'object of type MovementController under or above the top-most '
                                                       f'object of type Station.', True))
@@ -222,17 +224,17 @@ class TestGameBoard(unittest.TestCase):
     # test that the removed object is returned
     def test_remove_object_from(self):
         before: GameObject = self.game_board.game_map[Vector(0, 0)][0]
-        after: GameObject = self.game_board.remove_object(Vector(0, 0), ObjectType.STATION)
+        after: GameObject = self.game_board.remove(Vector(0, 0), ObjectType.STATION)
         self.assertEqual(before, after)
 
     # test that the returned value is None due to the object not being found
     def test_remove_object_from_none(self):
-        result = self.game_board.remove_object(Vector(0, 0), ObjectType.OCCUPIABLE_STATION)
+        result = self.game_board.remove(Vector(0, 0), ObjectType.OCCUPIABLE_STATION)
         self.assertEqual(result, None)
 
     # test that None is returned because of a bad coordinate
     def test_remove_object_from_bad_coord(self):
-        result = self.game_board.remove_object(Vector(100, 0), ObjectType.STATION)
+        result = self.game_board.remove(Vector(100, 0), ObjectType.STATION)
         self.assertEqual(result, None)
 
     # test that all matching objects in the entire map are returned

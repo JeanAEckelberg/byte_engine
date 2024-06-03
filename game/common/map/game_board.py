@@ -1,9 +1,10 @@
+import ast
 import random
 from typing import Self
-
 from game.common.avatar import Avatar
 from game.common.enums import *
 from game.common.game_object import GameObject
+from game.common.map.game_object_container import GameObjectContainer
 from game.common.map.occupiable import Occupiable
 from game.common.map.tile import Tile
 from game.common.map.wall import Wall
@@ -118,13 +119,13 @@ class GameBoard(GameObject):
 
         super().__init__()
         # game_map is initially going to be None. Since generation is slow, call generate_map() as needed
-        self.game_map: dict[Vector, list[GameObject]] | None = None
+        self.game_map: dict[Vector, GameObjectContainer] | None = None
         self.seed: int | None = seed
         random.seed(seed)
         self.object_type: ObjectType = ObjectType.GAMEBOARD
         self.event_active: int | None = None
         self.map_size: Vector = map_size
-        # when passing Vectors as a tuple, end the tuple of Vectors with a comma so it is recognized as a tuple
+        # when passing Vectors as a tuple, end the tuple of Vectors with a comma, so it is recognized as a tuple
         self.locations: dict | None = locations
         self.walled: bool = walled
 
@@ -143,16 +144,16 @@ class GameBoard(GameObject):
         self.__seed = seed
 
     @property
-    def game_map(self) -> dict[Vector, list[GameObject]] | None:
+    def game_map(self) -> dict[Vector, GameObjectContainer] | None:
         return self.__game_map
 
     @game_map.setter
-    def game_map(self, game_map: dict[Vector, list[GameObject]] | None) -> None:
-        if game_map is not None and (not isinstance(game_map, dict) or len(game_map) == 0 or
-                                     any(map(lambda x: not isinstance(x, list), game_map.values())) or
-                                     any([not isinstance(sublist[0], GameObject) for sublist in game_map.values()])):
+    def game_map(self, game_map: dict[Vector, GameObjectContainer] | None) -> None:
+        if game_map is not None and not isinstance(game_map, dict) \
+                and any([not isinstance(vec, Vector) or not isinstance(go_container, GameObjectContainer)
+                         for vec, go_container in game_map.items()]):
             raise ValueError(
-                f'{self.__class__.__name__}.game_map must be a dict[Vector, list[GameBoard]].'
+                f'{self.__class__.__name__}.game_map must be a dict[Vector, GameObjectContainer].'
                 f'It has a value of {game_map}.'
             )
 
@@ -207,172 +208,35 @@ class GameBoard(GameObject):
         # Dictionary Init
         self.game_map = self.__map_init()
 
-    def __map_init(self) -> dict[Vector, list[GameObject]]:
-        # tile: list[Tile] = [Tile(), ]
-        x: int = 0
-        y: int = 0
+    def __map_init(self) -> dict[Vector, GameObjectContainer]:
+        output: dict[Vector, GameObjectContainer] = dict()
 
-        output: dict[Vector, list[GameObject]] = {}
+        # Update all Avatar positions if they are to be placed on the map
+        for vec, objs in self.locations.items():
+            for obj in objs:
+                if isinstance(obj, Avatar):
+                    obj.position = vec
 
-        for iteration in range(self.map_size.x * self.map_size.y):
-            x = iteration % self.map_size.x
+        # Generate the walls
+        output.update({Vector(x=x, y=0): GameObjectContainer([Wall(), ]) for x in range(self.map_size.x)})
+        output.update({Vector(x=x, y=self.map_size.y - 1): GameObjectContainer([Wall(), ])
+                       for x in range(self.map_size.x)})
+        output.update({Vector(x=0, y=y): GameObjectContainer([Wall(), ]) for y in range(1, self.map_size.y - 1)})
+        output.update({Vector(x=self.map_size.x - 1, y=y): GameObjectContainer([Wall(), ])
+                       for y in range(1, self.map_size.y - 1)})
 
-            coords: Vector = Vector(x, y)
-
-            # the list of objects to place at a coordinate will be specified by the locations dictionary
-            # if nothing is specified, the default value to be used is a list with one Tile object as a placeholder
-            to_place: list[GameObject] | list = self.locations.get(coords, [Tile()])
-
-            # Add walls
-            if self.walled and (x == 0 or x == self.map_size.x or y == 0 or y == self.map_size.y):
-                # add a list containing one Wall object to create border
-                # if adding a wall, nothing should be below nor above it
-                output[coords] = [Wall()]
-            elif self.__valid_placement(to_place):
-                self.__assign_avatar_pos(coords, to_place)
-                output.update({coords: to_place})
-
-            # if coords in self.locations and self.__can_place_validator(coords, tile):
-            #     for index, obj in enumerate(self.locations[coords]):
-            #         output[coords][index].occupied_by = obj
-
-            # this doesn't account for assigning multiple things in the stack
-            # output[coords][1].occupied_by = self.locations[coords]
-
-            # Increment coords
-            if x == self.map_size.x - 1:
-                x = 0
-                y += 1
-
+        # convert locations dict to go_container
+        output.update({vec: GameObjectContainer(objs) for vec, objs in self.locations.items()})
         return output
 
-    def __valid_placement(self, to_place: list[GameObject]) -> bool:
-        # check that everything except the last object in the list is occupiable
-        for obj in to_place[:len(to_place) - 1]:
-            if not isinstance(obj, Occupiable):
-                raise AttributeError(f'{self.__class__.__name__} cannot generate the map with an unoccupiable object '
-                                     f'in the middle of a list of occupiable objects. Object of type {type(obj)} was '
-                                     f'misplaced.')
+    def place(self, coords: Vector, game_obj: GameObject | None) -> bool:
+        return self.game_map[coords].place(game_obj)
 
-        return True
+    def remove(self, coords: Vector, object_type: ObjectType) -> GameObject | None:
+        return self.game_map[coords].remove(object_type)
 
-    def __assign_avatar_pos(self, coords: Vector, to_place: list[GameObject]) -> None:
-        obj: GameObject = to_place[-1]
-        if isinstance(obj, Avatar):
-            obj.position = coords
-
-    def __can_place_validator(self, coords: Vector, locations_list: dict[tuple[Vector]:list[GameObject]]) -> bool:
-        for i in range(len(locations_list)):
-            if not isinstance(locations_list[i], Occupiable) and i < len(locations_list):
-                raise AttributeError(f'{self.__class__.__name__} Current location is unoccupiable. '
-                                     f'It is a(n) {locations_list[i].__class__.__name__} '
-                                     f'and is at {coords}. This object must be at the end  of the locations list.')
-            return True
-
-    def place_on_top_of(self, coords: Vector, game_obj: GameObject) -> bool:
-        """
-        Attempts to place the given GameObject on the given coordinate if the coordinate is valid. If the top-most
-        object inherits from Occupiable, the given object will be placed. If the top-most object *doesn't* inherit
-        from Occupiable, but the given object does, it will be placed below the unoccupiable object. If the neither
-        the top-most object nor the given object inherit from Occupiable, it will not be placed. If the top-most object
-        is a wall, nothing will be placed at all.
-
-        Examples
-
-        1:
-            - Top of stack object: OccupiableStation1
-            - Given: OcccupiableStation2
-            - Result: OccupiableStation1 -> OccupiableStation2
-                Success
-        2:
-            - Top of stack object: Avatar
-            - Given: Occupiable Station
-            - Result: OccupiableStation, Avatar
-                Success
-        3:
-            - Top of stack object: Station
-            - Given: Avatar
-            - Result: Station
-                Failure
-        4:
-            - Top of stack object: Wall
-            - Given: Avatar
-            - Result: Wall
-                Failure
-        :param coords:
-        :param game_obj:
-        :return: True to represent a success
-        """
-
-        # if given invalid coordinates, or if neither given object nor top of stack are Occupiable, raise an error
-        if self.is_invalid_coords(coords):
-            raise ValueError(f'{self.__class__.__name__}.place_on_top_of() was given the following nonexistent '
-                             f'coordinates: {str(coords)}.')
-
-        # If the passed in object is not a game object, raise an error
-        if game_obj is None:
-            raise ValueError(
-                f'{self.__class__.__name__}.place_on_top_of() cannot use None values.')
-
-        # If placing an unoccupiable object on an unoccupiable object, raise an error
-        if not isinstance(game_obj, Occupiable) and not isinstance(self.game_map[coords][-1], Occupiable):
-            raise ValueError(f'{self.__class__.__name__}.place_on_top_of() cannot place the unoccupiable object of '
-                             f'type {game_obj.__class__.__name__} under or above the top-most object of type '
-                             f'{self.game_map[coords][-1].__class__.__name__}.')
-
-        # If attempting to place an object on a Wall, raise an error
-        if isinstance(self.game_map[coords][-1], Wall):
-            raise ValueError(f'{self.__class__.__name__}.place_on_top_of() cannot place objects above or below a Wall.')
-
-        top_of_stack: GameObject = self.game_map[coords][-1]
-        location_objects: list[GameObject] = self.game_map[coords]
-
-        # if the top object is Occupiable, add the given object to the end of the list
-        # otherwise, it's placed below the top (the insert method handles this while using the -1 index)
-        location_objects.append(game_obj) if isinstance(top_of_stack, Occupiable) \
-            else location_objects.insert(-1, game_obj)
-
-        return True
-
-    def get_top_of(self, coords: Vector) -> GameObject:
-        """
-        Returns the last object in the list of objects located at the given coordinate.
-        :param coords:
-        :return: the last GameObject in list of coordinates
-        """
-
-        if self.is_invalid_coords(coords):
-            raise ValueError(f'{self.__class__.__name__}.get_top_of was given the following nonexistent coordinates: '
-                             f'{coords}.')
-
-        return self.game_map[coords][-1]
-
-    def is_occupiable(self, coords: Vector) -> bool:
-        return isinstance(self.get_top_of(coords), Occupiable)
-
-    def get_objects_from(self, coords: Vector, object_type: ObjectType) -> list[GameObject] | None:
-        """
-        Given a valid coordinate, return a filtered list of all objects that have the given ObjectType. If no objects
-        are found, return None.
-        :param coords:
-        :param object_type:
-        :return: a list of GameObjects or None
-        """
-
-        if coords not in self.game_map:
-            return None
-
-        return list(filter(lambda obj: obj.object_type == object_type, self.game_map[coords]))
-
-    def get_all_objects_from(self, coords: Vector) -> list[GameObject] | None:
-        """
-        Returns the list of GameObjects from the given coordinate if the coordinate is valid. Returns None if the
-        coordinate is invalid.
-        :param coords:
-        :return: a list of GameObjects or None
-        """
-
-        return self.game_map[coords] if coords in self.game_map else None
+    def get_top(self, coords: Vector) -> GameObject | None:
+        return self.game_map[coords].get_top()
 
     def object_is_found_at(self, coords: Vector, object_type: ObjectType) -> bool:
         """
@@ -383,45 +247,27 @@ class GameBoard(GameObject):
         :return: True or False to determine if the object is at that location
         """
 
-        if self.is_invalid_coords(coords):
+        if not self.is_valid_coords(coords):
             return False
 
-        return any(map(lambda obj: obj.object_type == object_type, self.game_map[coords]))
+        return self.game_map[coords].get_objects(object_type) is not None
 
-    def remove_object(self, coords: Vector, object_type: ObjectType) -> GameObject | None:
+    def is_valid_coords(self, coords: Vector) -> bool:
         """
-        Removes the first instance of the given ObjectType from the valid coordinate. The removed object is returned if
-        applicable.
+        Check if the given coordinates are valid. In order to do so, the following criteria must be met:
+            - The given coordinates must be in the self.game_map dictionary keys first *and* the last object at that
+                coordinate must be Occupiable
+            - Otherwise, the coordinates must be within the size of the game map
+
         :param coords:
-        :param object_type:
-        :return: removed GameObject or None
+        :return: True if the coordinates are in the
         """
 
-        if self.is_invalid_coords(coords):
-            return None
-
-        objects = self.game_map[coords]
-
-        for obj in objects:
-            if obj.object_type == object_type:
-                self.game_map[coords].remove(obj)
-
-            if len(objects) == 0:
-                # if the list is empty, append a single Tile object
-                objects.append(Tile())
-                return obj
-
-        return None
-
-    def is_invalid_coords(self, coords: Vector) -> bool:
-        """
-        Determines if coodinates are in the game map or not.
-        :param coords:
-        :return: True or False
-        """
-        return coords not in self.game_map
+        return isinstance(self.game_map[coords].get_top(), Occupiable) if (coords in self.game_map) \
+            else (0 <= self.map_size.x < coords.x) and (0 <= self.map_size.y < coords.y)
 
     # Returns the Vector and a list of GameObject for whatever objects you are trying to get
+    # CHANGE RETURN TYPE TO BE A DICT NOT A LIST OF TUPLES
     def get_objects(self, look_for: ObjectType) -> list[tuple[Vector, list[GameObject]]]:
         """
         Zips together the game map's keys and values. A nested for loop then iterates through the zipped lists, and
@@ -431,37 +277,24 @@ class GameBoard(GameObject):
         """
 
         results: list[tuple[Vector, list[GameObject]]] = []
-        found: list[GameObject] = []
-
-        # Zips the keys and values together
-        zipped: list[tuple[Vector, list[GameObject]]] = zip(self.game_map.keys(), self.game_map.values())
 
         # Loops through the zipped list
-        for couple in zipped:
-            for obj in couple[1]:
-                if obj.object_type is look_for:
-                    found.append(obj)  # add the matching object to the found list
+        # DICTIONARY COMPREHENSION HERE PLEASE
+        for vec, go_container in self.game_map.items():
+            found: list[GameObject] = go_container.get_objects(look_for)  # add the matching object to the found list
 
             # add values to result if something was found
             if len(found) > 0:
-                results.append((couple[0], found))  # Add tuple pairings and objects found
-                found = []  # reset the found list
+                results.append((vec, found))  # Add tuple pairings and objects found
 
         return results
 
     def to_json(self) -> dict:
         data: dict[str, object] = super().to_json()
+        temp = {str(vec.to_json()): go_container.to_json() for vec, go_container in self.game_map.items()}
+        data[
+            'game_map'] = temp  # {vec.to_json(): go_container.to_json() for vec, go_container in self.game_map.items()}
 
-        # data['game_map'] = None if self.game_map is None else \
-        #     {coord: tiles for (coord, tiles) in list(zip([vector.to_json() for vector in self.game_map.keys()],
-        #                                                  [self.game_map[key][0].to_json() for key in
-        #                                                   self.game_map.keys()]))}
-        data['game_map_vectors'] = [vec.to_json() for vec in self.game_map.keys()] if self.game_map is not None \
-            else None
-        data['game_map_objects'] = [[obj.to_json() for obj in v] for v in
-                                    self.game_map.values()] if self.game_map is not None else None
-
-        # data["game_map"] = [tile.to_json() for tile in tiles] if self.game_map is not None else None
         data["seed"] = self.seed
         data["map_size"] = self.map_size.to_json()
         data["location_vectors"] = [vec.to_json() for vec in self.locations.keys()] if self.locations is not None \
@@ -505,10 +338,12 @@ class GameBoard(GameObject):
         self.walled: bool = data["walled"]
         self.event_active: int = data['event_active']
 
-        # create the game_map based on the vectors and objects saved from the to_json() method
-        self.game_map: dict[Vector, list[GameObject]] = {
-            Vector().from_json(k): [self.__from_json_helper(obj) for obj in v] for k, v in
-            zip(data["game_map_vectors"], data["game_map_objects"])} if data["game_map_vectors"] is not None else None
-        # self.game_map: dict[Vector, list[Tile]] = [
-        #     [Tile().from_json(tile) for tile in y] for y in temp] if temp is not None else None
+        # json.ast.literal_eval is `abstract syntax tree`
+        # the vector objects were stored as a dictionary in a string format
+        # json.ast.literal_eval takes in the string, converts it to a dict, and uses that for the from_json()
+
+        self.game_map: dict[Vector, GameObjectContainer] = {
+            Vector().from_json(ast.literal_eval(k)): GameObjectContainer().from_json(v)
+            for k, v in data['game_map'].items()} if data['game_map'] is not None else None
+
         return self

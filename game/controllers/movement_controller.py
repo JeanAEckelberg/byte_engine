@@ -42,7 +42,7 @@ class MovementController(Controller):
         temp_vec: Vector = avatar_pos.add_to_vector(pos_mod)
 
         # if the top of the given coordinates are not occupiable or are invalid, return to do nothing
-        if world.is_invalid_coords(temp_vec) or not world.is_occupiable(temp_vec):
+        if not world.is_valid_coords(temp_vec):
             return
 
         # remove the avatar from its previous location

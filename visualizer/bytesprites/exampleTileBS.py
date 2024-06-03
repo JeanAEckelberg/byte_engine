@@ -33,10 +33,7 @@ class TileBytespriteFactoryExample(ByteSpriteFactory):
         :param spritesheets:
         :return:
         """
-        if data['occupied_by'] is not None:
-            return spritesheets[1]
-        else:
-            return spritesheets[0]
+        return spritesheets[0]
 
     @staticmethod
     def create_bytesprite(screen: pyg.Surface) -> ByteSprite:
