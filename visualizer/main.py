@@ -1,3 +1,4 @@
+import ast
 import math
 import sys
 import os
@@ -501,8 +502,16 @@ class ByteVisualiser:
         Loads the ByteSprite factories by calling the adapter and loads the logs as a dictionary
         :return: None
         """
+
+        # if first turn log doens't exist, this can cause problems; can find better way to fix this
         self.turn_logs: dict = logs_to_dict(self.logs)
         self.bytesprite_factories = self.adapter.populate_bytesprite_factories()
+        map_size: dict = self.turn_logs['turn_0001']['game_board']['map_size']
+
+        # bytesprite_factories[7] is indexing to access the Tile object type
+        self.bytesprite_map = [[[self.bytesprite_factories[7](self.screen), ]
+                                for _ in range(map_size['x'])]
+                               for _ in range(map_size['y'])]
 
     def prerender(self) -> None:
         """
@@ -530,7 +539,6 @@ class ByteVisualiser:
             self.recalc_animation(self.turn_logs[f'turn_{turn:04d}'])
             self.adapter.recalc_animation(
                 self.turn_logs[f'turn_{turn:04d}'])
-
         else:
             # NEXT ANIMATION FRAME
             self.continue_animation()
@@ -612,47 +620,25 @@ class ByteVisualiser:
         :param turn_data: A dictionary of all the turn data for current turn
         :return: None
         """
+
+        # Update tiles
+        [tile[0].update(dict(), 0, Vector(y=y, x=x)) for y, row
+         in enumerate(self.bytesprite_map) for x, tile
+         in enumerate(row)]
+
         game_map: [[dict]] = turn_data['game_board']['game_map']
-        # Iterate on each row on the game map
-        row: list
-        for y, row in enumerate(game_map):
-            # Add rows to bytesprite_map if needed
-            self.__add_rows(y)
-            # Iterate on each tile in the row
-            tile: dict
-            for x, tile in enumerate(row):
-                # Add tiles to row if needed
-                if len(self.bytesprite_map[y]) < x + 1:
-                    self.bytesprite_map[y].append(list())
-                # Render layers on tile
-                temp_tile: dict | None = tile
-                z: int = 0
-                while temp_tile is not None:
-                    # Add layers if needed
-                    self.__add_needed_layers(x, y, z)
+        for vec, go_container in game_map.items():
+            # get the vectors from the json (they were stored as strings, so ast.literal_eval is necessary)
+            vec: dict = ast.literal_eval(vec)
 
-                    # Create or replace bytesprite at current tile on this current layer
-                    self.__create_bytesprite(x, y, z, temp_tile)
+            # get the sublist from the current game object container
+            objs: [dict] = go_container['sublist']
 
-                    # Call render logic on bytesprite
-                    self.bytesprite_map[y][x][z].update(temp_tile, z, Vector(y=y, x=x))
-                    # increase iteration
-                    temp_tile = temp_tile.get('occupied_by') if temp_tile.get('occupied_by') is not None \
-                        else (temp_tile.get('held_item') if self.config.VISUALIZE_HELD_ITEMS
-                              else None)
-                    z += 1
-
-                # clean up additional layers
-                self.__clean_up_layers(x, y, z)
-
-    def __add_rows(self, y: int) -> None:
-        """
-        Add rows to bytesprite_map ran in recalc_animation method.
-        :param y: The current row value of the calculation.
-        :return: None
-        """
-        if len(self.bytesprite_map) < y + 1:
-            self.bytesprite_map.append(list())
+            # create bytesprites using the vector coordinates given
+            # z is used for the current layer of making the bytesprite (i.e., if iteration = 5, currently on 5th layer)
+            [self.__create_bytesprite(x=vec['x'], y=vec['y'], z=z, temp_tile=obj) for z, obj in
+             enumerate(objs, start=1)]
+            self.__clean_up_layers(x=vec['x'], y=vec['y'], z=len(objs) + 1)
 
     def __add_needed_layers(self, x: int, y: int, z: int) -> None:
         """
@@ -674,6 +660,7 @@ class ByteVisualiser:
         :param temp_tile: Current tile in the recalc_animation method.
         :return: None
         """
+        self.__add_needed_layers(x, y, z)
         if self.bytesprite_map[y][x][z] is None or \
                 self.bytesprite_map[y][x][z].object_type != temp_tile['object_type']:
             if len(self.bytesprite_factories) == 0:
@@ -687,6 +674,8 @@ class ByteVisualiser:
 
             # Instantiate a new bytesprite on current layer
             self.bytesprite_map[y][x][z] = factory_function(self.screen)
+
+        self.bytesprite_map[y][x][z].update(temp_tile, z, Vector(x=x, y=y))
 
     def __clean_up_layers(self, x: int, y: int, z: int) -> None:
         """
@@ -773,6 +762,7 @@ class ByteVisualiser:
         :return: None
         """
         in_phase: bool = True
+
         while in_phase:
             playback_buttons: PlaybackButtons = PlaybackButtons(0)
             # pygame events used to exit the loop

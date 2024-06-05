@@ -130,4 +130,10 @@ class Vector(GameObject):
         return self
 
     def __str__(self) -> str:
-        return f"Coordinates: ({self.x}, {self.y})"
+        return f'({self.x}, {self.y})'
+
+    def __hash__(self):
+        return hash(self.as_tuple())
+
+    def __eq__(self, other) -> bool:
+        return self.as_tuple() == other.as_tuple()

@@ -7,11 +7,13 @@ identifying types of Objects throughout the project.
 When developing the game, add any extra enums as necessary.
 """
 
+
 class DebugLevel(Enum):
     NONE = auto()
     CLIENT = auto()
     CONTROLLER = auto()
     ENGINE = auto()
+
 
 class ObjectType(Enum):
     NONE = auto()
@@ -29,6 +31,7 @@ class ObjectType(Enum):
     STATION_EXAMPLE = auto()
     STATION_RECEIVER_EXAMPLE = auto()
     OCCUPIABLE_STATION_EXAMPLE = auto()
+    GAME_OBJECT_CONTAINER = auto()
 
 
 class ActionType(Enum):

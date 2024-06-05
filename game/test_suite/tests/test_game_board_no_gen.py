@@ -28,11 +28,12 @@ class TestGameBoard(unittest.TestCase):
         self.item: Item = Item(10, None)
         self.wall: Wall = Wall()
         self.avatar: Avatar = Avatar(Vector(5, 5))
-        self.locations: dict[tuple[Vector]:list[GameObject]] = {
-            (Vector(1, 1),): [Station(None)],
-            (Vector(1, 2), Vector(1, 3)): [OccupiableStation(self.item), Station(None)],
-            (Vector(5, 5),): [self.avatar],
-            (Vector(5, 6),): [self.wall]
+        self.locations: dict[Vector, list[GameObject]] = {
+            Vector(1, 1): [Station(None)],
+            Vector(1, 2): [OccupiableStation(self.item)],
+            Vector(1, 3): [Station(None)],
+            Vector(5, 5): [self.avatar],
+            Vector(5, 6): [self.wall]
         }
         self.game_board: GameBoard = GameBoard(1, Vector(10, 10), self.locations, False)
         self.utils = game.test_suite.utils
@@ -104,15 +105,48 @@ class TestGameBoard(unittest.TestCase):
     def test_game_board_json(self):
         data: dict = self.game_board.to_json()
         temp: GameBoard = GameBoard().from_json(data)
-        for (k, v), (x, y) in zip(self.locations.items(), temp.locations.items()):
-            for (i, j), (a, b) in zip(zip(k, v), zip(x, y)):
-                self.assertEqual(i.object_type, a.object_type)
-                self.assertEqual(j.object_type, b.object_type)
+
+        self.assertEqual(self.game_board.seed, temp.seed)
+        self.assertEqual(self.game_board.map_size, temp.map_size)
+        self.assertEqual(self.game_board.walled, temp.walled)
+        self.assertEqual(self.game_board.event_active, temp.event_active)
+
+        # since the map wasn't generated, it should be the None value
+        self.assertTrue(self.game_board.game_map is None)
+        self.assertTrue(temp.game_map is None)
 
     def test_generate_map(self):
         self.game_board.generate_map()
-        self.assertEqual(self.game_board.game_map[1][1].occupied_by.object_type, ObjectType.STATION)
-        self.assertEqual(self.game_board.game_map[2][1].occupied_by.object_type, ObjectType.OCCUPIABLE_STATION)
-        self.assertEqual(self.game_board.game_map[3][1].occupied_by.object_type, ObjectType.STATION)
-        self.assertEqual(self.game_board.game_map[5][5].occupied_by.object_type, ObjectType.AVATAR)
-        self.assertEqual(self.game_board.game_map[6][5].occupied_by.object_type, ObjectType.WALL)
+
+        # access the objects in the GameObjectContainers to see if they are stored properly
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 1))[0].object_type, ObjectType.STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 2))[0].object_type, ObjectType.OCCUPIABLE_STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 3))[0].object_type, ObjectType.STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(5, 5))[0].object_type, ObjectType.AVATAR)
+        self.assertEqual(self.game_board.get_objects_from(Vector(5, 6))[0].object_type, ObjectType.WALL)
+
+    # ensure that walls are placed properly when generating the map
+    def test_wall_generation(self):
+        self.game_board.walled = True
+        map_size: Vector = self.game_board.map_size
+        self.game_board.generate_map()
+
+        x: int = 0
+        y: int = 0
+
+        for iteration in range(map_size.x * map_size.y):
+            x = iteration % map_size.x
+            coords: Vector = Vector(x, y)
+
+            # check every coordinate that's the border
+            if x == 0 or x == map_size.x or y == 0 or y == map_size.y:
+                # ensure that the borders only contain Wall objects
+                self.assertEqual(self.game_board.get_top(coords).object_type, ObjectType.WALL)
+                self.assertTrue(len(self.game_board.get_objects_from(coords)) == 1)
+
+        # access the objects in the GameObject lists to see if they are stored properly
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 1))[0].object_type, ObjectType.STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 2))[0].object_type, ObjectType.OCCUPIABLE_STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 3))[0].object_type, ObjectType.STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(5, 5))[0].object_type, ObjectType.AVATAR)
+        self.assertEqual(self.game_board.get_objects_from(Vector(5, 6))[0].object_type, ObjectType.WALL)

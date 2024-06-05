@@ -22,8 +22,8 @@ class TestInitialization(unittest.TestCase):
         self.item: Item = Item(10, 100)
         self.avatar: Avatar = Avatar(None)
         self.station: Station = Station(None)
-        self.occupiable_station: OccupiableStation = OccupiableStation(None, None)
-        self.tile: Tile = Tile(None)
+        self.occupiable_station: OccupiableStation = OccupiableStation(None)
+        self.tile: Tile = Tile()
         self.wall: Wall = Wall()
         self.vector: Vector = Vector()
 
