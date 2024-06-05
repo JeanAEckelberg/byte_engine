@@ -6,7 +6,10 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../..'))
-import game
+sys.path.insert(0, os.path.abspath('../../../visualizer'))
+sys.path.insert(0, os.path.abspath('../../../server'))
+
+
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information

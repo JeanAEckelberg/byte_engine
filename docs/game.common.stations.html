@@ -156,7 +156,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="game.html">Game Package Contents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Game Package Contents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current has-children"><a class="reference internal" href="game.common.html">Common Package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Common Package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="game.common.html">Game Common Package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Game Common Package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="game.common.items.html">Items Package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="game.common.map.html">Map Package</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Stations Package</a></li>
@@ -170,6 +170,29 @@
 <li class="toctree-l2"><a class="reference internal" href="game.utils.html">Utils Package</a></li>
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="visualizer.html">Visualizer Package</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Visualizer Package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="visualizer.bytesprites.html">ByteSprites Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualizer.templates.html">Templates Package</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="server.html">Server Package</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Server Package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="server.crud.html">Crud Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server.models.html">Models Package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="server.schemas.html">Schemas Package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Schemas Package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="server.schemas.run.html">Run Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.schemas.submission.html">Submission Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.schemas.submission_run_info.html">Submission Run Info Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.schemas.team.html">Team Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.schemas.team_type.html">Team Type Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.schemas.tournament.html">Tournament Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.schemas.turn.html">Turn Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.schemas.university.html">University Package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="server.unit_tests.html">Server Unit Tests Package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="db_viewer.html">DB Viewer File</a></li>
 </ul>
 
 </div>
@@ -206,6 +229,9 @@
         <article role="main">
           <section id="stations-package">
 <h1>Stations Package<a class="headerlink" href="#stations-package" title="Permalink to this heading">#</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">#</a></h2>
+</section>
 <section id="module-game.common.stations.occupiable_station">
 <span id="occupiable-station-class"></span><h2>Occupiable Station Class<a class="headerlink" href="#module-game.common.stations.occupiable_station" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
@@ -221,10 +247,14 @@ can contain items, items can be stored in this object too.</p>
 <p>Occupiable Station Example is a small file that shows an example of how this class can be
 used. The example class can be deleted or expanded upon if necessary.</p>
 </div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="game.common.stations.occupiable_station.OccupiableStation.from_json">
+<span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="_modules/game/common/stations/occupiable_station.html#OccupiableStation.from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.common.stations.occupiable_station.OccupiableStation.from_json" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </section>
-<hr class="docutils" />
 <section id="module-game.common.stations.occupiable_station_example">
 <span id="occupiable-station-example-class"></span><h2>Occupiable Station Example Class<a class="headerlink" href="#module-game.common.stations.occupiable_station_example" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
@@ -243,9 +273,8 @@ show the station’s purpose.
 </dd></dl>
 
 </section>
-<hr class="docutils" />
 <section id="module-game.common.stations.station">
-<span id="station-class"></span><h2>Station Class<a class="headerlink" href="#module-game.common.stations.station" title="Permalink to this heading">#</a></h2>
+<span id="station-module"></span><h2>Station Module<a class="headerlink" href="#module-game.common.stations.station" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="game.common.stations.station.Station">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">game.common.stations.station.</span></span><span class="sig-name descname"><span class="pre">Station</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">held_item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="game.common.items.html#game.common.items.item.Item" title="game.common.items.item.Item"><span class="pre">Item</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game/common/stations/station.html#Station"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.common.stations.station.Station" title="Permalink to this definition">#</a></dt>
@@ -260,12 +289,31 @@ go through this process. Refer to them for more details.</p>
 Station Receiver Example class demonstrates an avatar depositing its held item into a station. These are simple
 ideas for how stations can be used. These can be heavily added onto for more creative uses!</p>
 </div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="game.common.stations.station.Station.from_json">
+<span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="_modules/game/common/stations/station.html#Station.from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.common.stations.station.Station.from_json" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="game.common.stations.station.Station.held_item">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">held_item</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="game.common.items.html#game.common.items.item.Item" title="game.common.items.item.Item"><span class="pre">Item</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#game.common.stations.station.Station.held_item" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.common.stations.station.Station.take_action">
+<span class="sig-name descname"><span class="pre">take_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">avatar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="game.common.html#game.common.avatar.Avatar" title="game.common.avatar.Avatar"><span class="pre">Avatar</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="game.common.items.html#game.common.items.item.Item" title="game.common.items.item.Item"><span class="pre">Item</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/game/common/stations/station.html#Station.take_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.common.stations.station.Station.take_action" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.common.stations.station.Station.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/game/common/stations/station.html#Station.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.common.stations.station.Station.to_json" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </section>
-<hr class="docutils" />
 <section id="module-game.common.stations.station_example">
-<span id="station-example-class"></span><h2>Station Example Class<a class="headerlink" href="#module-game.common.stations.station_example" title="Permalink to this heading">#</a></h2>
+<span id="station-example"></span><h2>Station Example<a class="headerlink" href="#module-game.common.stations.station_example" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="game.common.stations.station_example.StationExample">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">game.common.stations.station_example.</span></span><span class="sig-name descname"><span class="pre">StationExample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">held_item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="game.common.items.html#game.common.items.item.Item" title="game.common.items.item.Item"><span class="pre">Item</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game/common/stations/station_example.html#StationExample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.common.stations.station_example.StationExample" title="Permalink to this definition">#</a></dt>
@@ -282,9 +330,8 @@ station’s purpose.
 </dd></dl>
 
 </section>
-<hr class="docutils" />
 <section id="module-game.common.stations.station_receiver_example">
-<span id="station-receiver-example-class"></span><h2>Station Receiver Example Class<a class="headerlink" href="#module-game.common.stations.station_receiver_example" title="Permalink to this heading">#</a></h2>
+<span id="station-receiver-example"></span><h2>Station Receiver Example<a class="headerlink" href="#module-game.common.stations.station_receiver_example" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="game.common.stations.station_receiver_example.StationReceiverExample">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">game.common.stations.station_receiver_example.</span></span><span class="sig-name descname"><span class="pre">StationReceiverExample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">held_item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="game.common.items.html#game.common.items.item.Item" title="game.common.items.item.Item"><span class="pre">Item</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game/common/stations/station_receiver_example.html#StationReceiverExample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.common.stations.station_receiver_example.StationReceiverExample" title="Permalink to this definition">#</a></dt>
@@ -300,6 +347,9 @@ its own.
 
 </dd></dl>
 
+</section>
+<section id="module-game.common.stations">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-game.common.stations" title="Permalink to this heading">#</a></h2>
 </section>
 </section>
 
@@ -359,8 +409,12 @@ its own.
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Stations Package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-game.common.stations.occupiable_station">Occupiable Station Class</a><ul>
-<li><a class="reference internal" href="#game.common.stations.occupiable_station.OccupiableStation"><code class="docutils literal notranslate"><span class="pre">OccupiableStation</span></code></a></li>
+<li><a class="reference internal" href="#game.common.stations.occupiable_station.OccupiableStation"><code class="docutils literal notranslate"><span class="pre">OccupiableStation</span></code></a><ul>
+<li><a class="reference internal" href="#game.common.stations.occupiable_station.OccupiableStation.from_json"><code class="docutils literal notranslate"><span class="pre">OccupiableStation.from_json()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-game.common.stations.occupiable_station_example">Occupiable Station Example Class</a><ul>
@@ -370,24 +424,31 @@ its own.
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-game.common.stations.station">Station Class</a><ul>
-<li><a class="reference internal" href="#game.common.stations.station.Station"><code class="docutils literal notranslate"><span class="pre">Station</span></code></a></li>
+<li><a class="reference internal" href="#module-game.common.stations.station">Station Module</a><ul>
+<li><a class="reference internal" href="#game.common.stations.station.Station"><code class="docutils literal notranslate"><span class="pre">Station</span></code></a><ul>
+<li><a class="reference internal" href="#game.common.stations.station.Station.from_json"><code class="docutils literal notranslate"><span class="pre">Station.from_json()</span></code></a></li>
+<li><a class="reference internal" href="#game.common.stations.station.Station.held_item"><code class="docutils literal notranslate"><span class="pre">Station.held_item</span></code></a></li>
+<li><a class="reference internal" href="#game.common.stations.station.Station.take_action"><code class="docutils literal notranslate"><span class="pre">Station.take_action()</span></code></a></li>
+<li><a class="reference internal" href="#game.common.stations.station.Station.to_json"><code class="docutils literal notranslate"><span class="pre">Station.to_json()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-game.common.stations.station_example">Station Example Class</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-game.common.stations.station_example">Station Example</a><ul>
 <li><a class="reference internal" href="#game.common.stations.station_example.StationExample"><code class="docutils literal notranslate"><span class="pre">StationExample</span></code></a><ul>
 <li><a class="reference internal" href="#game.common.stations.station_example.StationExample.take_action"><code class="docutils literal notranslate"><span class="pre">StationExample.take_action()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-game.common.stations.station_receiver_example">Station Receiver Example Class</a><ul>
+<li><a class="reference internal" href="#module-game.common.stations.station_receiver_example">Station Receiver Example</a><ul>
 <li><a class="reference internal" href="#game.common.stations.station_receiver_example.StationReceiverExample"><code class="docutils literal notranslate"><span class="pre">StationReceiverExample</span></code></a><ul>
 <li><a class="reference internal" href="#game.common.stations.station_receiver_example.StationReceiverExample.take_action"><code class="docutils literal notranslate"><span class="pre">StationReceiverExample.take_action()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-game.common.stations">Module contents</a></li>
 </ul>
 </li>
 </ul>

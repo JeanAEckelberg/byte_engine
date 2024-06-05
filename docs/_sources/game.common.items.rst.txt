@@ -1,10 +1,21 @@
 Items Package
 =============
 
-Item Class
+Submodules
 ----------
+
+Item Class
+-----------------------------
 
 .. automodule:: game.common.items.item
    :members:
-   :no-undoc-members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: game.common.items
+   :members:
+   :undoc-members:
    :show-inheritance:
