@@ -1,7 +1,5 @@
-from game.common.map.occupiable import Occupiable
 from game.common.player import Player
 from game.common.map.game_board import GameBoard
-from game.common.map.tile import Tile
 from game.common.enums import *
 from game.utils.vector import Vector
 from game.controllers.controller import Controller
@@ -42,14 +40,14 @@ class MovementController(Controller):
         temp_vec: Vector = avatar_pos.add_to_vector(pos_mod)
 
         # if the top of the given coordinates are not occupiable or are invalid, return to do nothing
-        if not world.is_valid_coords(temp_vec):
+        if not world.is_occupiable(temp_vec):
             return
 
         # remove the avatar from its previous location
-        world.remove_object(client.avatar.position, ObjectType.AVATAR)
+        world.remove(client.avatar.position, ObjectType.AVATAR)
 
         # add the avatar to the top of the list of the coordinate
-        world.place_on_top_of(temp_vec, client.avatar)
+        world.place(temp_vec, client.avatar)
 
         # reassign the avatar's position
         client.avatar.position = Vector(temp_vec.x, temp_vec.y)

@@ -25,20 +25,21 @@ class TestPlaceController(unittest.TestCase):
     def test_place_up(self) -> None:
         self.place_controller.handle_actions(ActionType.PLACE_ITEM_UP, self.client, self.game_board)
 
-        self.assertTrue(isinstance(self.game_board.get_top_of(Vector(1, 1)), Item))
+        self.assertTrue(isinstance(self.game_board.get_top(Vector(1, 1)), Item))
 
     def test_place_down(self) -> None:
+        self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
         self.place_controller.handle_actions(ActionType.PLACE_ITEM_DOWN, self.client, self.game_board)
 
-        self.assertTrue(isinstance(self.game_board.get_top_of(Vector(1, 3)), Item))
+        self.assertTrue(isinstance(self.game_board.get_top(Vector(1, 2)), Item))
 
     def test_place_left(self) -> None:
         self.movement_controller.handle_actions(ActionType.MOVE_RIGHT, self.client, self.game_board)
         self.place_controller.handle_actions(ActionType.PLACE_ITEM_LEFT, self.client, self.game_board)
 
-        self.assertTrue(isinstance(self.game_board.get_top_of(Vector(1, 2)), Item))
+        self.assertTrue(isinstance(self.game_board.get_top(Vector(1, 2)), Item))
 
     def test_place_right(self) -> None:
         self.place_controller.handle_actions(ActionType.PLACE_ITEM_RIGHT, self.client, self.game_board)
 
-        self.assertTrue(isinstance(self.game_board.get_top_of(Vector(2, 2)), Item))
+        self.assertTrue(isinstance(self.game_board.get_top(Vector(2, 2)), Item))

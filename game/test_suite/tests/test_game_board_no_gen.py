@@ -118,12 +118,12 @@ class TestGameBoard(unittest.TestCase):
     def test_generate_map(self):
         self.game_board.generate_map()
 
-        # access the objects in the GameObject lists to see if they are stored properly
-        self.assertEqual(self.game_board.game_map[Vector(1, 1)][0].object_type, ObjectType.STATION)
-        self.assertEqual(self.game_board.game_map[Vector(1, 2)][0].object_type, ObjectType.OCCUPIABLE_STATION)
-        self.assertEqual(self.game_board.game_map[Vector(1, 3)][0].object_type, ObjectType.STATION)
-        self.assertEqual(self.game_board.game_map[Vector(5, 5)][0].object_type, ObjectType.AVATAR)
-        self.assertEqual(self.game_board.game_map[Vector(5, 6)][0].object_type, ObjectType.WALL)
+        # access the objects in the GameObjectContainers to see if they are stored properly
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 1))[0].object_type, ObjectType.STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 2))[0].object_type, ObjectType.OCCUPIABLE_STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 3))[0].object_type, ObjectType.STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(5, 5))[0].object_type, ObjectType.AVATAR)
+        self.assertEqual(self.game_board.get_objects_from(Vector(5, 6))[0].object_type, ObjectType.WALL)
 
     # ensure that walls are placed properly when generating the map
     def test_wall_generation(self):
@@ -141,12 +141,12 @@ class TestGameBoard(unittest.TestCase):
             # check every coordinate that's the border
             if x == 0 or x == map_size.x or y == 0 or y == map_size.y:
                 # ensure that the borders only contain Wall objects
-                self.assertEqual(self.game_board.get_top_of(coords).object_type, ObjectType.WALL)
-                self.assertTrue(len(self.game_board.get_all_objects_from(coords)) == 1)
+                self.assertEqual(self.game_board.get_top(coords).object_type, ObjectType.WALL)
+                self.assertTrue(len(self.game_board.get_objects_from(coords)) == 1)
 
         # access the objects in the GameObject lists to see if they are stored properly
-        self.assertEqual(self.game_board.game_map[Vector(1, 1)][0].object_type, ObjectType.STATION)
-        self.assertEqual(self.game_board.game_map[Vector(1, 2)][0].object_type, ObjectType.OCCUPIABLE_STATION)
-        self.assertEqual(self.game_board.game_map[Vector(1, 3)][0].object_type, ObjectType.STATION)
-        self.assertEqual(self.game_board.game_map[Vector(5, 5)][0].object_type, ObjectType.AVATAR)
-        self.assertEqual(self.game_board.game_map[Vector(5, 6)][0].object_type, ObjectType.WALL)
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 1))[0].object_type, ObjectType.STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 2))[0].object_type, ObjectType.OCCUPIABLE_STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 3))[0].object_type, ObjectType.STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(5, 5))[0].object_type, ObjectType.AVATAR)
+        self.assertEqual(self.game_board.get_objects_from(Vector(5, 6))[0].object_type, ObjectType.WALL)

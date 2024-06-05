@@ -21,7 +21,7 @@ class TestOccupiable(unittest.TestCase):
         self.game_board.generate_map()
 
     def test_if_occupiable(self):
-        self.assertEqual(self.game_board.get_all_objects_from(Vector(2, 2))[0].object_type, ObjectType.OCCUPIABLE_STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(2, 2))[0].object_type, ObjectType.OCCUPIABLE_STATION)
 
     def test_if_not_occupiable(self):
-        self.assertEqual(self.game_board.get_all_objects_from(Vector(1, 1))[0].object_type, ObjectType.STATION)
+        self.assertEqual(self.game_board.get_objects_from(Vector(1, 1))[0].object_type, ObjectType.STATION)

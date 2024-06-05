@@ -56,6 +56,10 @@ class GameObjectContainer(GameObject):
             - Given: Avatar
             - Result: Wall
                 Failure
+
+        NOTE: True and False are returned instead of raising an error to prevent misuse of these methods during the
+        competition; if a competitor uses them and the game crashes, the game would end abruptly.
+
         :param game_obj:
         :return: True to represent a success, False to represent a failure
         """
@@ -66,10 +70,6 @@ class GameObjectContainer(GameObject):
 
         # If placing an unoccupiable object on an unoccupiable object, return False
         if not isinstance(game_obj, Occupiable) and not isinstance(self.get_top(), Occupiable | None):
-            return False
-
-        # If attempting to place an object on a Wall, return False
-        if isinstance(self.get_top(), Wall):
             return False
 
         # get the top-most object from the list; assign to be None if list doesn't exist or is empty
@@ -95,7 +95,8 @@ class GameObjectContainer(GameObject):
 
         for obj in self.__sublist:
             if obj.object_type == object_type:
-                return self.__sublist.remove(obj)
+                self.__sublist.remove(obj)
+                return obj
 
         return None
 

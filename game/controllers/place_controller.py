@@ -1,13 +1,7 @@
 from game.common.enums import *
-from game.common.game_object import GameObject
-from game.common.items.item import Item
 from game.common.map.game_board import GameBoard
-from game.common.map.occupiable import Occupiable
-from game.common.map.tile import Tile
 from game.common.player import Player
 from game.controllers.controller import Controller
-from game.utils.vector import Vector
-from game.common.map import occupiable
 from game.common.avatar import *
 
 
@@ -38,4 +32,4 @@ class PlaceController(Controller):
 
     def __place_item(self, client: Player, updated_coords: Vector, world: GameBoard) -> None:
         if client.avatar.held_item:
-            world.place_on_top_of(updated_coords, client.avatar.drop_held_item())
+            world.place(updated_coords, client.avatar.drop_held_item())

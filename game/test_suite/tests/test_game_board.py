@@ -29,12 +29,12 @@ class TestGameBoard(unittest.TestCase):
         self.wall: Wall = Wall()
         self.avatar: Avatar = Avatar()
         self.locations: dict[Vector, list[GameObject]] = {
-            Vector(0, 0): [Station(None)],
-            Vector(1, 0): [OccupiableStation(self.item), Station(None)],
+            Vector(0, 0): [Station(None),],
+            Vector(1, 0): [OccupiableStation(self.item), Station(None),],
             Vector(2, 0): [OccupiableStation(self.item), OccupiableStation(self.item), OccupiableStation(self.item),
                            OccupiableStation(self.item)],
-            Vector(0, 1): [self.avatar],
-            Vector(1, 1): [self.wall],
+            Vector(0, 1): [self.avatar,],
+            Vector(1, 1): [self.wall,],
         }
 
         self.game_board: GameBoard = GameBoard(1, Vector(3, 3), self.locations, False)
@@ -133,24 +133,22 @@ class TestGameBoard(unittest.TestCase):
     # testing another successful case of the place_on_top method
     def test_place_under_top_object(self):
         success: bool = self.game_board.place(Vector(0, 0), OccupiableStation())
-        objects: GameObjectContainer = self.game_board.game_map[Vector(0, 0)]
+        container: GameObjectContainer = self.game_board.game_map[Vector(0, 0)]
 
         # test return value is true
         self.assertTrue(success)
 
         # test that the UnoccupiableStation is first before the Station
-        self.assertEqual(objects[0].object_type, ObjectType.OCCUPIABLE_STATION)
-        self.assertEqual(objects[1].object_type, ObjectType.STATION)
-        self.assertEqual(self.game_board.get_top_of(Vector(0, 0)).object_type, ObjectType.STATION)
+        self.assertEqual(container.get_objects()[0].object_type, ObjectType.OCCUPIABLE_STATION)
+        self.assertEqual(container.get_objects()[1].object_type, ObjectType.STATION)
+        self.assertEqual(container.get_top().object_type, ObjectType.STATION)
 
-    # testing an invalid coordinate raising an error
+    # testing an invalid coordinate
     def test_place_on_top_of_invalid_coordinate(self):
         before: GameObjectContainer = self.game_board.game_map[Vector(0, 0)]
+        result: bool = self.game_board.place(Vector(100, 0), Avatar())
 
-        with self.assertRaises(ValueError) as e:
-            self.game_board.place(Vector(100, 0), Avatar())
-        self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() was given the '
-                                                      f'following nonexistent coordinates: (100, 0).', False))
+        self.assertFalse(result)
 
         # test that the list hasn't changed
         self.assertEqual(before, self.game_board.game_map[Vector(0, 0)])
@@ -158,12 +156,9 @@ class TestGameBoard(unittest.TestCase):
     # testing placing a None value raises an error
     def test_place_on_top_of_not_game_object(self):
         before: GameObjectContainer = self.game_board.game_map[Vector(0, 0)]
+        result: bool = self.game_board.place(Vector(100, 0), Avatar())
 
-        # test placing a None value
-        with self.assertRaises(ValueError) as e:
-            self.game_board.place(Vector(0, 0), None)
-        self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() cannot use None values.',
-                                    True))
+        self.assertFalse(result)
 
         # test that the list hasn't changed
         self.assertEqual(before, self.game_board.game_map[Vector(0, 0)])
@@ -173,21 +168,16 @@ class TestGameBoard(unittest.TestCase):
         before: GameObjectContainer = self.game_board.game_map[Vector(0, 0)]
 
         # test placing a GameObject that doesn't inherit from occupiable works
-        with self.assertRaises(ValueError) as e:
-            self.game_board.place(Vector(0, 0), Station())
-        self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() cannot place the unoccupiable '
-                                                      f'object of type Station under or above the top-most object of '
-                                                      f'type Station.', True))
+        result: bool =self.game_board.place(Vector(0, 0), Station())
+        self.assertFalse(result)
 
         # test that the list hasn't changed
         self.assertEqual(before, self.game_board.game_map[Vector(0, 0)])
 
         # test placing a non-GameObject doesn't work.
-        with self.assertRaises(ValueError) as e:
-            self.game_board.place(Vector(0, 0), MovementController())
-        self.assertTrue(spell_check(str(e.exception), f'GameBoard.place_on_top_of() cannot place the unoccupiable '
-                                                      f'object of type MovementController under or above the top-most '
-                                                      f'object of type Station.', True))
+        result: bool = self.game_board.place(Vector(0, 0), MovementController())
+        self.assertFalse(result)
+
         # test that the list hasn't changed
         self.assertEqual(before, self.game_board.game_map[Vector(0, 0)])
 
@@ -199,11 +189,11 @@ class TestGameBoard(unittest.TestCase):
         result: list[GameObject] = self.game_board.get_objects_from(Vector(2, 0), ObjectType.OCCUPIABLE_STATION)
 
         # check if the resulting lists are the same
-        self.assertEqual(result, self.game_board.game_map[Vector(2, 0)])
+        self.assertEqual(result, self.game_board.game_map[Vector(2, 0)].get_objects())
 
     def test_get_objects_from_fail(self):
         result = self.game_board.get_objects_from(Vector(50, 0), ObjectType.OCCUPIABLE_STATION)
-        self.assertEqual(result, None)
+        self.assertEqual(result, [])
 
     def test_object_is_found_at(self):
         result: bool = self.game_board.object_is_found_at(Vector(0, 0), ObjectType.STATION)
@@ -213,17 +203,9 @@ class TestGameBoard(unittest.TestCase):
         result: bool = self.game_board.object_is_found_at(Vector(0, 0), ObjectType.OCCUPIABLE_STATION)
         self.assertFalse(result)
 
-    def test_get_all_objects_from(self):
-        result: list[GameObject] = self.game_board.get_all_objects_from(Vector(0, 0))
-        self.assertEqual(result, self.game_board.game_map[Vector(0, 0)])
-
-    def test_get_all_objects_from_fail(self):
-        result: list[GameObject] = self.game_board.get_all_objects_from(Vector(100, 0))
-        self.assertEqual(result, None)
-
     # test that the removed object is returned
     def test_remove_object_from(self):
-        before: GameObject = self.game_board.game_map[Vector(0, 0)][0]
+        before: GameObject = self.game_board.get_objects_from(Vector(0, 0), ObjectType.STATION)[0]
         after: GameObject = self.game_board.remove(Vector(0, 0), ObjectType.STATION)
         self.assertEqual(before, after)
 

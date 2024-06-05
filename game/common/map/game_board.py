@@ -1,13 +1,14 @@
 import ast
 import random
 from typing import Self
+
 from game.common.avatar import Avatar
 from game.common.enums import *
 from game.common.game_object import GameObject
 from game.common.map.game_object_container import GameObjectContainer
-from game.common.map.occupiable import Occupiable
 from game.common.map.tile import Tile
 from game.common.map.wall import Wall
+from game.common.map.occupiable import Occupiable
 from game.common.stations.occupiable_station import OccupiableStation
 from game.common.stations.station import Station
 from game.utils.vector import Vector
@@ -217,26 +218,77 @@ class GameBoard(GameObject):
                 if isinstance(obj, Avatar):
                     obj.position = vec
 
-        # Generate the walls
-        output.update({Vector(x=x, y=0): GameObjectContainer([Wall(), ]) for x in range(self.map_size.x)})
-        output.update({Vector(x=x, y=self.map_size.y - 1): GameObjectContainer([Wall(), ])
-                       for x in range(self.map_size.x)})
-        output.update({Vector(x=0, y=y): GameObjectContainer([Wall(), ]) for y in range(1, self.map_size.y - 1)})
-        output.update({Vector(x=self.map_size.x - 1, y=y): GameObjectContainer([Wall(), ])
-                       for y in range(1, self.map_size.y - 1)})
+        if self.walled:
+            # Generate the walls
+            output.update({Vector(x=x, y=0): GameObjectContainer([Wall(), ]) for x in range(self.map_size.x)})
+            output.update({Vector(x=x, y=self.map_size.y - 1): GameObjectContainer([Wall(), ])
+                           for x in range(self.map_size.x)})
+            output.update({Vector(x=0, y=y): GameObjectContainer([Wall(), ]) for y in range(1, self.map_size.y - 1)})
+            output.update({Vector(x=self.map_size.x - 1, y=y): GameObjectContainer([Wall(), ])
+                           for y in range(1, self.map_size.y - 1)})
 
         # convert locations dict to go_container
         output.update({vec: GameObjectContainer(objs) for vec, objs in self.locations.items()})
         return output
 
+    def get(self, coords: Vector) -> GameObjectContainer | None:
+        """
+        A GameObjectContainer object returned given the coordinates. If the coordinates are valid but are not in the
+        game_map yet, a new GameObjectContainer is created and is stored in a new entry in the game_map dictionary.
+
+        :param coords:
+        :return: GameObjectContainer or None
+        """
+        if self.is_valid_coords(coords) and self.game_map.get(coords, None) is None:
+            self.game_map[coords] = GameObjectContainer()
+
+        return self.game_map.get(coords)
+
     def place(self, coords: Vector, game_obj: GameObject | None) -> bool:
-        return self.game_map[coords].place(game_obj)
+        """
+        Places the given object at the given coordinates if they are valid. A boolean is returned to represent a
+        successful placement
+        :param coords:
+        :param game_obj:
+        :return: True or False for a successful placement of the given object
+        """
+        return self.get(coords).place(game_obj) if self.is_valid_coords(coords) else False
+
+    def get_objects_from(self, coords: Vector, object_type: ObjectType | None = None) -> list[GameObject]:
+        """
+        Returns a list of GameObjects from the given, valid coordinates. If an ObjectType is specified, only that
+        ObjectType will be returned. If an ObjectType is not specified, the entire list of GameObjects will be
+        returned. If nothing is found, an empty list is given.
+        :param coords:
+        :param object_type:
+        :return: a list of GameObjects
+        """
+        return self.game_map[coords].get_objects(object_type) if coords in self.game_map else []
 
     def remove(self, coords: Vector, object_type: ObjectType) -> GameObject | None:
-        return self.game_map[coords].remove(object_type)
+        """
+        Removes the first instance of the given object type from the coordinates if they are valid. Returns None if
+        invalid coordinates are given.
+        :param coords:
+        :param object_type:
+        :return: GameObject or None
+        """
+        to_return: GameObject | None = self.game_map[coords].remove(object_type) if coords in self.game_map else None
+
+        # if there is a None value paired with the coordinate key after removal, delete that entry from the dict
+        if self.is_valid_coords(coords) and self.get(coords).get_top() is None:
+            self.game_map.pop(coords, None)
+
+        return to_return
 
     def get_top(self, coords: Vector) -> GameObject | None:
-        return self.game_map[coords].get_top()
+        """
+        Returns the last object in the GameObjectContainer (i.e, the top-most object in the stack). Returns None if
+        invalid coordinates are given.
+        :param coords:
+        :return: GameObject or None
+        """
+        return self.game_map[coords].get_top() if coords in self.game_map else None
 
     def object_is_found_at(self, coords: Vector, object_type: ObjectType) -> bool:
         """
@@ -250,21 +302,24 @@ class GameBoard(GameObject):
         if not self.is_valid_coords(coords):
             return False
 
-        return self.game_map[coords].get_objects(object_type) is not None
+        result: list[GameObject] | None = self.game_map[coords].get_objects(object_type)
+        return result is not None and len(result) > 0
 
     def is_valid_coords(self, coords: Vector) -> bool:
         """
         Check if the given coordinates are valid. In order to do so, the following criteria must be met:
-            - The given coordinates must be in the self.game_map dictionary keys first *and* the last object at that
-                coordinate must be Occupiable
+            - The given coordinates must be in the self.game_map dictionary keys first
             - Otherwise, the coordinates must be within the size of the game map
 
         :param coords:
-        :return: True if the coordinates are in the
+        :return: True if the coordinates are already in the map or are within the map size
         """
 
-        return isinstance(self.game_map[coords].get_top(), Occupiable) if (coords in self.game_map) \
-            else (0 <= self.map_size.x < coords.x) and (0 <= self.map_size.y < coords.y)
+        return (0 <= coords.x < self.map_size.x) and (0 <= coords.y < self.map_size.y)
+
+    def is_occupiable(self, coords: Vector) -> bool:
+        return self.is_valid_coords(coords) and (self.get(coords).get_top() is None or
+                                                 isinstance(self.get(coords).get_top(), Occupiable))
 
     # Returns the Vector and a list of GameObject for whatever objects you are trying to get
     # CHANGE RETURN TYPE TO BE A DICT NOT A LIST OF TUPLES
@@ -291,10 +346,10 @@ class GameBoard(GameObject):
 
     def to_json(self) -> dict:
         data: dict[str, object] = super().to_json()
-        temp = {str(vec.to_json()): go_container.to_json() for vec, go_container in self.game_map.items()}
-        data[
-            'game_map'] = temp  # {vec.to_json(): go_container.to_json() for vec, go_container in self.game_map.items()}
-
+        temp: dict[Vector, GameObjectContainer] | None = {str(vec.to_json()): go_container.to_json() for
+                                                          vec, go_container in
+                                                          self.game_map.items()} if self.game_map is not None else None
+        data['game_map'] = temp
         data["seed"] = self.seed
         data["map_size"] = self.map_size.to_json()
         data["location_vectors"] = [vec.to_json() for vec in self.locations.keys()] if self.locations is not None \
