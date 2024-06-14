@@ -24,8 +24,13 @@ class TestMovementControllerIfWall(unittest.TestCase):
         self.movement_controller = MovementController()
         self.avatar = Avatar(Vector(2, 2), 1)
         self.locations: dict[tuple[Vector]: list[GameObject]] = {
-            Vector(2, 2): [self.avatar]
+            Vector(2, 1): [OccupiableStation()],
+            Vector(1, 2): [Station()],
+            Vector(3, 2): [Wall()],
+            Vector(2, 2): [self.avatar],
+            Vector(2, 3): [OccupiableStation(), Station()]
         }
+
         self.game_board = GameBoard(0, Vector(4, 4), self.locations, False)
 
         # test movements up, down, left and right by starting with default 3,3 then know if it changes from there \/
@@ -38,22 +43,26 @@ class TestMovementControllerIfWall(unittest.TestCase):
         self.assertEqual((str(self.client.avatar.position)), str(Vector(2, 1)))
 
     # test move down
-    def test_move_down(self):
+    def test_move_down_on_occupied_occupiable_station_fail(self):
         self.movement_controller.handle_actions(ActionType.MOVE_DOWN, self.client, self.game_board)
-        self.assertEqual((str(self.client.avatar.position)), str(Vector(2, 3)))
+        self.assertEqual((str(self.client.avatar.position)), str(Vector(2, 2)))
 
     # test move left
-    def test_move_left(self):
+    def test_move_left_on_station_fail(self):
         self.movement_controller.handle_actions(ActionType.MOVE_LEFT, self.client, self.game_board)
-        self.assertEqual((str(self.client.avatar.position)), str(Vector(1, 2)))
-
-    # test moving right
-    def test_move_right(self):
-        self.movement_controller.handle_actions(ActionType.MOVE_RIGHT, self.client, self.game_board)
-        self.assertEqual((str(self.client.avatar.position)), str(Vector(3, 2)))
+        self.assertEqual((str(self.client.avatar.position)), str(Vector(2, 2)))
 
     # test moving off the map doesn't work
-    def test_move_right_invalid_coordinate(self):
+    def test_move_up_invalid_coordinate(self):
+        self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
+        self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
+        self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
+        self.assertEqual((str(self.client.avatar.position)), str(Vector(2, 0)))
+
+    def test_move_up_occupiable_station(self):
+        self.movement_controller.handle_actions(ActionType.MOVE_UP, self.client, self.game_board)
+        self.assertEqual(self.client.avatar.position, Vector(2, 1))
+
+    def test_move_right_wall_fail(self):
         self.movement_controller.handle_actions(ActionType.MOVE_RIGHT, self.client, self.game_board)
-        self.movement_controller.handle_actions(ActionType.MOVE_RIGHT, self.client, self.game_board)
-        self.assertEqual((str(self.client.avatar.position)), str(Vector(3, 2)))
+        self.assertEqual(self.client.avatar.position, Vector(2, 2))
