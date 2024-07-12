@@ -20,8 +20,8 @@ class GameBoard(GameObject):
 
     Map Size:
     ---------
-        map_size is a Vector object, allowing you to specify the size of the (x, y) plane of the game board.
-        For example, a Vector object with an 'x' of 5 and a 'y' of 7 will create a board 5 tiles wide and
+        `map_size` is a Vector object, allowing you to specify the size of the (x, y) plane of the game board.
+        For example, a Vector object with an 'x' of 5 and a 'y' of 7 will set a boarder of 5 tiles wide and
         7 tiles long.
 
         Example:
@@ -39,70 +39,21 @@ class GameBoard(GameObject):
 
     Locations:
     ----------
-        This is the bulkiest part of the generation.
-
-        The locations field is a dictionary with a key of a tuple of Vectors, and the value being a list of
-        GameObjects (the key **must** be a tuple instead of a list because Python requires dictionary keys to be
-        immutable).
-
-        This is used to assign the given GameObjects the given coordinates via the Vectors. This is done in two ways:
-
-        Statically:
-            If you want a GameObject to be at a specific coordinate, ensure that the key-value pair is
-            *ONE* Vector and *ONE* GameObject.
-            An example of this would be the following:
-            ::
-                locations = { (vector_2_4) : [station_0] }
-
-            In this example, vector_2_4 contains the coordinates (2, 4). (Note that this naming convention
-            isn't necessary, but was used to help with the concept). Furthermore, station_0 is the
-            GameObject that will be at coordinates (2, 4).
-
-        Dynamically:
-            If you want to assign multiple GameObjects to different coordinates, use a key-value
-            pair of any length.
-
-            **NOTE**: The length of the tuple and list *MUST* be equal, otherwise it will not
-            work. In this case, the assignments will be random. An example of this would be the following:
-            ::
-                locations =
-                {
-                    (vector_0_0, vector_1_1, vector_2_2) : [station_0, station_1, station_2]
-                }
-
-            (Note that the tuple and list both have a length of 3).
-
-            When this is passed in, the three different vectors containing coordinates (0, 0), (1, 1), or
-            (2, 2) will be randomly assigned station_0, station_1, or station_2.
-
-            If station_0 is randomly assigned at (1, 1), station_1 could be at (2, 2), then station_2 will be at (0, 0).
-            This is just one case of what could happen.
-
-        Lastly, another example will be shown to explain that you can combine both static and
-        dynamic assignments in the same dictionary:
-        ::
-            locations =
-                {
-                    (vector_0_0) : [station_0],
-                    (vector_0_1) : [station_1],
-                    (vector_1_1, vector_1_2, vector_1_3) : [station_2, station_3, station_4]
-                }
-
-        In this example, station_0 will be at vector_0_0 without interference. The same applies to
-        station_1 and vector_0_1. However, for vector_1_1, vector_1_2, and vector_1_3, they will randomly
-        be assigned station_2, station_3, and station_4.
+        The locations field is a dictionary with a key of a vector with a value of GameObjectContainer.
+        Every object in a GameObjectContainer will be store at the specified location.
+        Each container will function like a stack, where you can only place a new object at the top of the stack.
 
     -----
 
     Walled:
     -------
         This is simply a bool value that will create a wall barrier on the boundary of the game_board. If
-        walled is True, the wall will be created for you.
+        walled is True, the wall will be generated.
 
-        For example, let the dimensions of the map be (5, 7). There will be wall Objects horizontally across
-        x = 0 and x = 4. There will also be wall Objects vertically at y = 0 and y = 6
+        For example, let the dimensions of the map be (5, 7). There will be Wall objects horizontally across
+        x = 0 and x = 4. There will also be Wall objects vertically at y = 0 and y = 6
 
-        Below is a visual example of this, with 'x' being where the wall Objects are.
+        Below is a visual example of this, with 'x' being where the Wall objects are.
 
         Example:
         ::
@@ -206,10 +157,10 @@ class GameBoard(GameObject):
         self.__walled = walled
 
     def generate_map(self) -> None:
-        # Dictionary Init
-        self.game_map = self.__map_init()
-
-    def __map_init(self) -> dict[Vector, GameObjectContainer]:
+        """
+        Populates the game map based off self.locations.
+        :return: None
+        """
         output: dict[Vector, GameObjectContainer] = dict()
 
         # Update all Avatar positions if they are to be placed on the map
@@ -229,7 +180,7 @@ class GameBoard(GameObject):
 
         # convert locations dict to go_container
         output.update({vec: GameObjectContainer(objs) for vec, objs in self.locations.items()})
-        return output
+        self.game_map = output
 
     def get(self, coords: Vector) -> GameObjectContainer | None:
         """
@@ -322,7 +273,7 @@ class GameBoard(GameObject):
                                                  isinstance(self.get(coords).get_top(), Occupiable))
 
     # Returns the Vector and a list of GameObject for whatever objects you are trying to get
-    # CHANGE RETURN TYPE TO BE A DICT NOT A LIST OF TUPLES
+    # TODO: CHANGE RETURN TYPE TO BE A DICT NOT A LIST OF TUPLES
     def get_objects(self, look_for: ObjectType) -> list[tuple[Vector, list[GameObject]]]:
         """
         Zips together the game map's keys and values. A nested for loop then iterates through the zipped lists, and
