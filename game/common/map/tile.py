@@ -12,7 +12,7 @@ class Tile(Occupiable):
         Tile objects are never stored in the gameboard to ensure a faster generation.
         Since this is the case, if there is no GameObjectContainer at a specific coordinate, the visualizer will default
         to a tile sprite. Therefore, this file is still necessary for tile objects to be written to and from the json.
-        ⚠️⚠️⚠️DO NOT DELETE THIS FILE⚠️⚠️⚠️ :3
+        ⚠️⚠️⚠️DO NOT DELETE THIS FILE⚠️⚠️⚠️
     """
     def __init__(self):
         super().__init__()
