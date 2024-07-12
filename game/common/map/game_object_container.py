@@ -12,6 +12,8 @@ from game.common.stations.station import Station
 class GameObjectContainer(GameObject):
     """
     This class encapsulates all objects that are to be stored at a coordinate in the GameBoard.
+    The methods in this class handle the logic for storing and removing objects in the GameBoard.
+    This helps with abstraction and ensures that the GameBoard has cleaner code.
     """
 
     def __init__(self, objects: list[GameObject] | None = None):
@@ -21,6 +23,11 @@ class GameObjectContainer(GameObject):
         self.place_all(objects)
 
     def place_all(self, game_objs: list[GameObject] | None) -> bool:
+        """
+        Populates this GameObjectContainer with all given objects.
+        :param game_objs:
+        :return bool: True if placing all objects is successful, False otherwise
+        """
         if game_objs is None:
             return False
 
@@ -101,6 +108,10 @@ class GameObjectContainer(GameObject):
         return None
 
     def get_top(self) -> GameObject | None:
+        """
+        Returns the last object in self.__sublist or None if the list is empty.
+        :return: GameObject or None
+        """
         return self.__sublist[-1] if self.__sublist is not None \
                              and len(self.__sublist) > 0 else None
 
