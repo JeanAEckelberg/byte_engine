@@ -137,7 +137,7 @@ if __name__ == '__main__':
         if par_args.q_bool:
             quiet = True
 
-        engine = Engine(quiet)
+        engine = Engine(quiet, par_args.fn_bool)
         engine.loop()
 
     # Run the visualizer
