@@ -232,6 +232,31 @@ class GameBoard(GameObject):
 
         return to_return
 
+    def replace(self, coords: Vector, to_place: GameObject) -> None:
+
+        """
+
+        Replaces the GameObjectContainer at the given coordinate with a new GameObjectContainer. The new one will
+
+        contain the `to_place` object instead. No coordinates are removed in this way
+
+        """
+
+        goc: GameObjectContainer = GameObjectContainer([to_place])
+
+        self.game_map[coords] = goc
+
+    def remove_coordinate(self, coords: Vector) -> None:
+
+        """
+
+        Removes the given coordinate from the game map.
+
+        """
+
+        if self.is_valid_coords(coords):
+            self.game_map.pop(coords, None)
+
     def get_top(self, coords: Vector) -> GameObject | None:
         """
         Returns the last object in the GameObjectContainer (i.e, the top-most object in the stack). Returns None if
@@ -267,6 +292,16 @@ class GameBoard(GameObject):
         """
 
         return (0 <= coords.x < self.map_size.x) and (0 <= coords.y < self.map_size.y)
+
+    def get_list_of_valid_coords(self) -> list[Vector]:
+
+        """
+
+        Returns list of all vector positions available on the game board (everything in bounds).
+
+        """
+
+        return [Vector(x, y) for x in range(self.map_size.x) for y in range(self.map_size.y)]
 
     def is_occupiable(self, coords: Vector) -> bool:
         return self.is_valid_coords(coords) and (self.get(coords).get_top() is None or
